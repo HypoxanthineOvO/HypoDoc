@@ -8,7 +8,7 @@ status: active
 
 ## 当前工作
 
-- [Cycle 索引](cycles/INDEX.md)：`C001-hypodoc-monorepo-migration-release` 已进入 `M2`，等待主执行模型接手。
+- [Cycle 索引](cycles/INDEX.md)：`C001-hypodoc-monorepo-migration-release` 已 completed；HypoDoc `v0.1.0` 已发布。
 - [Experiment 索引](experiments/INDEX.md)：当前没有 Experiment。
 - [Memory 索引](memory/INDEX.md)：长期项目意图、采用状态与已确认决策。
 
