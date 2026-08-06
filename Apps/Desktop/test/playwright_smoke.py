@@ -54,6 +54,8 @@ def screenshot(page: Page, name: str) -> None:
     baseline = BASELINES / name
     page.screenshot(path=actual)
     assert_nonblank(actual)
+    if os.environ.get("SKIP_VISUAL_DIFF") == "1":
+        return
     if UPDATE_SNAPSHOTS or not baseline.exists():
         shutil.copy2(actual, baseline)
         return
