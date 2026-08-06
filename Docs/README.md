@@ -8,7 +8,9 @@ The migration procedure currently lives in the repository root at
 
 Current migration evidence and decisions:
 
+- [`migration/decisions.md`](migration/decisions.md): confirmed product-history, version,
+  Spec and execution-model decisions in plain language.
 - [`migration/source-inventory.md`](migration/source-inventory.md): frozen source commits,
   dirty-state recovery, validation evidence and risks.
 - [`migration/import-design.md`](migration/import-design.md): proposed authority hierarchy,
-  history-preserving import strategy and business consolidation boundary.
+  direct curated import strategy and business consolidation boundary.

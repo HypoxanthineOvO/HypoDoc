@@ -5,8 +5,9 @@ Status: proposed for Stone S1 review
 ## Decision Summary
 
 Treat the three source repositories as versioned evidence and implementation material, not as
-immutable truth. Preserve their Git provenance, then make business-driven consolidation changes in
-separate commits whose purpose, compatibility effect and verification are visible.
+immutable truth. Keep their repositories, commit SHAs, tags and dirty patches as provenance, but do
+not merge their Git histories into the new product `main`. Curate and modify the source content into
+a clean product history whose commits describe the actual integration work.
 
 ## Authority Hierarchy
 
@@ -26,13 +27,14 @@ the Spec repository, reviewed, versioned and then pinned by the product.
 ### Product root
 
 Keep `1a35eb6dec2da1230284b8cf1f65a8d9c4a4932f` as the pre-import root anchor. Migration documents
-and later integration commits build on it. Do not rewrite this anchor after S1.
+and later integration commits build on it. Do not rewrite this anchor or attach unrelated source
+histories as ancestors of the new product branch.
 
 ### Hypo-Markdown
 
-Use `e4e7148494bed527e050867616d643353a6641d8` as the source anchor. Fetch it as a local source remote
-and add it without squash under a temporary import prefix so its commit remains reachable from the
-product history. A following organization commit maps only the product-owned surfaces:
+Use `e4e7148494bed527e050867616d643353a6641d8` as the source anchor and archived comparison point.
+Copy only the selected product-owned surfaces into the new repository, applying business changes as
+part of reviewed integration commits. Do not merge or subtree-add the source commit into product history:
 
 | Source | Target | Integration treatment |
 | --- | --- | --- |
@@ -46,23 +48,24 @@ product history. A following organization commit maps only the product-owned sur
 | nested `.pipeline` | Not imported as product content | Durable decisions are consulted, but source Workflow runtime is not product source |
 | `spec/hypodoc` | Not retained as a nested dependency | Reconciled into the independent root Spec workflow |
 
-Because the source has only one anchor commit, a temporary prefixed import plus a separate mapping
-commit provides both provenance and a readable organization boundary. The temporary tree is removed
-after mapping; its source commit remains in history.
+The source SHA and path mapping remain in the migration manifest and inventory. The old repository
+stays available for `git log`, blame and recovery; the new repository records only meaningful product
+integration commits.
 
 ### Hypo-LaTeX
 
-Fetch `b1ef2c7335e969f332aafb38c766ff9cbb46b182` and import it without squash at
-`Renderers/LaTeX`. Preserve its six unpublished commits and full existing ancestry. Then apply a
-separate integration commit that:
+Use `b1ef2c7335e969f332aafb38c766ff9cbb46b182` as the source snapshot and copy the curated renderer
+content into `Renderers/LaTeX`. Keep the old repository and its six unpublished commits as archived
+provenance, but do not merge that ancestry into product `main`. The integration commits will:
 
-- removes the renderer-local Spec submodule and consumes the root pinned Spec;
-- keeps `hypolatex` compatibility where it has demonstrated user value, while allowing product-facing
+- remove the renderer-local Spec submodule and consume the root pinned Spec;
+- keep `hypolatex` compatibility where it has demonstrated user value, while allowing product-facing
   names and package versions to change;
-- separates renderer-neutral authoring guidance into `Skills/Authoring` and LaTeX build/verification
+- separate renderer-neutral authoring guidance into `Skills/Authoring` and LaTeX build/verification
   guidance into `Skills/LaTeX`;
-- reconciles duplicate docs, themes and release assumptions instead of copying them unchanged; and
-- applies or supersedes the preserved `uv.lock` correction only after the integrated version is chosen.
+- reconcile duplicate docs, themes and release assumptions instead of copying them unchanged; and
+- normalize product-facing version metadata for the new `v0.1.0` line and either apply or supersede
+  the preserved `uv.lock` correction explicitly.
 
 ### HypoDoc Spec
 
@@ -98,16 +101,24 @@ Adopt MIT for first-party integrated product code, matching HypoDoc-Spec and Hyp
 all third-party notices and license reports. This recommendation needs explicit S1 acceptance because
 Hypo-Markdown currently lacks a first-party license file.
 
+## Product Version
+
+The first integrated product release is `HypoDoc v0.1.0`. It starts a new product history and does not
+inherit Hypo-LaTeX's `v0.4.0` sequence. HypoDoc Spec keeps its own independent version. Release and
+package metadata must make that distinction explicit.
+
 ## S1 Acceptance Boundary
 
-Accepting S1 authorizes the local history-preserving imports and subsequent business consolidation in
-M2/M3. It does not authorize pushing a remote, publishing a package, choosing the final integrated
-version, creating a public Release or claiming unsupported platform validation. Those remain behind S2.
+Accepting S1 authorizes the direct curated imports and subsequent business consolidation in M2/M3.
+It does not authorize pushing a remote, publishing a package, creating a public Release or claiming
+unsupported platform validation. Those remain behind S2. The product version is already fixed at
+`v0.1.0`; S2 verifies release readiness rather than choosing a different inherited version line.
 
 Acceptance should mean:
 
 - the four baseline commits and two dirty patches are sufficient recovery evidence;
-- the authority hierarchy permits critical content modification while preserving provenance;
+- the authority hierarchy permits critical content modification while preserving provenance outside
+  the new product commit graph;
 - the proposed path mapping and Spec reconciliation are suitable starting points;
 - MIT is accepted as the intended first-party root license; and
 - the known local-only and platform-validation limitations are understood.

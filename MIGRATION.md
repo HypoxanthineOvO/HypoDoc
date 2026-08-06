@@ -41,11 +41,11 @@ HypoDoc/
 
 | 来源 | 目标 | 迁移方式 |
 | --- | --- | --- |
-| `Hypo-Markdown/packages/*` | `Packages/*` | 在来源仓建立首个可回退 commit 后导入 |
+| `Hypo-Markdown/packages/*` | `Packages/*` | 从固定来源 SHA 筛选并直接整理到新产品历史 |
 | `Hypo-Markdown/apps/desktop` | `Apps/Desktop` | 保留源码，更新 workspace 路径与产品名 |
 | `Hypo-Markdown/extensions/vscode` | `Extensions/VSCode` | 保留扩展 ID 决策，更新构建与发布路径 |
 | `Hypo-Markdown/packages/render-web` | `Packages/render-web` | 首次迁移继续作为共享 Web renderer package |
-| `Hypo-LaTeX` | `Renderers/LaTeX` | 保留 Git 历史导入，不复制粘贴 |
+| `Hypo-LaTeX` | `Renderers/LaTeX` | 固定来源 SHA 后直接整理内容；旧仓独立保留历史 |
 | `Hypo-LaTeX/skill` | `Skills/LaTeX` | 先区分通用写作规则与 LaTeX 专用规则 |
 | `HypoDoc-Spec` | `Spec/` | 保持独立版本与历史，以固定 revision 接入 |
 
@@ -55,7 +55,7 @@ HypoDoc/
 
 1. 记录三个来源工作区的 branch、HEAD、tag、remote 和 dirty files。
 2. 为未提交内容生成只读清单，不擅自丢弃或覆盖。
-3. 明确项目许可证、首发版本和 GitHub/GitLab 主从关系。
+3. 明确项目许可证和 GitHub/GitLab 主从关系；首发产品版本已确定为 `v0.1.0`。
 
 完成条件：任何来源文件都能从 Git 或明确的 dirty-file 清单恢复。
 
@@ -69,7 +69,7 @@ HypoDoc/
 
 ### 阶段 2：导入 TypeScript 产品
 
-1. 将共享 packages、Desktop、VS Code 和工具脚本导入本仓。
+1. 从固定来源 SHA 直接整理共享 packages、Desktop、VS Code 和工具脚本，不合并旧仓 Git 历史。
 2. 更新 pnpm workspace、TypeScript 配置和 CI 路径。
 3. 保持 portable runtime 不依赖 Python/Pandoc 的现有边界。
 
@@ -77,10 +77,10 @@ HypoDoc/
 
 ### 阶段 3：导入 HypoDoc LaTeX
 
-1. 使用保留历史的导入方式将仓库放入 `Renderers/LaTeX`。
+1. 从固定来源 SHA 筛选并整理内容到 `Renderers/LaTeX`，不合并旧仓 Git 历史。
 2. 移除重复的嵌套 Spec 引用，统一由根 `Spec/` 提供固定规范版本。
 3. 将 renderer-neutral 的写作规则提取到 `Skills/Authoring`。
-4. 保留 Python 包自身版本，不强制与 Desktop/VS Code 同步。
+4. 将产品发布线统一为 `v0.1.0`；Spec 独立版本化，旧 Hypo-LaTeX `v0.4.0` 不作为新产品版本前身。
 
 完成条件：Python tests、CLI 构建、代表性 TeX/PDF 构建与现有 release contract 通过。
 
@@ -103,7 +103,7 @@ HypoDoc/
 ## 不可跨越的安全门
 
 - 来源仓有 dirty files 时，不做破坏性迁移。
-- 没有来源 commit 时，不声称保留了历史。
+- 没有来源 commit、dirty patch 或等价恢复证据时，不开始内容迁移。
 - 新仓全量测试未通过时，不归档旧仓。
 - Windows/macOS 未实际构建时，不把对应产物写成已验证。
 - 未确定许可证、签名和 notarization 状态时，不发布 `1.0.0`。
@@ -111,7 +111,6 @@ HypoDoc/
 ## 尚待决定
 
 - 项目许可证是否与现有 HypoDoc Spec 和 HypoDoc LaTeX 一致采用 MIT。
-- 首个集成版本使用 `v0.1.0 Preview` 还是其他版本。
 - GitHub canonical + GitLab mirror，或相反。
 - VS Code Marketplace publisher 与正式扩展 ID。
 - macOS/Windows 签名、notarization 和证书管理策略。

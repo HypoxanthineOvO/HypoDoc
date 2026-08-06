@@ -1,10 +1,21 @@
 ---
 kind: execution-log
 cycle: C001-hypodoc-monorepo-migration-release
-updated: 2026-08-06T17:53:26+08:00
+updated: 2026-08-06T18:04:05+08:00
 ---
 
 # HypoDoc Monorepo 迁移、整理与发布执行记录
+
+## 2026-08-06 18:04 - S1 决策路线整理
+
+- **计划项：** `S1`
+- **目的：** 将用户关于产品历史、首发版本和执行模型的讨论收敛为无冲突的正式决策。
+- **动作：** 废止“合并来源 Git 历史”路线；改为保留来源证据并直接整理迁入。固定首个产品版本为 `v0.1.0`，确认 Spec 独立版本化，并记录 V4 Flash 可作为 M2 至 M4 主执行模型。
+- **结果：** Plan、Migration、Import Design、Progress、Discussion Summary 与决策清单已对齐；S1 仍等待 MIT 许可证确认。
+- **证据：** `Docs/migration/decisions.md`、`Docs/migration/import-design.md`、`MIGRATION.md`、`PLAN.md`、`PROGRESS.md`。
+- **计划影响：** Plan ID 与 Stone 顺序不变；M2/M3 的导入方式和 M5 的版本目标发生明确修订。
+- **遇到的问题：** 无。
+- **下一步：** 用户确认或调整 MIT 第一方许可证；之后决定是否接受 S1。
 
 ## 2026-08-06 17:53 - 来源基线与业务整合设计完成
 
