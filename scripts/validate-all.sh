@@ -28,6 +28,7 @@ cd "$ROOT"
 pnpm conformance:portable
 
 echo "== LaTeX renderer =="
+export PATH="$ROOT/Spec/.tools/pandoc/3.10/bin:$PATH"
 cd "$ROOT/Renderers/LaTeX"
 uv sync --frozen
 uv run hypolatex doctor

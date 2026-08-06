@@ -6,17 +6,16 @@
 \HypoSetMetadata{title}{Ordinary Table Compatibility}
 \HypoSetMetadata{author}{M5 Test Worker}
 \HypoSetMetadata{theme}{plain}
+\HypoSetMetadata{layout}{standard}
 
 \begin{document}
-\HypoMakeCover
-\clearpage
-\tableofcontents
-\clearpage
+\HypoDocumentStart
 
 \chapter{Ordinary Markdown Table}
 
 This table is intentionally outside a \texttt{.table} div. M5 must keep it on the existing Pandoc compatibility path.
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
 \toprule\noalign{}
 Concept & Status \\
@@ -27,6 +26,7 @@ Concept & Status \\
 Lists & Required \\
 Tables & Required \\
 \end{longtable}
+}
 
 The document should continue after the table.
 \end{document}
