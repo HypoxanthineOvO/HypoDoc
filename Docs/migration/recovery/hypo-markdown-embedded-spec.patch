@@ -1,0 +1,147 @@
+diff --git a/README.md b/README.md
+index abe5ef9..b0c6035 100644
+--- a/README.md
++++ b/README.md
+@@ -12,6 +12,13 @@ This repository is the semantic authority for the HypoDoc Markdown
+ `0.2.0-rc.1` candidate. The matching Python distribution version is
+ `0.2.0rc1`; the IR protocol remains `hypodoc.ir/v1`.
+ 
++The Python distribution and its pinned Pandoc frontend are the executable
++reference toolchain for this candidate. They provide a deterministic semantic
++oracle, reference IR, diagnostics, and conformance fixtures. Applications may
++instead implement a portable parser, validator, or renderer without shipping
++Python or Pandoc, provided that they demonstrate the claimed behavior against
++the versioned conformance evidence in this repository.
++
+ This local candidate is for downstream renderer evaluation. It is not a stable
+ release and makes no renderer, PDF, TeX, or Hypo-LaTeX validation claim.
+ 
+@@ -33,6 +40,12 @@ release and makes no renderer, PDF, TeX, or Hypo-LaTeX validation claim.
+   repositories.
+ - Shared syntax, semantic block names, answer visibility semantics, and
+   compatibility fixtures belong here.
++- Pandoc `3.10` and API `[1,23,1,2]` pin reference-toolchain behavior; they are
++  not runtime dependencies for every independent HypoDoc implementation.
++- Only an implementation that emits the complete schema-defined reference IR
++  may describe its output as `hypodoc.ir/v1`. Other implementations should
++  name their internal representation separately and compare a documented
++  semantic projection against the reference fixtures.
+ 
+ Run `hypodoc registry check` from the repository root to verify that all four
+ candidate contract documents carry the exact registry-derived facts block.
+diff --git a/spec/ai-authoring.md b/spec/ai-authoring.md
+index 9116ee7..d71a0e6 100644
+--- a/spec/ai-authoring.md
++++ b/spec/ai-authoring.md
+@@ -10,8 +10,11 @@ machine authority for every directive.
+ ```
+ <!-- hypodoc-registry-facts:end -->
+ 
+-The runtime candidate is `hypodoc==0.2.0rc1`, with IR `hypodoc.ir/v1` and
+-Pandoc `3.10` / API `[1,23,1,2]`.
++The executable reference validator is `hypodoc==0.2.0rc1`, with reference IR
++`hypodoc.ir/v1` and Pandoc `3.10` / API `[1,23,1,2]`. These versions fix the
++authoring oracle used to generate diagnostics and conformance evidence; an
++independent authoring application may use another runtime when it proves the
++claimed behavior against that evidence.
+ 
+ ## Authoring Rules
+ 
+@@ -31,4 +34,5 @@ Pandoc `3.10` / API `[1,23,1,2]`.
+   directives, attributes, profiles, features, or protocol versions.
+ 
+ AI output targets the semantic candidate only. It must not claim stable status
+-or renderer, PDF, TeX, or Hypo-LaTeX verification.
++or renderer, PDF, TeX, or Hypo-LaTeX verification. Passing a renderer's private
++AST or preview does not by itself establish reference conformance.
+diff --git a/spec/migration.md b/spec/migration.md
+index 90a9988..3cd5c2a 100644
+--- a/spec/migration.md
++++ b/spec/migration.md
+@@ -9,8 +9,12 @@ registry remains the semantic authority.
+ ```
+ <!-- hypodoc-registry-facts:end -->
+ 
+-The Python candidate is `hypodoc==0.2.0rc1`; Pandoc is pinned to `3.10` and API
+-`[1,23,1,2]`. The IR protocol deliberately remains `hypodoc.ir/v1`.
++The executable reference migration validator is `hypodoc==0.2.0rc1`; Pandoc is
++pinned to `3.10` and API `[1,23,1,2]` so its normalization and diagnostics are
++deterministic. The reference IR protocol deliberately remains
++`hypodoc.ir/v1`. Independent migration tools need not ship this toolchain, but
++they must compare their claimed behavior with its versioned fixtures and
++reference outputs.
+ 
+ ## Migration Order
+ 
+diff --git a/spec/renderer-consumer-contract.md b/spec/renderer-consumer-contract.md
+index 2254488..89ba5b3 100644
+--- a/spec/renderer-consumer-contract.md
++++ b/spec/renderer-consumer-contract.md
+@@ -1,7 +1,9 @@
+ # HypoDoc Renderer Consumer Contract 0.2.0-rc.1
+ 
+ This contract defines how a downstream renderer evaluates a HypoDoc candidate
+-without becoming a second semantic authority.
++without becoming a second semantic authority. It supports both consumers of
++the executable reference IR and independent runtimes validated against the
++reference conformance evidence.
+ 
+ <!-- hypodoc-registry-facts:start -->
+ ```json
+@@ -9,18 +11,38 @@ without becoming a second semantic authority.
+ ```
+ <!-- hypodoc-registry-facts:end -->
+ 
+-The consumer evaluates Spec `0.2.0-rc.1`, Python distribution `0.2.0rc1`, IR
+-`hypodoc.ir/v1`, Pandoc `3.10`, and Pandoc API `[1,23,1,2]`.
++The executable reference pipeline evaluates Spec `0.2.0-rc.1` with Python
++distribution `0.2.0rc1`, IR `hypodoc.ir/v1`, Pandoc `3.10`, and Pandoc API
++`[1,23,1,2]`. These exact versions define the reference oracle; they do not
++require every independent renderer runtime to distribute or invoke Python and
++Pandoc.
++
++## Integration Modes
++
++A renderer may use either integration mode:
++
++1. **Reference IR consumer.** Run or consume output from the pinned reference
++   pipeline, negotiate `hypodoc.ir/v1`, and follow the requirements below.
++2. **Independent implementation.** Parse and validate HypoDoc using another
++   runtime, then demonstrate the claimed syntax, semantics, normalization, and
++   diagnostics against the versioned fixtures and reference outputs. Its own
++   internal representation is renderer-owned and must not be called
++   `hypodoc.ir/v1` unless it satisfies the complete IR schema.
+ 
+ ## Required Consumer Behavior
+ 
+-1. Declare `hypodoc.capability/v1` with renderer identity, renderer version,
+-   accepted Spec range, IR versions, Pandoc API versions, profiles, features,
+-   and extensions.
+-2. Negotiate before rendering. Unsupported schema, Spec, IR, Pandoc API,
+-   profile, or feature subsets fail closed in the runtime-defined order.
+-3. Treat `document` and `semantic_nodes` as canonical semantics. Treat
+-   `compatibility_extensions` only as namespaced, optional compatibility data.
++1. Declare the accepted Spec range, profiles, features, and extensions. A
++   reference IR consumer additionally declares `hypodoc.capability/v1`, IR
++   versions, and Pandoc API versions.
++2. Validate compatibility before rendering. A reference IR consumer uses the
++   defined negotiation order. An independent implementation must provide an
++   equivalent fail-closed boundary for unsupported Spec, profile, feature, and
++   extension subsets.
++3. A reference IR consumer treats `document` and `semantic_nodes` as canonical
++   semantics and `compatibility_extensions` only as namespaced, optional data.
++   An independent implementation compares a documented semantic projection to
++   those reference results instead of treating its private AST as new shared
++   authority.
+ 4. Preserve source order, arbitrary choice blocks, CodeBlock opacity, stable
+    symbols, and structured answer references. Renderer-generated labels do not
+    enter semantic identity.
+@@ -28,5 +50,6 @@ The consumer evaluates Spec `0.2.0-rc.1`, Python distribution `0.2.0rc1`, IR
+    TeX implementation in the renderer repository.
+ 
+ The registry digest binds the exact semantic authority consumed. A downstream
+-project must record its own runtime, renderer, PDF, and TeX evidence; this
+-candidate bundle intentionally records none. Stable status remains blocked.
++project must record its integration mode, reference fixture or IR evidence,
++runtime, renderer, PDF, and TeX evidence as applicable; this candidate bundle
++intentionally records none. Stable status remains blocked.
