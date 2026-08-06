@@ -67,11 +67,18 @@ jobs:
           python3 Spec/scripts/provision-pandoc.py --version 3.10 --dest "$RUNNER_TEMP/pandoc"
           echo "$RUNNER_TEMP/pandoc/3.10/bin" >> "$GITHUB_PATH"
       - run: uv sync --project Renderers/LaTeX --frozen
-      - run: uv run --project Renderers/LaTeX hypolatex doctor
-      - run: uv run --project Renderers/LaTeX python -m pytest -q tests
-      - run: uv run --project Renderers/LaTeX hypolatex build Renderers/LaTeX/examples/showcase/hypolatex-showcase.md --output /tmp/hypodoc-showcase.pdf
+      - name: LaTeX doctor
+        working-directory: Renderers/LaTeX
+        run: uv run hypolatex doctor
+      - name: LaTeX tests
+        working-directory: Renderers/LaTeX
+        run: uv run python -m pytest -q tests
+      - name: Representative PDF build
+        working-directory: Renderers/LaTeX
+        run: uv run hypolatex build examples/showcase/hypolatex-showcase.md --output build/ci-showcase.pdf
       - name: Verify non-empty PDF
-        run: test -s /tmp/hypodoc-showcase.pdf
+        working-directory: Renderers/LaTeX
+        run: test -s build/ci-showcase.pdf
 
   browser:
     runs-on: ubuntu-latest
