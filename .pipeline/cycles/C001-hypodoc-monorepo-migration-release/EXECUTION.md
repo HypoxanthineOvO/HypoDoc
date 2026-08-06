@@ -39,3 +39,15 @@ updated: 2026-08-06T19:00:00+08:00
 - **接受范围：** MIT、干净产品历史、`v0.1.0`、Spec 独立修订边界、业务整合方式和 V4 Flash 主执行均已确认；远端与发布治理不在本次接受范围。
 - **剩余风险：** 三套 Spec 状态仍需在 M3 整理；Windows/macOS、签名、notarization 与公开发布仍未验证或授权。
 - **下一步：** 接手主模型从 M2 开始直接迁入并整理 TypeScript 产品。
+
+## 2026-08-06 19:10 - M4 产品面统一完成，S2 进入等待审阅
+
+- **计划项：** `M4` → `S2`
+- **目的：** 把整合后的产品形成一致产品面与可审计发布记录，并生成 S2 审阅包。
+- **动作：** 品牌统一为 HypoDoc（Desktop 表面、标题、VSIX displayName、smoke 断言）；建立根 `scripts/validate-all.sh` 统一验证入口；迁入并改写 CI（portable-runtime、reference-differential、latex-renderer、browser、build-hosts）；整理 `Docs/`（architecture、security、ADR）；运行许可报告（271 包 0 未解决）；创建 `Docs/release/manifest.json`（组件版本、来源 SHA、平台验证矩阵、签名状态）。
+- **结果：** `M4` completed，`S2` `waiting-review`。产品 commit `e4460c6`（+ 修正 commit）。无远端副作用。
+- **验证：** `./scripts/validate-all.sh` EXIT=0：TS typecheck/test/build/audit/licenses/perf 全过；Spec 268 passed + registry valid；conformance 13/13；LaTeX doctor 全过、253 passed/12 skipped、showcase PDF 13 页 A4 与 PDF 证据通过；VSIX package 成功（sha256 `aaf23a4c93fe38e6d1d4f8e668bada5a453babc9834ae818ea3e5e30e46d591e`）。
+- **证据：** commit `e4460c6`、`scripts/validate-all.sh`、`Docs/release/manifest.json`、`reports/third-party-licenses.json`、`release/hypodoc-vscode.vsix`。
+- **遇到的问题：** 根 `.gitignore` 的 `release/` 规则曾误忽略 `Docs/release/` 与 `Renderers/LaTeX/docs/release`，改为 `/release/` 后修正；validate-all 中 Spec/LaTeX pytest 需在对应目录运行，registry check 需在 Spec 目录运行。
+- **剩余风险（S2 审阅范围）：** canonical remote 与 mirror 方向未定；VS Code publisher/extension ID、代码签名与 notarization 未配置；Windows/macOS 平台构建未在真实宿主验证（CI 工作流已就位但未运行）；三套 Spec 分歧已合并但新修订 commit `ef80abe` 尚未 push，干净 clone 的 submodule 验证依赖远端可达。
+- **下一步：** 用户审阅 S2 包并决定接受/拒绝。
