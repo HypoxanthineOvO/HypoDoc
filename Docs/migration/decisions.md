@@ -44,9 +44,11 @@ source inventory 和本决策清单。它必须持续更新 Workflow 记录，�
 ### 7. 发布副作用继续受人工控制
 
 在 S2 接受之前，不 push 新 remote、不创建公开 tag/Release、不上传 Marketplace，也不声称
-Windows、macOS、签名或 notarization 已验证。旧仓在一个发布观察期内保留，不立即删除。
+Windows、macOS、签名或 notarization 已验证。旧仓清理已获用户授权（Hypo-Markdown、Hypo-LaTeX 可清理；Spec 保留）。
 
-## S2 待确认
+## S2 已确认
 
-- GitHub/GitLab 的 canonical 与 mirror 方向。
-- VS Code Marketplace publisher、正式 extension ID、签名与 notarization 策略。
+- canonical remote 为 GitHub `HypoxanthineOvO/HypoDoc`（仓库名大写），mirror 为内部 GitLab `heyx/HypoDoc`。
+- v0.1.0 交付为 VSIX 手动安装包，不注册 Marketplace publisher；扩展 ID 固定 `hypodoc.hypodoc-vscode`；签名与 notarization 推迟到后续版本。
+- 旧产品实现仓库（Hypo-Markdown、Hypo-LaTeX）可清理；HypoDoc-Spec 作为独立语义权威保留。
+- Windows/macOS 平台构建已授权在 CI 验证；CI 验收标准须稳健，避免因轻微输出变化失败。
