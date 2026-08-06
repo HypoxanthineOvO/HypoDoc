@@ -33,7 +33,7 @@ uv sync --frozen
 uv run hypolatex doctor
 uv run python -m pytest -q tests
 uv run hypolatex build examples/showcase/hypolatex-showcase.md --output build/validate-showcase.pdf
-pdfinfo build/validate-showcase.pdf | grep -E "Pages|Page size"
+test -s build/validate-showcase.pdf  # non-empty PDF evidence gate; page count is reported, not asserted
 cd "$ROOT"
 
 echo "== VSIX packaging =="

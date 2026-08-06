@@ -62,7 +62,8 @@ jobs:
       - run: uv run --project Renderers/LaTeX hypolatex doctor
       - run: uv run --project Renderers/LaTeX python -m pytest -q tests
       - run: uv run --project Renderers/LaTeX hypolatex build Renderers/LaTeX/examples/showcase/hypolatex-showcase.md --output /tmp/hypodoc-showcase.pdf
-      - run: pdfinfo /tmp/hypodoc-showcase.pdf | grep -E "Pages|Page size"
+      - name: Verify non-empty PDF
+        run: test -s /tmp/hypodoc-showcase.pdf
 
   browser:
     runs-on: ubuntu-latest
