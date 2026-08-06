@@ -8,13 +8,35 @@
     "registry_digest": "sha256:159c5ea0f86efdc31c3d5005f1e7ebeafe5e795dec35eb822518f341d50f9768"
   },
   "components": {
-    "parser-core": { "package": "@hypodoc/parser-core", "version": "0.1.0" },
-    "render-model": { "package": "@hypodoc/render-model", "version": "0.1.0" },
-    "render-web": { "package": "@hypodoc/render-web", "version": "0.1.0" },
-    "theme": { "package": "@hypodoc/theme", "version": "0.1.0" },
-    "desktop": { "package": "@hypodoc/desktop", "version": "0.1.0" },
-    "vscode": { "package": "hypodoc-vscode", "version": "0.1.0", "publisher": "hypodoc" },
-    "latex": { "package": "hypolatex", "version": "0.1.0" }
+    "parser-core": {
+      "package": "@hypodoc/parser-core",
+      "version": "0.1.0"
+    },
+    "render-model": {
+      "package": "@hypodoc/render-model",
+      "version": "0.1.0"
+    },
+    "render-web": {
+      "package": "@hypodoc/render-web",
+      "version": "0.1.0"
+    },
+    "theme": {
+      "package": "@hypodoc/theme",
+      "version": "0.1.0"
+    },
+    "desktop": {
+      "package": "@hypodoc/desktop",
+      "version": "0.1.0"
+    },
+    "vscode": {
+      "package": "hypodoc-vscode",
+      "version": "0.1.0",
+      "publisher": "hypodoc"
+    },
+    "latex": {
+      "package": "hypolatex",
+      "version": "0.1.0"
+    }
   },
   "source_anchors": {
     "Hypo-Markdown": "e4e7148494bed527e050867616d643353a6641d8",
@@ -22,10 +44,23 @@
     "HypoDoc-Spec": "1866c357fdcfef88f6435860e092f7897f47fbb9"
   },
   "platform_validation": {
-    "linux": "validated locally (2026-08-06): typecheck, tests, build, conformance, perf, desktop smoke, vsix, latex doctor/pytest, representative PDF",
-    "windows": "not validated",
-    "macos": "not validated"
+    "linux": "validated locally + CI (2026-08-06): typecheck, tests, build, conformance, perf, desktop smoke, vsix, latex doctor/pytest, representative PDF",
+    "windows": "CI electron-builder --dir build passed (run 31098566878, 2026-08-06)",
+    "macos": "CI electron-builder --dir build passed (run 31098566878, 2026-08-06)"
   },
-  "signing": { "code_signing": "not configured", "notarization": "not configured" },
-  "remote": { "canonical": "pending S2 decision", "mirror": "pending S2 decision" }
+  "signing": {
+    "code_signing": "not configured",
+    "notarization": "not configured"
+  },
+  "remote": {
+    "canonical": "pending S2 decision",
+    "mirror": "pending S2 decision"
+  },
+  "ci": {
+    "build_hosts_run": "31098566878",
+    "workflows": [
+      ".github/workflows/ci.yml",
+      ".github/workflows/build-hosts.yml"
+    ]
+  }
 }
