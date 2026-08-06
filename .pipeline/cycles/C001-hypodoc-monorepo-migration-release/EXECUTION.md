@@ -51,3 +51,15 @@ updated: 2026-08-06T19:00:00+08:00
 - **遇到的问题：** 根 `.gitignore` 的 `release/` 规则曾误忽略 `Docs/release/` 与 `Renderers/LaTeX/docs/release`，改为 `/release/` 后修正；validate-all 中 Spec/LaTeX pytest 需在对应目录运行，registry check 需在 Spec 目录运行。
 - **剩余风险（S2 审阅范围）：** canonical remote 与 mirror 方向未定；VS Code publisher/extension ID、代码签名与 notarization 未配置；Windows/macOS 平台构建未在真实宿主验证（CI 工作流已就位但未运行）；三套 Spec 分歧已合并但新修订 commit `ef80abe` 尚未 push，干净 clone 的 submodule 验证依赖远端可达。
 - **下一步：** 用户审阅 S2 包并决定接受/拒绝。
+
+## 2026-08-06 20:30 - S2 治理确认，M5 发布进行中
+
+- **计划项：** `S2` → `M5`
+- **目的：** 落实用户对四项治理问题的决定，执行 v0.1.0 发布动作。
+- **用户决定：** ① 用本地 gh/glab 建远端，仓库名必须大写 `HypoDoc`，旧产品仓可清理；② VS Code publisher/ID 路径待落实（需 PAT）；③ 授权 Windows/macOS 验证，但 CI 验收必须稳健（避免过度精细断言）；④ 授权 push Spec 修订 `ef80abe`。
+- **动作：** push Spec `ef80abe` 到 hypodoc-spec 远端；创建 GitHub `HypoxanthineOvO/HypoDoc`（public）并 push main；打 `v0.1.0` tag；创建 GitHub Release（VSIX + CHECKSUMS 资产）；创建 GitLab mirror `heyx/HypoDoc` 并同步 main + tag（HTTPS 需凭证，改 SSH 成功）；触发 Build Hosts 三平台构建；修复 CI 脆弱点（PDF 存在性 gate、SKIP_VISUAL_DIFF、latex job submodule/working-directory/pandoc 3.10、fontawesome5 降级为 optional、snapshot 对齐 pandoc 3.10）。
+- **结果：** S2 completed，M5 in_progress。Build Hosts Linux/Windows/macOS 三平台 electron-builder --dir 构建 + VSIX 打包全部通过（run 31098566878）；CI 四个 job 中三个已绿，latex-renderer 修复链已推送等待全绿。
+- **证据：** GitHub 远端与 Release `v0.1.0`（https://github.com/HypoxanthineOvO/HypoDoc/releases/tag/v0.1.0）、GitLab mirror、`Docs/release/manifest.json`（平台验证已更新）、commit 链至 `893bc03`。
+- **遇到的问题：** gh token 缺 `delete_repo` scope 无法删除 hypodoc-latex 远端（需用户 `gh auth refresh`）；GitLab HTTPS 推送需凭证（改 SSH）；CI latex job 依次修复 submodule 初始化、工作目录、pandoc 3.10 与快照对齐。
+- **剩余风险：** VS Code Marketplace 上传需用户 PAT；旧仓远端删除待 delete_repo scope；CI latex job 全绿待确认。
+- **下一步：** CI 全绿 → 收尾 M5 → `S3` 已发布结果审阅。
