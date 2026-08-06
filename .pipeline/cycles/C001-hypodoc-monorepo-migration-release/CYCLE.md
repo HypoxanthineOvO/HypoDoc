@@ -1,7 +1,7 @@
 ---
 kind: cycle
 name: C001-hypodoc-monorepo-migration-release
-status: active
+status: completed
 started: 2026-08-06
 updated: 2026-08-06
 builds_on: []

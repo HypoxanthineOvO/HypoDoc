@@ -2,9 +2,9 @@
 kind: progress
 cycle: C001-hypodoc-monorepo-migration-release
 plan: PLAN.md
-status: active
-updated: 2026-08-06T21:00:00+08:00
-current: S2
+status: completed
+updated: 2026-08-06T21:30:00+08:00
+current: M6
 next: 等待用户审阅 S2 Release Candidate 包（RC 内容、验证报告、剩余风险与发布治理问题）
 ---
 
@@ -26,9 +26,9 @@ TypeScript 产品已直接迁入新仓并建立根 pnpm 工作区；M2 的独立
 | `M3` | 整合 Spec、LaTeX 与 Skills | `completed` | Spec 固定 `ef80abe` 于根 `Spec/`；LaTeX 迁入 `Renderers/LaTeX`（v0.1.0）；Skills 拆分完成；conformance 13/13、parser-core 18/18、LaTeX 253 passed、Spec 268 passed、PDF 证据通过 | 已进入 `M4` |
 | `M4` | 统一产品结构、品牌、验证与发布工程 | `completed` | 品牌统一 HypoDoc；`scripts/validate-all.sh` 全绿（TS/Spec/LaTeX/PDF/VSIX）；CI 就位；许可报告与 Release manifest 建立；Linux 平台验证完整 | 已进入 `S2` |
 | `S2` | Release Candidate 与发布治理审阅 | `completed` | 用户答复四项治理问题：gh/glab 建远端（GitHub canonical + GitLab mirror，仓库名大写 `HypoDoc`）、授权旧仓清理、授权平台验证（CI 须稳健）、授权 push Spec 修订 | 已进入 `M5` |
-| `M5` | 发布 `v0.1.0` | `in_progress` | CI 全绿（run `31102885070` 四 job 全过）；Release `v0.1.0` 资产：Linux AppImage/deb + VSIX + CHECKSUMS；Windows NSIS / macOS dmg/zip 安装器 CI 打包中（run `31103596261`）；Spec `ef80abe` 已 push；GitLab mirror 已同步 | 安装器打包完成上传后收尾，进入 `S3` |
-| `S3` | 已发布结果审阅 | `pending` | 尚无公开 Release | 等待 `M5` 验证通过 |
-| `M6` | 非破坏性切换与 Cycle 收尾 | `pending` | 尚未开始 | 等待 `S3` 接受 |
+| `M5` | 发布 `v0.1.0` | `completed` | Release 资产齐全：Linux AppImage/deb、Windows NSIS exe、macOS arm64 dmg/zip、VSIX、CHECKSUMS；三平台安装器 CI 打包通过（run `31103596261`）；CI 全绿（run `31102885070`） | 已进入 `S3` |
+| `S3` | 已发布结果审阅 | `completed` | 用户查看 Release 资产与限制后确认收尾；未签名与 macOS 仅 arm64 已知限制已披露 | 已进入 `M6` |
+| `M6` | 非破坏性切换与 Cycle 收尾 | `completed` | 干净 clone 验证通过（submodule 远端拉取 + install + typecheck）；旧仓本地清理完成（Hypo-Markdown、Hypo-LaTeX 已删，恢复 patch 与 SHA 证据在案）；Cycle Summary 已归档；远端删除待 `delete_repo` scope | Cycle 已关闭 |
 
 ## 阻塞
 

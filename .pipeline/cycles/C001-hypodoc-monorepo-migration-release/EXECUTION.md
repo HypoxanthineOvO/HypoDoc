@@ -63,3 +63,12 @@ updated: 2026-08-06T19:00:00+08:00
 - **遇到的问题：** gh token 缺 `delete_repo` scope 无法删除 hypodoc-latex 远端（需用户 `gh auth refresh`）；GitLab HTTPS 推送需凭证（改 SSH）；CI latex job 依次修复 submodule 初始化、工作目录、pandoc 3.10 与快照对齐。
 - **剩余风险：** VS Code Marketplace 上传需用户 PAT；旧仓远端删除待 delete_repo scope；CI latex job 全绿待确认。
 - **下一步：** CI 全绿 → 收尾 M5 → `S3` 已发布结果审阅。
+
+## 2026-08-06 21:40 - M5 发布完成，S3 接受，M6 收尾关闭
+
+- **计划项：** `M5` → `S3` → `M6`
+- **目的：** 完成 v0.1.0 发布与 Cycle 收尾。
+- **动作：** 上传 Windows NSIS exe、macOS arm64 dmg/zip 到 Release（含全量 CHECKSUMS）；CI 全绿确认（run `31102885070`，四 job success）；三平台安装器打包通过（run `31103596261`）；干净 clone 验证通过（GitHub clone + submodule `ef80abe` 远端拉取 + `pnpm install --frozen-lockfile` + typecheck）；旧仓本地工作区按授权清理（Hypo-Markdown、Hypo-LaTeX 已删，恢复 patch/SHA 证据保留在 `Docs/migration/recovery/` 与 inventory）；撰写 `SUMMARY.md` 并关闭 Cycle。
+- **结果：** `M5`/`S3`/`M6` completed，Cycle 关闭。Release `v0.1.0` 资产齐全。
+- **证据：** Release 页面、run `31102885070`/`31103596261`、`SUMMARY.md`、`Docs/migration/source-inventory.md`、`Docs/migration/recovery/*.patch`。
+- **剩余事项（Cycle 外）：** GitHub `hypodoc-latex` 远端删除需 `gh auth refresh -h github.com -s delete_repo`；VS Code Marketplace publisher 注册需 PAT；macOS Intel/签名/notarization；Web/Desktop 幻灯片模式。

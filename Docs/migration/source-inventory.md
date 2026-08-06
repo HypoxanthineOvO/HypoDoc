@@ -124,3 +124,13 @@ must not claim a settled first-party license until S1 accepts an explicit root l
 All source content needed for S1 is recoverable from recorded commits plus portable patches. The
 baseline is strong enough to design the import, but not strong enough to treat source structure,
 versioning, contracts, branding or release claims as final product truth.
+
+## Post-Release Cleanup (2026-08-06)
+
+After `v0.1.0` release and user authorization, the local workspaces
+`Hypo-Markdown` and `Hypo-LaTeX` were removed. All recovery evidence remains
+in this repository: source SHAs (above), `recovery/hypo-markdown-embedded-spec.patch`
+and `recovery/hypolatex-uv-lock.patch` (SHA-256 verified), and the release
+manifest. `HypoDoc-Spec` remains as the independent semantic authority.
+Deletion of the GitHub `hypodoc-latex` remote is pending a token with the
+`delete_repo` scope.

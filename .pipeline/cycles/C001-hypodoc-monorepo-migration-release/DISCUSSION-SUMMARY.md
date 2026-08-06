@@ -1,7 +1,7 @@
 ---
 kind: discussion-summary
 cycle: C001-hypodoc-monorepo-migration-release
-updated: 2026-08-06T18:08:22+08:00
+updated: 2026-08-06T21:40:00+08:00
 raw_discussion: local/discussions/C001-hypodoc-monorepo-migration-release/
 ---
 
@@ -33,7 +33,15 @@ raw_discussion: local/discussions/C001-hypodoc-monorepo-migration-release/
 - `S1` 首次说明过于工程化。后续审阅说明应先讲清业务含义、授权范围和实际风险，再给技术证据。
 - 原 Plan 的“合并来源 Git 历史”路线已被后续讨论替代；改为“保留来源证据、直接整理迁入、建立干净产品历史”。
 
-## 未决问题
+## S2 后新决定
 
-- canonical remote 与 mirror 方向。
-- VS Code publisher/extension ID、签名与 notarization 策略。
+- canonical remote 为 GitHub `HypoxanthineOvO/HypoDoc`（仓库名必须大写），mirror 为内部 GitLab `heyx/HypoDoc`；旧产品实现仓可清理（Spec 保留）。
+- v0.1.0 交付为 VSIX 手动安装包，不注册 Marketplace publisher；签名/notarization 推迟。
+- Windows/macOS 平台验证授权，但 CI 验收须稳健（避免因轻微输出变化失败）。
+- 用户确认收尾：Release 资产齐全后接受 S3，Cycle 关闭。
+
+## 未决问题（Cycle 外）
+
+- GitHub `hypodoc-latex` 远端删除需 `delete_repo` scope。
+- VS Code Marketplace publisher 注册需 PAT。
+- macOS Intel 包、签名、notarization 与 Web/Desktop 幻灯片模式为后续候选。
