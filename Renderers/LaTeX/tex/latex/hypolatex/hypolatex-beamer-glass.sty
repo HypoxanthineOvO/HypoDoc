@@ -1,0 +1,230 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hypolatex-beamer-glass}[2026/07/18 Hypo-LaTeX glass Beamer theme]
+
+% ---------------------------------------------------------------------------
+% Glass Beamer theme (light modern gradient + glassmorphism)
+%
+% Subtle accent-tinted gradient canvas with faint corner orbs; floating
+% translucent glass panels carry the frame title, blocks, cover, and section
+% dividers. Panels are plain tikz nodes with fill opacity, because tcolorbox
+% opacityback relies on PDF transparency groups that the XeTeX driver does
+% not support. Serif faces (Noto Serif CJK + TeX Gyre Termes). The palette
+% retints both the accent and the canvas gradient:
+%   red    #E11D48 rose
+%   blue   #4F46E5 indigo (closest to the style reference)
+%   yellow #B45309 amber
+%   gray   #475569 slate
+%   mono   #262626 neutral
+% ---------------------------------------------------------------------------
+
+\usetikzlibrary{shadows}
+
+% Canvas and text colors (light variant).
+\definecolor{HypoGlassInk}{HTML}{1E293B}
+\definecolor{HypoGlassBody}{HTML}{334155}
+\definecolor{HypoGlassMuted}{HTML}{64748B}
+
+\colorlet{HypoBeamerInk}{HypoGlassInk}
+\colorlet{HypoBeamerBody}{HypoGlassBody}
+\colorlet{HypoBeamerMuted}{HypoGlassMuted}
+\colorlet{HypoBeamerHair}{HypoGlassInk!14!white}
+\setbeamercolor{frametitle}{fg=HypoGlassInk}
+\setbeamercolor{footline}{fg=HypoGlassMuted,bg=}
+
+% Retint accent, canvas, and derived colors in one place; beamer snapshots
+% colors at \setbeamercolor time, so dependents must be re-set on each call.
+\newcommand{\HypoGlassRetint}[1]{%
+  \HypoSetAccent{#1}%
+  \colorlet{HypoGlassOrbA}{HypoBeamerMain!22!white}%
+  \colorlet{HypoGlassOrbB}{HypoBeamerMain!10!white}%
+  \colorlet{HypoGlassCanvas}{HypoBeamerMain!7!white}%
+  \colorlet{HypoGlassBorder}{HypoBeamerMain!30!white}%
+  \colorlet{HypoTableHead}{HypoBeamerMain!80!white}%
+  \colorlet{HypoTableRowHead}{HypoBeamerMain!12!white}%
+  \colorlet{HypoTableStripe}{HypoBeamerMain!5!white}%
+}
+
+\renewcommand{\HypoApplyPalette}[1]{%
+  \ifstrequal{#1}{red}{\HypoGlassRetint{E11D48}}{%
+  \ifstrequal{#1}{blue}{\HypoGlassRetint{4F46E5}}{%
+  \ifstrequal{#1}{yellow}{\HypoGlassRetint{B45309}}{%
+  \ifstrequal{#1}{gray}{\HypoGlassRetint{475569}}{%
+  \ifstrequal{#1}{mono}{\HypoGlassRetint{262626}}{%
+    \HypoGlassRetint{4F46E5}%
+  }}}}}%
+}
+\HypoGlassRetint{4F46E5}
+
+% ---------------------------------------------------------------------------
+% Subtle tinted gradient canvas with faint corner orbs
+% ---------------------------------------------------------------------------
+
+\setbeamertemplate{background canvas}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \shade[top color=white,bottom color=HypoGlassCanvas]
+      (current page.north west) rectangle (current page.south east);
+    \shade[inner color=HypoGlassOrbA,outer color=HypoGlassOrbA!0]
+      ([xshift=0.04\paperwidth,yshift=0.04\paperheight]current page.north east)
+      circle (0.20\paperwidth);
+    \shade[inner color=HypoGlassOrbB,outer color=HypoGlassOrbB!0]
+      ([xshift=-0.03\paperwidth,yshift=-0.03\paperheight]current page.south west)
+      circle (0.16\paperwidth);
+  \end{tikzpicture}%
+}
+
+% Shared glass node style: translucent fill, opaque text, tinted border.
+\tikzset{
+  HypoGlassBox/.style={
+    align=left,
+    text=HypoGlassBody,
+    fill=white,
+    fill opacity=0.58,
+    text opacity=1,
+    draw=HypoGlassBorder,
+    line width=0.7pt,
+    rounded corners=2.5mm,
+    inner sep=8pt,
+    drop shadow={opacity=0.14,fill=black}%
+  }
+}
+
+% ---------------------------------------------------------------------------
+% Frame title: slim floating glass bar near the top
+% ---------------------------------------------------------------------------
+
+\setbeamerfont{frametitle}{size=\large,series=\bfseries,family=\rmfamily}
+
+\setbeamertemplate{frametitle}{%
+  \vspace*{0.5em}%
+  \noindent\begin{tikzpicture}%
+    \node[HypoGlassBox,text width=\dimexpr\paperwidth-2.4em-16pt\relax]{%
+      \ifnum\value{section}>0\relax
+        {\scriptsize\mdseries
+         {\color{HypoGlassMuted}\insertsection}%
+         \ifnum\value{subsection}>0\relax
+           \enspace{\color{HypoBeamerMain!35!white}/}\enspace{\color{HypoBeamerMain}\insertsubsection}%
+         \fi\par}%
+        \vspace{0.3ex}%
+      \fi
+      {\usebeamerfont{frametitle}\color{HypoGlassInk}\insertframetitle\par}%
+    };
+  \end{tikzpicture}%
+}
+
+% ---------------------------------------------------------------------------
+% Section divider: centered glass card
+% ---------------------------------------------------------------------------
+
+\setbeamertemplate{section page}{%
+  \vfill
+  {\centering
+    \begin{tikzpicture}%
+      \node[HypoGlassBox,text width=0.66\paperwidth,inner sep=12pt]{%
+        {\color{HypoBeamerMain!30!white}\fontsize{32}{32}\selectfont\bfseries\thesection\par}%
+        \vspace{1mm}%
+        {\usebeamerfont{section page}\color{HypoGlassInk}\insertsection\par}%
+        \vspace{1.5mm}%
+        {\color{HypoBeamerMain}\rule{14mm}{1.4pt}\par}%
+      };
+    \end{tikzpicture}%
+  \par}
+  \vfill
+}
+
+% Mini agenda inside the divider card: non-current sections are muted.
+\setbeamercolor{section in toc shaded}{fg=HypoGlassMuted}
+
+% TOC page: entries inside one large glass card (two fixed-range columns so
+% large tables of contents stay on the page).
+\renewcommand{\HypoTOCPage}{%
+  \begin{frame}
+    \frametitle{\contentsname}%
+    \begin{center}
+      \begin{tikzpicture}%
+        \node[HypoGlassBox,text width=0.82\paperwidth,inner sep=10pt]{%
+          \HypoTOCColumns
+        };
+      \end{tikzpicture}%
+    \end{center}
+  \end{frame}%
+}
+
+% ---------------------------------------------------------------------------
+% Cover: compact glass card at the top, authors below on the canvas
+% ---------------------------------------------------------------------------
+
+\setbeamertemplate{title page}{%
+  \edef\@hypo@gl@logo{\HypoMetadata{logo}}%
+  \edef\@hypo@gl@logolong{\HypoMetadata{logolong}}%
+  \vspace*{1.6em}%
+  \hspace*{1.6em}%
+  \begin{tikzpicture}%
+    \node[HypoGlassBox,text width=0.64\paperwidth,inner sep=14pt]{%
+      \ifx\@hypo@gl@logo\@empty\else
+        \includegraphics[height=0.85cm]{\@hypo@gl@logo}\par
+        \vspace{0.7em}%
+      \fi
+      \HypoIfMetadataEmptyTF{organization}{%
+        \HypoIfMetadataEmptyTF{course}{}{%
+          {\scriptsize\bfseries\color{HypoBeamerMain}\HypoMetadata{course}\par}%
+          \vspace{0.5em}%
+        }%
+      }{%
+        {\scriptsize\bfseries\color{HypoBeamerMain}\HypoMetadata{organization}\par}%
+        \vspace{0.5em}%
+      }%
+      {\usebeamerfont{title}\color{HypoGlassInk}\inserttitle\par}%
+      \ifx\insertsubtitle\@empty\else
+        \vspace{0.5em}%
+        {\usebeamerfont{subtitle}\color{HypoGlassMuted}\insertsubtitle\par}%
+      \fi
+    };
+  \end{tikzpicture}%
+  \par
+  \vspace{2em}%
+  \hspace*{1.6em}%
+  \begin{minipage}{0.64\paperwidth}%
+    \raggedright
+    {\usebeamerfont{author}\color{HypoGlassBody}\insertauthor\par}%
+    \vspace{0.6em}%
+    {\usebeamerfont{date}\color{HypoGlassMuted}%
+     \HypoIfMetadataEmptyTF{course}{}{\HypoMetadata{course}\enspace·\enspace}%
+     \insertdate\par}%
+  \end{minipage}%
+  \ifx\@hypo@gl@logolong\@empty\else
+    \begin{tikzpicture}[remember picture,overlay]
+      \node[anchor=south east,inner sep=0pt]
+        at ([xshift=-1.6em,yshift=1.6em]current page.south east)
+        {\includegraphics[height=0.7cm]{\@hypo@gl@logolong}};
+    \end{tikzpicture}%
+  \fi
+  \vfill
+}
+
+% ---------------------------------------------------------------------------
+% Blocks: translucent glass cards with an accent label
+% ---------------------------------------------------------------------------
+
+\RenewDocumentEnvironment{HypoBlockBox}{O{HypoBeamerMain} m +b}{%
+  \par\vspace{5pt}%
+  \noindent\begin{tikzpicture}%
+    \node[HypoGlassBox,text width=\dimexpr\linewidth-16pt\relax]{%
+      {\bfseries\small\color{#1}#2\par}%
+      \vspace{2pt}%
+      #3%
+    };
+  \end{tikzpicture}%
+  \par\vspace{5pt}%
+}{}
+
+\RenewDocumentEnvironment{HypoQuoteBox}{+b}{%
+  \par\vspace{4pt}%
+  \noindent\begin{tikzpicture}%
+    \node[HypoGlassBox,fill opacity=0.4,rounded corners=0pt,
+          text width=\dimexpr\linewidth-16pt\relax]{#1};
+    \draw[HypoBeamerMain!55!white,line width=2pt]
+      ([xshift=1pt]current bounding box.north west) --
+      ([xshift=1pt]current bounding box.south west);
+  \end{tikzpicture}%
+  \par\vspace{4pt}%
+}{}

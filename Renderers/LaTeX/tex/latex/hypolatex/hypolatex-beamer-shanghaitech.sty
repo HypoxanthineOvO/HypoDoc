@@ -1,0 +1,322 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hypolatex-beamer-shanghaitech}[2026/07/18 Hypo-LaTeX ShanghaiTech Beamer theme]
+
+% ---------------------------------------------------------------------------
+% ShanghaiTech Beamer theme
+%
+% Campus presentation theme built around the university red (#8B0000, sampled
+% from the official seal). The cover follows the Awesome Marp "Cover E"
+% composition:
+%   (a) a full-height red block on the right with a slanted left edge,
+%   (b) a red square at the upper left holding the negative (white) seal,
+%   (c) title and subtitle in the university red at the upper left,
+%   (d) the white long wordmark inside the red block at the lower right,
+%   (e) the lower-left area reserved for authors, course, and date.
+%
+% Metadata keys used (all optional):
+%   logo          square seal for light backgrounds (bordered white square)
+%   logonegative  white-on-red seal, placed inside the red cover square
+%   logolong      horizontal wordmark (use a white/negative variant; it sits
+%                 inside the red block at the lower right)
+%   organization / course   cover kicker and content line
+%
+% Palette selection is inert under this theme: the accent is always the
+% university red.
+% ---------------------------------------------------------------------------
+
+% Force the university red after any palette application. \HypoSetAccent
+% re-sets every dependent, and the band colors must be re-declared because
+% beamer snapshots them at \setbeamercolor time.
+\renewcommand{\HypoApplyPalette}[1]{%
+  \HypoSetAccent{8B0000}%
+  \setbeamercolor{frametitle}{fg=white,bg=HypoBeamerMain}%
+}
+\definecolor{HypoBeamerMain}{HTML}{8B0000}
+
+% ---------------------------------------------------------------------------
+% Frame title: the classic full-width band, executed with disciplined type
+% ---------------------------------------------------------------------------
+
+\setbeamercolor{frametitle}{fg=white,bg=HypoBeamerMain}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=1.6em,rightskip=1.6em,sep=0.95ex]{frametitle}%
+    \ifnum\value{section}>0\relax
+      {\scriptsize\mdseries\color{white!72!HypoBeamerMain}%
+       \insertsection%
+       \ifnum\value{subsection}>0\relax
+         \enspace/\enspace\insertsubsection%
+       \fi\par}%
+      \vspace{0.3ex}%
+    \fi
+    {\usebeamerfont{frametitle}\insertframetitle\par}%
+  \end{beamercolorbox}%
+}
+
+% ---------------------------------------------------------------------------
+% Section divider: floating red card on a light canvas
+% ---------------------------------------------------------------------------
+
+\setbeamertemplate{section page}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[HypoBeamerPanel] (current page.south west) rectangle (current page.north east);
+  \end{tikzpicture}%
+  \vfill
+  {\centering
+    \begin{tcolorbox}[%
+      enhanced,
+      width=0.78\paperwidth,
+      colback=HypoBeamerMain,
+      boxrule=0pt,
+      arc=1.2mm,
+      drop shadow={black!25},
+      left=8mm,
+      right=8mm,
+      top=5mm,
+      bottom=5mm%
+    ]
+      \begin{minipage}[t]{0.56\linewidth}%
+        \raggedright
+        {\color{white!28!HypoBeamerMain}\fontsize{30}{30}\selectfont\bfseries\thesection\par}%
+        \vspace{1mm}%
+        {\usebeamerfont{section page}\color{white}\insertsection\par}%
+        \vspace{1.5mm}%
+        {\color{white!85!HypoBeamerMain}\rule{14mm}{1.6pt}\par}%
+      \end{minipage}%
+      \hfill
+      % In-card agenda on the right: white balls with red numbers, shaded
+      % entries in light white; scales to any section count.
+      \begin{minipage}[t]{0.38\linewidth}%
+        \raggedright
+        \renewcommand{\HypoTOCSectionSkip}{\vspace{0.15em}}%
+        \renewcommand{\HypoTOCShadedSkip}{\vspace{0.15em}}%
+        \setbeamercolor{section number projected}{bg=white,fg=HypoBeamerMain}%
+        \setbeamercolor{section in toc}{fg=white}%
+        \setbeamercolor{section in toc shaded}{fg=white!65!HypoBeamerMain}%
+        \setbeamerfont{section in toc}{size=\small,series=\bfseries}%
+        \setbeamerfont{subsection in toc}{size=\footnotesize}%
+        {\setcounter{tocdepth}{1}%
+         \tableofcontents[sectionstyle=show/shaded]}%
+      \end{minipage}%
+    \end{tcolorbox}
+  \par}
+  \vfill
+}
+
+% TOC page: left accent panel with the seal watermark, entries on the right
+% (Awesome Marp panel layout).
+\renewcommand{\HypoTOCPage}{%
+  \begin{frame}[plain]%
+    \edef\@hypo@st@logoneg{\HypoMetadata{logonegative}}%
+    \begin{tikzpicture}[remember picture,overlay]
+      \fill[HypoBeamerMain]
+        (current page.north west) rectangle
+        ([xshift=0.27\paperwidth]current page.south west);
+      \node[anchor=north west,align=left,text=white,text width=0.23\paperwidth]
+        at ([xshift=8mm,yshift=-0.20\paperheight]current page.north west)
+        {%
+          {\usebeamerfont{title}\contentsname\par}%
+          \vspace{0.4em}%
+          {\large\bfseries CONTENTS\par}%
+        };
+      \ifx\@hypo@st@logoneg\@empty\else
+        \node[anchor=south west,opacity=0.22]
+          at ([xshift=4mm,yshift=5mm]current page.south west)
+          {\includegraphics[width=0.19\paperwidth]{\@hypo@st@logoneg}};
+      \fi
+    \end{tikzpicture}%
+    \hspace*{0.29\paperwidth}%
+    \begin{minipage}[t][0.82\textheight][t]{0.65\paperwidth}%
+      \vspace{1.2em}%
+      \HypoTOCColumns
+    \end{minipage}%
+  \end{frame}%
+}
+
+% ---------------------------------------------------------------------------
+% Blocks: the classic framed callout (colored border, title band, tinted body)
+% ---------------------------------------------------------------------------
+
+\renewtcolorbox{HypoBlockBox}[2][HypoBeamerMain]{%
+  colback=#1!4!white,
+  colframe=#1!40!white,
+  colbacktitle=#1!12!white,
+  coltitle=#1,
+  fonttitle=\bfseries\small,
+  title={#2},
+  boxrule=0.8pt,
+  arc=1.5pt,
+  left=6pt,
+  right=6pt,
+  top=5pt,
+  bottom=5pt,
+  toptitle=3pt,
+  bottomtitle=2.5pt,
+  before skip=9pt,
+  after skip=9pt%
+}
+
+% ---------------------------------------------------------------------------
+% Covers: cover-e (default, slanted block), cover-b (rounded band),
+% cover-c (strip + band + motto). Select with frontmatter cover_layout.
+% All logo images must have transparent backgrounds.
+% ---------------------------------------------------------------------------
+
+\newcommand{\HypoST@coverE}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % (a) full-height red block on the right, slanted left edge
+    \fill[HypoBeamerMain]
+      ([xshift=-0.37\paperwidth]current page.north east) --
+      (current page.north east) --
+      (current page.south east) --
+      ([xshift=-0.22\paperwidth]current page.south east) -- cycle;
+    % (b) red square with the negative seal, or a bordered white square
+    \ifx\@hypo@st@logoneg\@empty
+      \ifx\@hypo@st@logo\@empty\else
+        \fill[white] ([xshift=9mm,yshift=-9mm]current page.north west) rectangle ++(1.5cm,-1.5cm);
+        \draw[HypoBeamerMain,line width=1pt]
+          ([xshift=9mm,yshift=-9mm]current page.north west) rectangle ++(1.5cm,-1.5cm);
+        \node at ([xshift={9mm+0.75cm},yshift={-9mm-0.75cm}]current page.north west)
+          {\includegraphics[width=1.25cm]{\@hypo@st@logo}};
+      \fi
+    \else
+      \fill[HypoBeamerMain] ([xshift=9mm,yshift=-9mm]current page.north west) rectangle ++(1.5cm,-1.5cm);
+      \node at ([xshift={9mm+0.75cm},yshift={-9mm-0.75cm}]current page.north west)
+        {\includegraphics[width=1.25cm]{\@hypo@st@logoneg}};
+    \fi
+    % (c) title and subtitle in the university red, upper left
+    \node[anchor=north west,align=left,text width=0.56\paperwidth,inner sep=0pt]
+      at ([xshift=9mm,yshift=-0.31\paperheight]current page.north west)
+      {%
+        {\usebeamerfont{title}\color{HypoBeamerMain}\inserttitle\par}%
+        \ifx\insertsubtitle\@empty\else
+          \vspace{0.9em}%
+          {\usebeamerfont{subtitle}\color{HypoBeamerMain}\insertsubtitle\par}%
+        \fi
+      };
+    % (e) authors, course, and date in the lower-left area
+    \node[anchor=north west,align=left,text width=0.50\paperwidth,inner sep=0pt]
+      at ([xshift=9mm,yshift=-0.58\paperheight]current page.north west)
+      {%
+        {\usebeamerfont{author}\color{HypoBeamerBody}\insertauthor\par}%
+        \vspace{0.8em}%
+        {\usebeamerfont{date}\color{HypoBeamerBody}%
+         \HypoIfMetadataEmptyTF{course}{}{\HypoMetadata{course}\par}%
+         \vspace{0.25em}%
+         \insertdate\par}%
+      };
+    % (d) white long wordmark inside the block, lower right
+    \ifx\@hypo@st@logolong\@empty\else
+      \node[anchor=south east,inner sep=0pt]
+        at ([xshift=-1.2em,yshift=1.2em]current page.south east)
+        {\includegraphics[height=0.8cm]{\@hypo@st@logolong}};
+    \fi
+  \end{tikzpicture}%
+}
+
+\newcommand{\HypoST@coverB}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % rounded color band across the upper half
+    \fill[HypoBeamerMain,rounded corners=2.5mm]
+      ([xshift=0.03\paperwidth,yshift=-0.05\paperheight]current page.north west)
+      rectangle
+      ([xshift=-0.03\paperwidth,yshift=-0.58\paperheight]current page.north east);
+    % seal centered above the title inside the band
+    \ifx\@hypo@st@logoneg\@empty\else
+      \node at ([yshift=-0.13\paperheight]current page.north)
+        {\includegraphics[height=1.05cm]{\@hypo@st@logoneg}};
+    \fi
+    % white title and subtitle, centered inside the band
+    \node[align=center,text width=0.84\paperwidth,inner sep=0pt]
+      at ([yshift=-0.24\paperheight]current page.north)
+      {%
+        {\usebeamerfont{title}\color{white}\inserttitle\par}%
+        \ifx\insertsubtitle\@empty\else
+          \vspace{0.9em}%
+          {\usebeamerfont{subtitle}\color{white!88!HypoBeamerMain}\insertsubtitle\par}%
+        \fi
+      };
+    % centered info lines below the band
+    \node[anchor=north,align=center,text width=0.8\paperwidth,inner sep=0pt]
+      at ([yshift=-0.66\paperheight]current page.north)
+      {%
+        {\usebeamerfont{author}\color{HypoBeamerBody}\insertauthor\par}%
+        \vspace{0.8em}%
+        {\usebeamerfont{date}\color{HypoBeamerBody}%
+         \HypoIfMetadataEmptyTF{organization}{}{\HypoMetadata{organization}\par}%
+         \vspace{0.25em}%
+         \HypoIfMetadataEmptyTF{course}{}{\HypoMetadata{course}\enspace·\enspace}%
+         \insertdate\par}%
+      };
+  \end{tikzpicture}%
+}
+
+\newcommand{\HypoST@coverC}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % top white strip: seal plus organization name
+    \ifx\@hypo@st@logo\@empty\else
+      \node[anchor=west,inner sep=0pt]
+        at ([xshift=9mm,yshift=-7.5mm]current page.north west)
+        {\includegraphics[height=1.05cm]{\@hypo@st@logo}};
+    \fi
+    \node[anchor=west,inner sep=0pt]
+      at ([xshift={9mm+1.3cm},yshift=-7.5mm]current page.north west)
+      {%
+        \HypoIfMetadataEmptyTF{organization}{}{%
+          {\large\bfseries\color{HypoBeamerInk}\HypoMetadata{organization}\par}%
+        }%
+      };
+    % full-width color band with white title and info
+    \fill[HypoBeamerMain]
+      ([yshift=-0.22\paperheight]current page.north west)
+      rectangle
+      ([yshift=-0.85\paperheight]current page.north east);
+    \node[anchor=north west,align=left,text width=0.86\paperwidth,inner sep=0pt]
+      at ([xshift=9mm,yshift=-0.30\paperheight]current page.north west)
+      {%
+        {\usebeamerfont{title}\color{white}\inserttitle\par}%
+        \ifx\insertsubtitle\@empty\else
+          \vspace{0.8em}%
+          {\usebeamerfont{subtitle}\color{white!88!HypoBeamerMain}\insertsubtitle\par}%
+        \fi
+      };
+    \node[anchor=north west,align=left,text width=0.7\paperwidth,inner sep=0pt]
+      at ([xshift=9mm,yshift=-0.58\paperheight]current page.north west)
+      {%
+        {\usebeamerfont{author}\color{white}\insertauthor\par}%
+        \vspace{0.7em}%
+        {\usebeamerfont{date}\color{white!85!HypoBeamerMain}%
+         \HypoIfMetadataEmptyTF{course}{}{\HypoMetadata{course}\enspace·\enspace}%
+         \insertdate\par}%
+      };
+    % motto in the bottom strip, right aligned
+    \node[anchor=east,inner sep=0pt]
+      at ([xshift=-9mm,yshift=-0.935\paperheight]current page.north east)
+      {%
+        \HypoIfMetadataEmptyTF{motto}{%
+          {\small\color{HypoBeamerBody}立志\enspace 成才\enspace 报国\enspace 裕民}%
+        }{%
+          {\small\color{HypoBeamerBody}\HypoMetadata{motto}}%
+        }%
+      };
+  \end{tikzpicture}%
+}
+
+\setbeamertemplate{title page}{%
+  \edef\@hypo@st@logo{\HypoMetadata{logo}}%
+  \edef\@hypo@st@logoneg{\HypoMetadata{logonegative}}%
+  \edef\@hypo@st@logolong{\HypoMetadata{logolong}}%
+  \edef\@hypo@st@layout{\HypoMetadata{cover_layout}}%
+  \ifx\@hypo@st@layout\@empty\def\@hypo@st@layout{cover-e}\fi
+  \ifdefstring{\@hypo@st@layout}{cover-b}{%
+    \HypoST@coverB
+  }{%
+    \ifdefstring{\@hypo@st@layout}{cover-c}{%
+      \HypoST@coverC
+    }{%
+      \HypoST@coverE
+    }%
+  }%
+}

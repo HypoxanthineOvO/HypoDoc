@@ -1,0 +1,228 @@
+{
+  "protocol": "hypodoc.portable-differential/v1",
+  "reference": {
+    "spec": "0.2.0-rc.1",
+    "pandoc": "3.10",
+    "mode": "canonical"
+  },
+  "portable": {
+    "protocol": "hypodoc.render-document/v1",
+    "runtime": "typescript"
+  },
+  "caseCount": 13,
+  "failureCount": 0,
+  "cases": [
+    {
+      "fixture": "m2/positive/code-pseudo-backtick.md",
+      "passed": true,
+      "reference": {
+        "valid": true,
+        "diagnostics": []
+      },
+      "portable": {
+        "valid": true,
+        "profile": "core",
+        "diagnostics": [],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m2/positive/code-pseudo-tilde.md",
+      "passed": true,
+      "reference": {
+        "valid": true,
+        "diagnostics": []
+      },
+      "portable": {
+        "valid": true,
+        "profile": "core",
+        "diagnostics": [],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m2/positive/indented-code-pseudo.md",
+      "passed": true,
+      "reference": {
+        "valid": true,
+        "diagnostics": []
+      },
+      "portable": {
+        "valid": true,
+        "profile": "core",
+        "diagnostics": [],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m2/positive/nested-variable-fences.md",
+      "passed": true,
+      "reference": {
+        "valid": true,
+        "diagnostics": []
+      },
+      "portable": {
+        "valid": true,
+        "profile": "core",
+        "diagnostics": [],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m2/positive/repeated-nodes.md",
+      "passed": true,
+      "reference": {
+        "valid": true,
+        "diagnostics": []
+      },
+      "portable": {
+        "valid": true,
+        "profile": "core",
+        "diagnostics": [],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m6/canonical/full-surface.md",
+      "passed": true,
+      "reference": {
+        "valid": true,
+        "diagnostics": []
+      },
+      "portable": {
+        "valid": true,
+        "profile": "article",
+        "diagnostics": [],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m2/negative/unclosed-fence.md",
+      "passed": true,
+      "reference": {
+        "valid": false,
+        "diagnostics": [
+          "SOURCE_INDEX_UNCLOSED_FENCE"
+        ]
+      },
+      "portable": {
+        "valid": false,
+        "profile": "core",
+        "diagnostics": [
+          "DIRECTIVE_FENCE_UNCLOSED"
+        ],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m2/negative/nested-unknown-attributes.md",
+      "passed": true,
+      "reference": {
+        "valid": false,
+        "diagnostics": [
+          "UNKNOWN_ATTRIBUTE",
+          "UNKNOWN_ATTRIBUTE"
+        ]
+      },
+      "portable": {
+        "valid": false,
+        "profile": "core",
+        "diagnostics": [
+          "UNKNOWN_ATTRIBUTE",
+          "UNKNOWN_ATTRIBUTE"
+        ],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m2/negative/malformed-yaml.md",
+      "passed": true,
+      "reference": {
+        "valid": false,
+        "diagnostics": [
+          "CONTRACT_INVALID"
+        ]
+      },
+      "portable": {
+        "valid": false,
+        "profile": "core",
+        "diagnostics": [
+          "FRONTMATTER_INVALID"
+        ],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m2/negative/duplicate-metadata.md",
+      "passed": true,
+      "reference": {
+        "valid": false,
+        "diagnostics": [
+          "DUPLICATE_METADATA_KEY"
+        ]
+      },
+      "portable": {
+        "valid": false,
+        "profile": "core",
+        "diagnostics": [
+          "FRONTMATTER_INVALID"
+        ],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m6/negative/note-unknown-attribute.md",
+      "passed": true,
+      "reference": {
+        "valid": false,
+        "diagnostics": [
+          "UNKNOWN_ATTRIBUTE"
+        ]
+      },
+      "portable": {
+        "valid": false,
+        "profile": "core",
+        "diagnostics": [
+          "UNKNOWN_ATTRIBUTE"
+        ],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m6/negative/figure-missing-src.md",
+      "passed": true,
+      "reference": {
+        "valid": false,
+        "diagnostics": [
+          "ATTRIBUTE_REQUIRED"
+        ]
+      },
+      "portable": {
+        "valid": false,
+        "profile": "core",
+        "diagnostics": [
+          "REQUIRED_ATTRIBUTE"
+        ],
+        "outline": []
+      }
+    },
+    {
+      "fixture": "m6/negative/solution-outside-qa.md",
+      "passed": true,
+      "reference": {
+        "valid": false,
+        "diagnostics": [
+          "PARENT_INVALID"
+        ]
+      },
+      "portable": {
+        "valid": false,
+        "profile": "core",
+        "diagnostics": [
+          "WRONG_PARENT"
+        ],
+        "outline": []
+      }
+    }
+  ]
+}

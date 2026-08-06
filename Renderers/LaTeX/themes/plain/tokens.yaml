@@ -1,0 +1,35 @@
+name: plain
+kind: longform
+colors:
+  ink: "#1F2933"
+  muted: "#5B6472"
+  accent: "#0F766E"
+  note_back: "#F4F7FB"
+  note_frame: "#64748B"
+  tip_back: "#F0FDF4"
+  tip_frame: "#15803D"
+  warning_back: "#FFF7ED"
+  warning_frame: "#C2410C"
+  summary_back: "#EFF6FF"
+  summary_frame: "#1D4ED8"
+layout:
+  paper: letter
+  margin: 1in
+beamer_palettes:
+  red:
+    main: "#8B0000"
+  blue:
+    main: "#1E40AF"
+  yellow:
+    main: "#B45309"
+  gray:
+    main: "#374151"
+  mono:
+    main: "#1F2937"
+beamer_blocks:
+  frame: "main!40!white"
+  title_back: "main!12!white"
+  body_back: "main!4!white"
+  title_text: main
+  border_rule: 0.8pt
+

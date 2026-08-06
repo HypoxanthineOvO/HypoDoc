@@ -1,0 +1,406 @@
+import re
+import shutil
+import subprocess
+from pathlib import Path
+
+import pytest
+
+
+TEST_ROOT = Path(__file__).parent
+PROJECT_ROOT = TEST_ROOT.parent
+FIXTURE_ROOT = TEST_ROOT / "fixtures"
+MIN_PDF_BYTES = 1024
+M2_BILINGUAL_FIXTURE = FIXTURE_ROOT / "m2" / "bilingual-a4.md"
+M2_CHEATSHEET_GRID_FIXTURE = FIXTURE_ROOT / "m2" / "cheatsheet-grid-build.md"
+M3_PRINTABLE_CHEATSHEET_FIXTURE = FIXTURE_ROOT / "m3" / "printable-cheatsheet.md"
+ANSWER_MODE_FIXTURE = FIXTURE_ROOT / "semantics" / "answer-mode.md"
+SEMANTIC_PROJECT_FIXTURE = FIXTURE_ROOT / "semantics" / "project-brief.md"
+BEAMER_MINIMAL_FIXTURE = FIXTURE_ROOT / "beamer" / "minimal-inheritance.md"
+BEAMER_FUNCTION_MATRIX_FIXTURE = FIXTURE_ROOT / "beamer" / "function-matrix.md"
+SKILL_BEAMER_TEMPLATE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "templates" / "beamer.md"
+BEAMER_PACKAGE = PROJECT_ROOT / "tex" / "latex" / "hypolatex" / "hypolatex-beamer.sty"
+
+
+BUILD_FIXTURE_CASES = (
+    pytest.param(
+        "longform/tutorial.md",
+        "longform-tutorial.pdf",
+        id="longform-cover-toc-callouts",
+    ),
+    pytest.param(
+        "callouts/all-callouts.md",
+        "callouts-all-callouts.pdf",
+        id="callout-environments",
+    ),
+    pytest.param(
+        "figures/figure-ref.md",
+        "figures-figure-ref.pdf",
+        id="figure-ref-macros",
+    ),
+    pytest.param(
+        "bilingual/bilingual.md",
+        "bilingual-bilingual.pdf",
+        id="bilingual-xelatex",
+    ),
+)
+
+
+def _invoke_build(
+    runner,
+    cli_app,
+    input_path,
+    output_path,
+    paper=None,
+    answer_mode=None,
+):
+    args = ["build", str(input_path), "--output", str(output_path)]
+    if paper is not None:
+        args.extend(["--paper", paper])
+    if answer_mode is not None:
+        args.extend(["--answer-mode", answer_mode])
+    return runner.invoke(cli_app, args)
+
+
+def _require_poppler_tool(name):
+    tool = shutil.which(name)
+    assert tool is not None, f"{name} is required for M2 PDF evidence tests."
+    return tool
+
+
+def _run_pdfinfo(pdf_path):
+    result = subprocess.run(
+        [_require_poppler_tool("pdfinfo"), str(pdf_path)],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    return result.stdout
+
+
+def _pdf_page_size(pdf_path):
+    pdfinfo_output = _run_pdfinfo(pdf_path)
+    match = re.search(
+        r"^Page size:\s+(\d+(?:\.\d+)?) x (\d+(?:\.\d+)?) pts",
+        pdfinfo_output,
+        re.MULTILINE,
+    )
+    assert match is not None, pdfinfo_output
+    return float(match.group(1)), float(match.group(2))
+
+
+def _pdf_pages(pdf_path):
+    pdfinfo_output = _run_pdfinfo(pdf_path)
+    match = re.search(r"^Pages:\s+(\d+)\s*$", pdfinfo_output, re.MULTILINE)
+    assert match is not None, pdfinfo_output
+    return int(match.group(1))
+
+
+def _extract_pdf_text(pdf_path):
+    result = subprocess.run(
+        [_require_poppler_tool("pdftotext"), str(pdf_path), "-"],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    return result.stdout
+
+
+def _normalize_pdf_text(text):
+    return (
+        text.replace("\u2010", "-")
+        .replace("\u2011", "-")
+        .replace("\u2012", "-")
+        .replace("\u2212", "-")
+    )
+
+
+def _assert_non_empty_pdf(output_path):
+    assert output_path.suffix == ".pdf"
+    assert output_path.is_file()
+    assert output_path.stat().st_size > MIN_PDF_BYTES
+
+
+def test_beamer_package_sets_global_graphics_keepaspectratio():
+    text = BEAMER_PACKAGE.read_text(encoding="utf-8")
+
+    assert r"\setkeys{Gin}{keepaspectratio}" in text
+
+
+@pytest.mark.parametrize(("fixture_name", "pdf_name"), BUILD_FIXTURE_CASES)
+def test_build_compiles_core_fixtures_to_pdf(
+    runner,
+    cli_app,
+    tmp_path,
+    fixture_name,
+    pdf_name,
+):
+    input_path = FIXTURE_ROOT / fixture_name
+    output_path = tmp_path / pdf_name
+
+    result = _invoke_build(runner, cli_app, input_path, output_path)
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+
+
+def test_build_defaults_m2_bilingual_fixture_to_a4_pdfinfo(
+    runner,
+    cli_app,
+    tmp_path,
+):
+    output_path = tmp_path / "m2-bilingual-a4.pdf"
+
+    result = _invoke_build(runner, cli_app, M2_BILINGUAL_FIXTURE, output_path)
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+    pdfinfo_output = _run_pdfinfo(output_path)
+    assert re.search(
+        r"Page size:\s+595(?:\.\d+)? x 842(?:\.\d+)? pts.*\(A4\)",
+        pdfinfo_output,
+    ), pdfinfo_output
+
+
+def test_build_accepts_explicit_letterpaper_override_by_pdfinfo(
+    runner,
+    cli_app,
+    tmp_path,
+):
+    output_path = tmp_path / "m2-bilingual-letter.pdf"
+
+    result = _invoke_build(
+        runner,
+        cli_app,
+        M2_BILINGUAL_FIXTURE,
+        output_path,
+        paper="letterpaper",
+    )
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+    pdfinfo_output = _run_pdfinfo(output_path)
+    assert re.search(
+        r"Page size:\s+612(?:\.\d+)? x 792(?:\.\d+)? pts",
+        pdfinfo_output,
+    ), pdfinfo_output
+
+
+def test_build_m2_bilingual_fixture_extracts_chinese_and_english_text(
+    runner,
+    cli_app,
+    tmp_path,
+):
+    output_path = tmp_path / "m2-bilingual-text.pdf"
+
+    result = _invoke_build(runner, cli_app, M2_BILINGUAL_FIXTURE, output_path)
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+    pdf_text = _normalize_pdf_text(_extract_pdf_text(output_path))
+    assert "中文证据段落" in pdf_text
+    assert "English evidence text" in pdf_text
+
+
+@pytest.mark.parametrize(
+    ("answer_mode", "should_show_answer"),
+    (
+        pytest.param("student", False, id="student-hides-answer"),
+        pytest.param("review", True, id="review-shows-answer"),
+        pytest.param("teacher", True, id="teacher-shows-answer"),
+    ),
+)
+def test_build_answer_mode_controls_pdf_answer_visibility(
+    runner,
+    cli_app,
+    tmp_path,
+    answer_mode,
+    should_show_answer,
+):
+    output_path = tmp_path / f"answer-mode-{answer_mode}.pdf"
+
+    result = _invoke_build(
+        runner,
+        cli_app,
+        ANSWER_MODE_FIXTURE,
+        output_path,
+        answer_mode=answer_mode,
+    )
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+    pdf_text = _normalize_pdf_text(_extract_pdf_text(output_path))
+    assert "Visible prompt text" in pdf_text
+
+    if should_show_answer:
+        assert "Teacher-only answer text" in pdf_text
+    else:
+        assert "Teacher-only answer text" not in pdf_text
+
+
+def test_build_semantic_project_brief_extracts_semantic_pdf_text(
+    runner,
+    cli_app,
+    tmp_path,
+):
+    output_path = tmp_path / "semantic-project-brief.pdf"
+
+    result = _invoke_build(runner, cli_app, SEMANTIC_PROJECT_FIXTURE, output_path)
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+    pdf_text = _extract_pdf_text(output_path)
+    for expected_text in ("目标", "交付物", "硬性要求", "验收标准", "项目"):
+        assert expected_text in pdf_text
+
+
+def test_build_cheatsheet_grid_fixture_extracts_cell_content_from_pdf(
+    runner,
+    cli_app,
+    tmp_path,
+):
+    output_path = tmp_path / "cheatsheet-grid-build.pdf"
+
+    result = _invoke_build(runner, cli_app, M2_CHEATSHEET_GRID_FIXTURE, output_path)
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+    pdf_text = _normalize_pdf_text(_extract_pdf_text(output_path))
+    for expected_text in (
+        "Derivative Rules",
+        "Power rule",
+        "Build Loop",
+        "hypolatex build",
+    ):
+        assert expected_text in pdf_text
+
+
+def test_build_m3_printable_cheatsheet_pdf_has_bounded_pages_and_text_evidence(
+    runner,
+    cli_app,
+    tmp_path,
+):
+    output_path = tmp_path / "printable-cheatsheet.pdf"
+
+    result = _invoke_build(
+        runner,
+        cli_app,
+        M3_PRINTABLE_CHEATSHEET_FIXTURE,
+        output_path,
+    )
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+
+    pdf_text = _normalize_pdf_text(_extract_pdf_text(output_path))
+    for expected_text in (
+        "Printable Cheatsheet",
+        "Derivative Rules",
+        "Model Checklist",
+        "Dense Table Evidence",
+        "hypolatex build",
+    ):
+        assert expected_text in pdf_text
+
+    assert 1 <= _pdf_pages(output_path) <= 4
+
+
+def test_build_minimal_beamer_fixture_to_non_empty_pdf(runner, cli_app, tmp_path):
+    output_path = tmp_path / "beamer-minimal.pdf"
+
+    result = _invoke_build(runner, cli_app, BEAMER_MINIMAL_FIXTURE, output_path)
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+
+
+def test_build_function_matrix_beamer_fixture_to_pdf_evidence(
+    runner,
+    cli_app,
+    tmp_path,
+):
+    output_path = tmp_path / "function-matrix-beamer.pdf"
+
+    result = _invoke_build(
+        runner,
+        cli_app,
+        BEAMER_FUNCTION_MATRIX_FIXTURE,
+        output_path,
+    )
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+    pdf_text = _normalize_pdf_text(_extract_pdf_text(output_path))
+    for expected_text in (
+        "Function Matrix",
+        "Domain And Codomain",
+        "Kernel, Image, Rank",
+        "Function Matrix Table",
+        "Local Asset Rule",
+    ):
+        assert expected_text in pdf_text
+    assert 4 <= _pdf_pages(output_path) <= 8
+
+
+@pytest.mark.skipif(
+    shutil.which("xelatex") is None or shutil.which("latexmk") is None,
+    reason="xelatex and latexmk are required for Beamer PDF geometry evidence.",
+)
+def test_build_function_matrix_beamer_fixture_defaults_to_16_9_geometry(
+    runner,
+    cli_app,
+    tmp_path,
+):
+    output_path = tmp_path / "function-matrix-beamer-geometry.pdf"
+
+    result = _invoke_build(
+        runner,
+        cli_app,
+        BEAMER_FUNCTION_MATRIX_FIXTURE,
+        output_path,
+    )
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+    width, height = _pdf_page_size(output_path)
+    assert width / height == pytest.approx(16 / 9, abs=0.01)
+
+
+def test_build_skill_beamer_template_to_pdf_evidence(runner, cli_app, tmp_path):
+    output_path = tmp_path / "skill-beamer-template.pdf"
+
+    result = _invoke_build(runner, cli_app, SKILL_BEAMER_TEMPLATE, output_path)
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output_path)
+    pdf_text = _normalize_pdf_text(_extract_pdf_text(output_path))
+    for expected_text in (
+        "Function Matrix",
+        "Domain",
+        "Codomain",
+        "Kernel",
+        "Image",
+        "Rank",
+    ):
+        assert expected_text in pdf_text
+
+
+def test_build_rejects_conversion_errors_with_actionable_diagnostic(
+    runner,
+    cli_app,
+    tmp_path,
+):
+    input_path = FIXTURE_ROOT / "callouts" / "unknown-directive.md"
+    output_path = tmp_path / "unknown-directive.pdf"
+
+    result = _invoke_build(runner, cli_app, input_path, output_path)
+
+    assert result.exit_code != 0
+    assert not output_path.exists()
+
+    diagnostic = f"{result.output}\n{result.exception or ''}".lower()
+    assert "unknown directive" in diagnostic or "unsupported directive" in diagnostic
+    assert "experiment" in diagnostic
+    for supported_directive in ("note", "tip", "warning", "summary", "figure", "ref"):
+        assert supported_directive in diagnostic

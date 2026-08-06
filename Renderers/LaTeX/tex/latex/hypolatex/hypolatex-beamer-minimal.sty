@@ -1,0 +1,183 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hypolatex-beamer-minimal}[2026/07/18 Hypo-LaTeX minimal Beamer theme]
+
+% ---------------------------------------------------------------------------
+% Minimal Beamer theme (Swiss / flat)
+%
+% Monochrome discipline: white canvas, ink type, hairline rules, no color
+% blocks, no rounded corners, no shadows. The palette accent survives only in
+% list markers and block labels; everything else is grayscale. Sans faces
+% (Inter + Noto Sans CJK) replace the serif default of the base package.
+% ---------------------------------------------------------------------------
+
+% Serif type like the base (Noto Serif CJK + TeX Gyre Termes); the theme only
+% retunes sizes and families stay inherited. No sans override.
+
+% Table header follows ink instead of the accent under this theme.
+\let\HypoMN@BaseApplyPalette\HypoApplyPalette
+\renewcommand{\HypoApplyPalette}[1]{%
+  \HypoMN@BaseApplyPalette{#1}%
+  \colorlet{HypoTableHead}{HypoBeamerInk!82!white}%
+  \colorlet{HypoTableRowHead}{HypoBeamerInk!8!white}%
+}
+\colorlet{HypoTableHead}{HypoBeamerInk!82!white}
+\colorlet{HypoTableRowHead}{HypoBeamerInk!8!white}
+
+% ---------------------------------------------------------------------------
+% Frame title: ink type, one full-width hairline
+% ---------------------------------------------------------------------------
+
+\setbeamercolor{frametitle}{fg=HypoBeamerInk,bg=white}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries,family=\rmfamily}
+
+\setbeamertemplate{frametitle}{%
+  \vspace*{0.65em}%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=1.6em,rightskip=1.6em,sep=0pt]{frametitle}%
+    \ifnum\value{section}>0\relax
+      {\scriptsize\mdseries
+       {\color{HypoBeamerMuted}\insertsection}%
+       \ifnum\value{subsection}>0\relax
+         \enspace{\color{HypoBeamerHair}/}\enspace{\color{HypoBeamerInk}\insertsubsection}%
+       \fi\par}%
+      \vspace{0.3ex}%
+    \fi
+    {\usebeamerfont{frametitle}\insertframetitle\par}%
+    \vspace{0.3ex}%
+    {\color{HypoBeamerInk!85!white}\rule{\linewidth}{0.8pt}}%
+  \end{beamercolorbox}%
+}
+
+% ---------------------------------------------------------------------------
+% Section divider: quiet whitespace, huge pale number
+% ---------------------------------------------------------------------------
+
+\setbeamertemplate{section page}{%
+  \vspace*{2.4em}%
+  \noindent
+  \begin{minipage}[t]{0.36\paperwidth}%
+    \raggedright
+    {\color{HypoBeamerInk!14!white}\fontsize{44}{44}\selectfont\bfseries\thesection\par}%
+    \vspace{0.1em}%
+    {\usebeamerfont{section page}\color{HypoBeamerInk}\insertsection\par}%
+    \vspace{1ex}%
+    {\color{HypoBeamerInk!85!white}\rule{18mm}{1.2pt}\par}%
+  \end{minipage}%
+  \hfill
+  \begin{minipage}[t]{0.54\paperwidth}%
+    \vspace{0.6em}%
+    \raggedright
+    {\setcounter{tocdepth}{1}%
+     \tableofcontents[sectionstyle=show/shaded]}%
+  \end{minipage}%
+  \vfill
+}
+
+% Mini agenda on the divider: non-current sections are muted.
+\setbeamercolor{section in toc shaded}{fg=HypoBeamerMuted}
+
+% TOC page: masthead on the left, entries in a compact flat panel on the right.
+\renewcommand{\HypoTOCPage}{%
+  \begin{frame}[plain]%
+    \begin{tikzpicture}[remember picture,overlay]
+      \node[anchor=north east,align=left,inner sep=7mm,
+            fill=HypoBeamerInk!4!white,text=HypoBeamerBody,
+            text width=0.62\paperwidth]
+        at ([xshift=-1.6em,yshift=-0.14\paperheight]current page.north east)
+        {\HypoTOCColumns};
+      \node[anchor=north west,align=left,inner sep=0pt,text width=0.3\paperwidth]
+        at ([xshift=1.6em,yshift=-0.22\paperheight]current page.north west)
+        {%
+          {\usebeamerfont{title}\color{HypoBeamerInk}\contentsname\par}%
+          \vspace{0.6em}%
+          {\color{HypoBeamerInk!85!white}\rule{22mm}{1.2pt}\par}%
+          \vspace{0.7em}%
+          {\small\color{HypoBeamerMuted}CONTENTS\par}%
+        };
+    \end{tikzpicture}%
+  \end{frame}%
+}
+
+% ---------------------------------------------------------------------------
+% Cover: masthead composition, no color at all
+% ---------------------------------------------------------------------------
+
+\setbeamertemplate{title page}{%
+  \edef\@hypo@mn@logo{\HypoMetadata{logo}}%
+  \edef\@hypo@mn@logolong{\HypoMetadata{logolong}}%
+  \begin{tikzpicture}[remember picture,overlay]
+    % masthead rule
+    \draw[HypoBeamerInk,line width=1.2pt]
+      ([xshift=1.6em,yshift=-1.6em]current page.north west) --
+      ([xshift=-1.6em,yshift=-1.6em]current page.north east);
+    % kicker
+    \node[anchor=north west,align=left,inner sep=0pt]
+      at ([xshift=1.6em,yshift=-2.6em]current page.north west)
+      {%
+        \HypoIfMetadataEmptyTF{organization}{%
+          \HypoIfMetadataEmptyTF{course}{}{%
+            {\scriptsize\bfseries\color{HypoBeamerMuted}\HypoMetadata{course}}%
+          }%
+        }{%
+          {\scriptsize\bfseries\color{HypoBeamerMuted}\HypoMetadata{organization}}%
+        }%
+      };
+    % logo, quiet, top right
+    \ifx\@hypo@mn@logo\@empty\else
+      \node[anchor=north east,inner sep=0pt]
+        at ([xshift=-1.6em,yshift=-2.2em]current page.north east)
+        {\includegraphics[height=1cm]{\@hypo@mn@logo}};
+    \fi
+    % title block
+    \node[anchor=north west,align=left,text width=0.86\paperwidth,inner sep=0pt]
+      at ([xshift=1.6em,yshift=-0.34\paperheight]current page.north west)
+      {%
+        {\usebeamerfont{title}\color{HypoBeamerInk}\inserttitle\par}%
+        \vspace{0.8em}%
+        {\color{HypoBeamerInk!85!white}\rule{22mm}{1.2pt}\par}%
+        \ifx\insertsubtitle\@empty\else
+          \vspace{0.9em}%
+          {\usebeamerfont{subtitle}\color{HypoBeamerMuted}\insertsubtitle\par}%
+        \fi
+      };
+    % authors and date, lower left
+    \node[anchor=south west,align=left,text width=0.6\paperwidth,inner sep=0pt]
+      at ([xshift=1.6em,yshift=1.6em]current page.south west)
+      {%
+        {\usebeamerfont{author}\color{HypoBeamerBody}\insertauthor\par}%
+        \vspace{0.7em}%
+        {\usebeamerfont{date}\color{HypoBeamerMuted}\insertdate\par}%
+      };
+    % long wordmark, lower right
+    \ifx\@hypo@mn@logolong\@empty\else
+      \node[anchor=south east,inner sep=0pt]
+        at ([xshift=-1.6em,yshift=1.6em]current page.south east)
+        {\includegraphics[height=0.8cm]{\@hypo@mn@logolong}};
+    \fi
+  \end{tikzpicture}%
+}
+
+% ---------------------------------------------------------------------------
+% Blocks: flat gray panels, sharp corners, bold ink label
+% ---------------------------------------------------------------------------
+
+\renewtcolorbox{HypoBlockBox}[2][HypoBeamerInk]{%
+  enhanced,
+  frame hidden,
+  boxrule=0pt,
+  sharp corners,
+  colback=HypoBeamerInk!5!white,
+  colbacktitle=HypoBeamerInk!5!white,
+  coltitle=#1,
+  fonttitle=\bfseries\small,
+  title={#2},
+  left=8pt,
+  right=8pt,
+  top=5pt,
+  bottom=6pt,
+  boxsep=0pt,
+  toptitle=5pt,
+  bottomtitle=2pt,
+  before skip=5pt,
+  after skip=8pt%
+}

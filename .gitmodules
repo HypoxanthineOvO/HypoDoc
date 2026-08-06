@@ -1,0 +1,3 @@
+[submodule "Spec"]
+	path = Spec
+	url = git@github.com:HypoxanthineOvO/hypodoc-spec.git
