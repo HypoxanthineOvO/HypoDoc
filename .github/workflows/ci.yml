@@ -61,7 +61,7 @@ jobs:
           git config --global url."https://github.com/".insteadOf git@github.com:
           git submodule update --init --depth 1 Spec
       - uses: astral-sh/setup-uv@v6
-      - run: sudo apt-get update && sudo apt-get install -y texlive-xetex texlive-lang-chinese texlive-fonts-extra latexmk poppler-utils fonts-noto-cjk
+      - run: sudo apt-get update && sudo apt-get install -y texlive-xetex texlive-lang-chinese latexmk poppler-utils fonts-noto-cjk
       - name: Provision pinned Pandoc
         run: |
           python3 Spec/scripts/provision-pandoc.py --version 3.10 --dest "$RUNNER_TEMP/pandoc"

@@ -28,12 +28,15 @@ PDF_EVIDENCE_TOOLS = (
 REQUIRED_TEX_PACKAGES = (
     "ctex",
     "fontspec",
-    "fontawesome5",
     "tcolorbox",
     "fancyhdr",
     "geometry",
     "titlesec",
     "eso-pic",
+)
+
+OPTIONAL_TEX_PACKAGES = (
+    "fontawesome5",
 )
 
 REQUIRED_NOTO_CJK_FONTS = (
@@ -69,6 +72,7 @@ class DoctorReport:
 
     executables: tuple[CheckResult, ...]
     tex_packages: tuple[CheckResult, ...]
+    optional_tex_packages: tuple[CheckResult, ...]
     noto_cjk_fonts: tuple[CheckResult, ...]
     recommended_chinese_fonts: tuple[CheckResult, ...]
     pdf_evidence_tools: tuple[CheckResult, ...]
@@ -92,6 +96,7 @@ def collect_doctor_report() -> DoctorReport:
     return DoctorReport(
         executables=tuple(check_executable(name) for name in REQUIRED_EXECUTABLES),
         tex_packages=tuple(check_tex_package(name) for name in REQUIRED_TEX_PACKAGES),
+        optional_tex_packages=tuple(check_tex_package(name) for name in OPTIONAL_TEX_PACKAGES),
         noto_cjk_fonts=tuple(
             check_font_family(name) for name in REQUIRED_NOTO_CJK_FONTS
         ),

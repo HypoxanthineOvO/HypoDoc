@@ -18,6 +18,8 @@ def run() -> None:
     typer.echo("")
     _print_section("TeX packages", report.tex_packages)
     typer.echo("")
+    _print_section("Optional TeX packages", report.optional_tex_packages)
+    typer.echo("")
     _print_section("Noto CJK fonts", report.noto_cjk_fonts)
     typer.echo("")
     _print_section("Recommended Chinese fonts", report.recommended_chinese_fonts)

@@ -92,6 +92,24 @@ def test_doctor_reports_required_tex_packages_when_available(
         assert fragment in output
 
 
+def test_doctor_optional_tex_packages_do_not_block_success(
+    runner,
+    cli_app,
+    fake_toolchain_factory,
+    optional_tex_packages,
+):
+    fake_toolchain = fake_toolchain_factory()
+    env = dict(fake_toolchain.env())
+    env["HYPOLATEX_FAKE_MISSING_TEX_PACKAGES"] = ",".join(optional_tex_packages)
+
+    result = runner.invoke(cli_app, ["doctor"], env=env)
+
+    assert result.exit_code == 0, result.output
+    output = _normalized(result.output)
+    for package in optional_tex_packages:
+        assert package in output
+
+
 def test_doctor_reports_noto_cjk_fonts_and_poppler_tools_when_available(
     runner,
     cli_app,
@@ -198,11 +216,11 @@ def test_doctor_fails_and_names_missing_tex_package(
     result = runner.invoke(
         cli_app,
         ["doctor"],
-        env=fake_toolchain.env(missing_tex_packages=("fontawesome5",)),
+        env=fake_toolchain.env(missing_tex_packages=("tcolorbox",)),
     )
 
     assert result.exit_code != 0, result.output
-    assert "fontawesome5" in _normalized(result.output)
+    assert "tcolorbox" in _normalized(result.output)
     _assert_actionable_failure(result.output)
 
 

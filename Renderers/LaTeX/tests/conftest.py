@@ -62,6 +62,11 @@ def required_tex_packages():
 
 
 @pytest.fixture(scope="session")
+def optional_tex_packages():
+    return tuple(_required_toolchain().get("optional_tex_packages", []))
+
+
+@pytest.fixture(scope="session")
 def doctor_ok_fragments():
     snapshot_file = DOCTOR_SNAPSHOT_ROOT / "doctor-ok-fragments.txt"
     return tuple(
