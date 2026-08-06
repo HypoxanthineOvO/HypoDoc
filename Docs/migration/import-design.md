@@ -95,11 +95,12 @@ The import is not a mechanical case conversion. Expected normal changes include:
 Compatibility shims are retained only when there is a demonstrated consumer or migration need. Source
 behavior is not preserved merely because it exists.
 
-## License Recommendation
+## License Decision
 
 Adopt MIT for first-party integrated product code, matching HypoDoc-Spec and Hypo-LaTeX, while retaining
-all third-party notices and license reports. This recommendation needs explicit S1 acceptance because
-Hypo-Markdown currently lacks a first-party license file.
+all third-party notices and license reports. The user explicitly accepted this decision at S1; the root
+repository carries the resulting `LICENSE`. Hypo-Markdown's former lack of a first-party license file
+does not remove any third-party attribution obligations.
 
 ## Product Version
 

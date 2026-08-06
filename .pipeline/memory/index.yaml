@@ -1,6 +1,7 @@
 active_by_dedupe_key:
   adoption_brief: decision-4988194e8da4729f6e146acd82ad6894
   business_integration_authority_policy: decision-1261e60c4cd0c7209ca2e010550440f0
+  first_party_license: decision-cd39ad190c827e030fcb68f713383f87
   hypolatex_integrated_version_policy: decision-7a679ee5fbaf2ec9b2873dc60fc13816
   initial_integrated_product_version: decision-d5f4929416cf8332a44ead38aedda53d
   primary_execution_model_v4_flash: preference-d3f7af6127396e94297dbe67525f4cd8
@@ -94,6 +95,23 @@ records:
         type: user_request
     supersedes: []
     updated_at: 2026-08-06T10:04:32.656Z
+  - active: true
+    confidence: confirmed
+    created_at: 2026-08-06T10:09:37.325Z
+    dedupe_key: first_party_license
+    id: decision-cd39ad190c827e030fcb68f713383f87
+    kind: decision
+    path: .pipeline/memory/records/project-9ee4882526c8/decision/decision-cd39ad190c827e030fcb68f713383f87.md
+    scope:
+      ref: project:HypoDoc
+      type: project
+    semantic_hash: cd39ad190c827e030fcb68f713383f8738d8393bf693aa01a7538e3d8d78029e
+    source_refs:
+      - locator: request.first-party-license
+        ref: accept
+        type: user_request
+    supersedes: []
+    updated_at: 2026-08-06T10:09:37.325Z
   - active: true
     confidence: confirmed
     created_at: 2026-08-06T10:04:32.656Z

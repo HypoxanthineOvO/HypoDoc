@@ -36,16 +36,17 @@ renderer 不得私下形成第二套共享语义。
 机械任务。交接时必须提供当前 Cycle 的 Plan、Progress、Execution、Discussion Summary、
 source inventory 和本决策清单。它必须持续更新 Workflow 记录，并在 S2 停下等待人工审阅。
 
-### 6. 发布副作用继续受人工控制
+### 6. 第一方代码采用 MIT
+
+新仓第一方代码统一采用 MIT，与 HypoDoc Spec 和 Hypo-LaTeX 一致。第三方代码继续保留
+各自许可证、notice 和依赖报告；采用 MIT 不会覆盖第三方许可义务。
+
+### 7. 发布副作用继续受人工控制
 
 在 S2 接受之前，不 push 新 remote、不创建公开 tag/Release、不上传 Marketplace，也不声称
 Windows、macOS、签名或 notarization 已验证。旧仓在一个发布观察期内保留，不立即删除。
 
-## 仍待确认
+## S2 待确认
 
-- 新仓第一方代码是否统一采用 MIT。Spec 与 Hypo-LaTeX 已是 MIT，但 Hypo-Markdown 没有
-  第一方许可证文件，因此需要用户明确确认。
 - GitHub/GitLab 的 canonical 与 mirror 方向。
 - VS Code Marketplace publisher、正式 extension ID、签名与 notarization 策略。
-
-其中只有 MIT 决定仍属于当前 S1；其余发布治理问题在 S2 解决。

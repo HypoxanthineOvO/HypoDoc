@@ -10,6 +10,8 @@ Current migration evidence and decisions:
 
 - [`migration/decisions.md`](migration/decisions.md): confirmed product-history, version,
   Spec and execution-model decisions in plain language.
+- [`migration/execution-handoff.md`](migration/execution-handoff.md): bounded M2-M4 recovery
+  and execution context for the next primary model.
 - [`migration/source-inventory.md`](migration/source-inventory.md): frozen source commits,
   dirty-state recovery, validation evidence and risks.
 - [`migration/import-design.md`](migration/import-design.md): proposed authority hierarchy,

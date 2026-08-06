@@ -27,3 +27,8 @@ gates.
 The product implementation belongs here. The HypoDoc specification remains an
 independently versioned semantic authority and is consumed through `Spec/` at a
 pinned compatible revision.
+
+## License
+
+HypoDoc first-party code is licensed under the [MIT License](LICENSE). Third-party
+components retain their own licenses and attribution requirements.

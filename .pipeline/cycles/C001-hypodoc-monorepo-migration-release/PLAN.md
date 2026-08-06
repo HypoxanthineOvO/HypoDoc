@@ -26,6 +26,7 @@ Skills、Packages、Renderers、Apps、Extensions 和 Docs 边界，建立统一
   但必须以独立整理提交保留 provenance、变更理由和兼容性证据。
 - Hypo-LaTeX 当前 `0.4.0` 只视为来源版本；首个整合产品版本固定为 `HypoDoc v0.1.0`，
   Spec 继续独立版本化。
+- 新仓第一方代码统一采用 MIT；第三方 notice 与依赖许可继续保留。
 - Stone 接受前不越过对应决策门；发布前不 push、不创建 Release、不上传 Marketplace。
 - 不删除旧工作区；签名、notarization 和未实际运行的平台构建不得写成已验证。
 
@@ -72,6 +73,5 @@ ID 在本 Cycle 内保持稳定；开始执行后不重排或复用。
 
 ## 未决问题
 
-- 项目许可证暂按现有 Spec 与 Hypo-LaTeX 的 MIT 倾向验证，在 `S1` 形成结论。
 - GitHub/GitLab 的 canonical 与 mirror 关系、VS Code publisher、扩展 ID、签名和 notarization
   在 `S2` 前必须明确；缺失条件会缩小发布声明，而不会被假定为已解决。

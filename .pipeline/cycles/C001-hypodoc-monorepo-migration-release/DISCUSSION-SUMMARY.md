@@ -1,7 +1,7 @@
 ---
 kind: discussion-summary
 cycle: C001-hypodoc-monorepo-migration-release
-updated: 2026-08-06T18:04:05+08:00
+updated: 2026-08-06T18:08:22+08:00
 raw_discussion: local/discussions/C001-hypodoc-monorepo-migration-release/
 ---
 
@@ -19,12 +19,14 @@ raw_discussion: local/discussions/C001-hypodoc-monorepo-migration-release/
 - 用户决定不把旧仓 Git 历史合并进新仓 `main`；旧仓、来源 SHA、tag、patch 与测试证据继续保留，筛选后的内容直接建立干净产品历史。
 - 用户决定首个整合产品版本为 `HypoDoc v0.1.0`；它不继承 Hypo-LaTeX `v0.4.0`，Spec 继续独立版本化。
 - 用户认可 V4 Flash 可作为 M2 至 M4 的主执行模型；交接必须包含完整 Workflow 与迁移决策上下文，并在 S2 停止等待审阅。
+- 用户明确确认新仓第一方代码采用 MIT；第三方许可与 notice 继续保留。
 
 ## 接受与拒绝
 
 - 用户已选择“确认并开始”，接受完整 Proposal，并授权执行 `M1`；后续仍受 `S1`、`S2`、`S3` 人工审阅门约束。
 - `M1` 审阅包已完成，当前等待用户对 `S1` 的接受或拒绝；尚未授权进入 `M2`。
 - 用户选择保持 `S1` 等待审阅，没有授权进入 `M2`，并要求用日常业务语言解释清楚审阅内容。
+- 用户随后确认 MIT，接受 `S1` 的完整范围并授权进入 `M2`；发布副作用仍受 `S2` 约束。
 
 ## 纠正与分歧
 
@@ -33,6 +35,5 @@ raw_discussion: local/discussions/C001-hypodoc-monorepo-migration-release/
 
 ## 未决问题
 
-- MIT 许可证最终确认。
 - canonical remote 与 mirror 方向。
 - VS Code publisher/extension ID、签名与 notarization 策略。

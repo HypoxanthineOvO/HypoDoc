@@ -55,7 +55,7 @@ HypoDoc/
 
 1. 记录三个来源工作区的 branch、HEAD、tag、remote 和 dirty files。
 2. 为未提交内容生成只读清单，不擅自丢弃或覆盖。
-3. 明确项目许可证和 GitHub/GitLab 主从关系；首发产品版本已确定为 `v0.1.0`。
+3. 第一方代码采用 MIT，首发产品版本为 `v0.1.0`；GitHub/GitLab 主从关系留到发布治理审阅。
 
 完成条件：任何来源文件都能从 Git 或明确的 dirty-file 清单恢复。
 
@@ -110,7 +110,6 @@ HypoDoc/
 - 两个平台不同时手工维护独立历史；必须先确定 canonical remote。
 ## 尚待决定
 
-- 项目许可证是否与现有 HypoDoc Spec 和 HypoDoc LaTeX 一致采用 MIT。
 - GitHub canonical + GitLab mirror，或相反。
 - VS Code Marketplace publisher 与正式扩展 ID。
 - macOS/Windows 签名、notarization 和证书管理策略。
