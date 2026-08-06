@@ -21,6 +21,7 @@ win:
     - nsis
 linux:
   category: Office
+  maintainer: HypoDoc contributors <hypodoc@hypoxanthine.dev>
   target:
     - AppImage
     - deb

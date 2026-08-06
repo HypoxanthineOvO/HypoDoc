@@ -36,11 +36,20 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm --filter @hypodoc/desktop exec electron-builder --${{ matrix.target }} --dir --config electron-builder.yml
+      - name: Package installer (unsigned)
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: pnpm --filter @hypodoc/desktop exec electron-builder --${{ matrix.target }} --config electron-builder.yml
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-${{ matrix.target }}-${{ runner.arch }}
-          path: Apps/Desktop/release/
+          path: |
+            Apps/Desktop/release/*.AppImage
+            Apps/Desktop/release/*.deb
+            Apps/Desktop/release/*.exe
+            Apps/Desktop/release/*.dmg
+            Apps/Desktop/release/*.zip
+          if-no-files-found: error
 
   vscode:
     runs-on: ubuntu-latest
