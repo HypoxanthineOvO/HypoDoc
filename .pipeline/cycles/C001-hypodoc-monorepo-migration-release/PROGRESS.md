@@ -2,25 +2,25 @@
 kind: progress
 cycle: C001-hypodoc-monorepo-migration-release
 plan: PLAN.md
-status: active
-updated: 2026-08-06T17:39:11+08:00
-current: M1
-next: 完成 M1 来源 inventory、恢复锚点和历史导入设计
+status: waiting-review
+updated: 2026-08-06T17:53:26+08:00
+current: S1
+next: 等待用户审阅来源基线、业务整合设计与 MIT 许可证建议
 ---
 
 # HypoDoc Monorepo 迁移、整理与发布进度
 
 ## 当前状态
 
-用户已确认完整 Proposal 并授权开始。当前执行 `M1`，只建立来源 inventory、恢复锚点与
-历史导入设计；到达 `S1` 时暂停，不提前迁移源码或产生远端发布副作用。
+`M1` 已完成并验证，当前停在 `S1`。来源提交、dirty patch、验证结果、权威层级、历史导入
+路线与拟议业务修改均已形成真实审阅包；尚未导入源码或产生远端发布副作用。
 
 ## 完整计划状态
 
 | ID | 阶段 | 状态 | 当前结果 / 证据 | 下一步 |
 | --- | --- | --- | --- | --- |
-| `M1` | 冻结来源并建立恢复锚点 | `in_progress` | Proposal 已确认；开始盘点和建立本地恢复锚点 | 生成并验证 S1 审阅包 |
-| `S1` | 迁移基线与业务整合设计审阅 | `pending` | 已确认来源仓不是唯一真理；审阅包尚未完成 | 等待 `M1` 验证通过 |
+| `M1` | 冻结来源并建立恢复锚点 | `completed` | 根锚点 `1a35eb6`、Hypo-Markdown 锚点 `e4e7148`、两条 safety ref、两份恢复 patch；基线验证通过 | 已进入 `S1` |
+| `S1` | 迁移基线与业务整合设计审阅 | `waiting-review` | `Docs/migration/source-inventory.md` 与 `import-design.md` 已提交为 `a85bc54` | 用户接受或拒绝审阅包 |
 | `M2` | 导入 TypeScript 产品 | `pending` | 尚未开始 | 等待 `S1` 接受 |
 | `M3` | 整合 Spec、LaTeX 与 Skills | `pending` | 尚未开始 | 等待 `M2` 验证通过 |
 | `M4` | 统一产品结构、品牌、验证与发布工程 | `pending` | 尚未开始 | 等待 `M3` 验证通过 |
@@ -31,7 +31,7 @@ next: 完成 M1 来源 inventory、恢复锚点和历史导入设计
 
 ## 阻塞
 
-- 无。
+- `S1` 人工审阅 gate；未接受前不进入 `M2`。
 
 ## 计划变化
 
@@ -40,4 +40,4 @@ next: 完成 M1 来源 inventory、恢复锚点和历史导入设计
 
 ## 下一步
 
-完成 `M1` 的来源 inventory、恢复锚点与导入设计，验证后将 `S1` 标记为 `waiting-review`。
+用户审阅 `S1` 的真实产物；接受后进入 `M2`，拒绝则按反馈恢复相关 Milestone 修订。

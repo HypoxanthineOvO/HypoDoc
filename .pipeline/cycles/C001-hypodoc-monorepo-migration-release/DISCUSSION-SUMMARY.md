@@ -1,7 +1,7 @@
 ---
 kind: discussion-summary
 cycle: C001-hypodoc-monorepo-migration-release
-updated: 2026-08-06T17:39:11+08:00
+updated: 2026-08-06T17:53:26+08:00
 raw_discussion: local/discussions/C001-hypodoc-monorepo-migration-release/
 ---
 
@@ -20,6 +20,7 @@ raw_discussion: local/discussions/C001-hypodoc-monorepo-migration-release/
 ## 接受与拒绝
 
 - 用户已选择“确认并开始”，接受完整 Proposal，并授权执行 `M1`；后续仍受 `S1`、`S2`、`S3` 人工审阅门约束。
+- `M1` 审阅包已完成，当前等待用户对 `S1` 的接受或拒绝；尚未授权进入 `M2`。
 
 ## 纠正与分歧
 
