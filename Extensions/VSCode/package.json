@@ -1,6 +1,6 @@
 {
   "name": "hypodoc-vscode",
-  "displayName": "HypoDoc Markdown",
+  "displayName": "HypoDoc",
   "description": "Offline HypoDoc validation and theme-integrated preview.",
   "version": "0.1.0",
   "private": true,

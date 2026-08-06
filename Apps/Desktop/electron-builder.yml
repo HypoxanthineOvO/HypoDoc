@@ -1,6 +1,6 @@
 appId: org.hypodoc.markdown
-productName: Hypo Markdown
-executableName: hypo-markdown
+productName: HypoDoc
+executableName: hypodoc
 copyright: Copyright 2026 HypoDoc contributors
 asar: true
 npmRebuild: false

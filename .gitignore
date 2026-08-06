@@ -22,7 +22,7 @@ build/
 *.synctex.gz
 
 # Distribution output
-release/
+/release/
 Apps/Desktop/release/
 
 # Local tooling

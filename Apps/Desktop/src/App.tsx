@@ -118,7 +118,7 @@ export function App() {
             <Menu aria-hidden="true" size={18} />
           </button>
           <span className="brand-mark">H</span>
-          <strong>Hypo Markdown</strong>
+          <strong>HypoDoc</strong>
         </div>
 
         <div className="mode-switcher" role="group" aria-label="Document view mode">

@@ -70,7 +70,7 @@ def desktop_flow(page: Page, console_errors: list[str]) -> None:
     page.wait_for_load_state("networkidle")
     wait_for_preview(page)
     assert_layout(page)
-    assert page.get_by_text("Hypo Markdown", exact=True).is_visible()
+    assert page.get_by_text("HypoDoc", exact=True).is_visible()
     assert page.get_by_role("button", name="Split").get_attribute("aria-pressed") == "true"
     assert page.locator('[data-pane="editor"]').is_visible()
     assert page.locator('[data-pane="preview"]').is_visible()

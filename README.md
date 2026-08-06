@@ -1,34 +1,48 @@
 # HypoDoc
 
-HypoDoc is the product workspace for authoring, previewing, and rendering
-HypoDoc documents across editor, desktop, web, and LaTeX/PDF surfaces.
+HypoDoc is a product workspace for authoring, previewing, and rendering
+HypoDoc documents across desktop, web, and LaTeX/PDF surfaces. Authors keep
+structured Markdown sources; renderers produce reviewable TeX, PDFs, and live
+previews from a shared semantic model.
 
-This repository is currently a migration scaffold. Product source still lives
-in the existing `Hypo-Markdown`, `Hypo-LaTeX`, and `HypoDoc-Spec` workspaces.
-Nothing has been copied or moved yet.
-
-## Intended Layout
+## Layout
 
 | Path | Responsibility |
 | --- | --- |
-| `Spec/` | Pinned HypoDoc language specification and compatibility fixtures |
-| `Skills/` | Renderer-neutral authoring guidance and renderer-specific agent skills |
-| `Packages/` | Shared parser, render model, theme, and reusable runtime packages |
-| `Renderers/` | Output backends, including Web and LaTeX/PDF |
-| `Apps/` | User applications, beginning with HypoDoc Desktop |
+| `Spec/` | Pinned HypoDoc language specification (independent repo, pinned revision) |
+| `Packages/` | Portable TypeScript parser, render model, Web renderer, and theme tokens |
+| `Renderers/` | Output backends, beginning with LaTeX/PDF (`hypolatex`) |
+| `Apps/` | End-user hosts, beginning with HypoDoc Desktop |
 | `Extensions/` | Editor integrations, beginning with HypoDoc for VS Code |
-| `Docs/` | Product architecture, contributor documentation, and release guidance |
+| `Skills/` | Renderer-neutral authoring skill and LaTeX-specific build skill |
+| `Docs/` | Architecture, security, migration, and release records |
 
-See [MIGRATION.md](MIGRATION.md) for the staged migration design and safety
-gates.
+## Validation
+
+Run the full reproducible check with:
+
+```sh
+./scripts/validate-all.sh
+```
+
+This covers TypeScript typecheck/tests/build, npm audit, third-party license
+report, parser performance budgets, Spec pytest and registry check, portable
+conformance differential, LaTeX doctor/pytest, a representative PDF build with
+PDF evidence, and VSIX packaging.
+
+Platform installers for Windows and macOS, code signing, and notarization are
+not yet validated; see `Docs/release/manifest.json` for the honest validation
+matrix.
 
 ## Repository Boundary
 
 The product implementation belongs here. The HypoDoc specification remains an
-independently versioned semantic authority and is consumed through `Spec/` at a
-pinned compatible revision.
+independently versioned semantic authority, consumed through `Spec/` at a
+pinned compatible revision. Renderers must not silently redefine shared syntax
+or treat a private AST as new semantic authority.
 
 ## License
 
-HypoDoc first-party code is licensed under the [MIT License](LICENSE). Third-party
-components retain their own licenses and attribution requirements.
+HypoDoc first-party code is licensed under the [MIT License](LICENSE).
+Third-party components retain their own licenses and attribution requirements;
+see `reports/third-party-licenses.md`.

@@ -8,13 +8,13 @@
   "parser": {
     "sampleBytes": 856,
     "sample": {
-      "averageMs": 0.228,
-      "maxMs": 0.924
+      "averageMs": 0.22,
+      "maxMs": 0.749
     },
     "oneMiBBytes": 1047085,
     "oneMiB": {
-      "averageMs": 10.603,
-      "maxMs": 14.694
+      "averageMs": 7.78,
+      "maxMs": 10.161
     }
   },
   "budgets": {
@@ -37,9 +37,9 @@
         "gzipBytes": 817697
       },
       {
-        "file": "assets/index-BIuWYtcK.js",
-        "bytes": 970622,
-        "gzipBytes": 315128
+        "file": "assets/index-BkSlIDga.js",
+        "bytes": 970616,
+        "gzipBytes": 315125
       },
       {
         "file": "assets/shiki-CGnSGOO7.js",

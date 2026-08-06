@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  portable-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize pinned HypoDoc-Spec
+        run: |
+          git config --global url."https://github.com/".insteadOf git@github.com:
+          git submodule update --init --depth 1 Spec
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.5.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm audit --prod --audit-level high
+      - run: pnpm licenses:report
+      - run: pnpm perf
+
+  reference-differential:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize pinned HypoDoc-Spec
+        run: |
+          git config --global url."https://github.com/".insteadOf git@github.com:
+          git submodule update --init --depth 1 Spec
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.5.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: astral-sh/setup-uv@v6
+      - run: pnpm install --frozen-lockfile
+      - run: uv sync --project Spec --frozen
+      - run: python3 Spec/scripts/provision-pandoc.py --version 3.10 --dest Spec/.tools/pandoc
+      - run: pnpm conformance:portable
+
+  latex-renderer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: sudo apt-get update && sudo apt-get install -y texlive-xetex latexmk poppler-utils fonts-noto-cjk
+      - run: uv sync --project Renderers/LaTeX --frozen
+      - run: uv run --project Renderers/LaTeX hypolatex doctor
+      - run: uv run --project Renderers/LaTeX python -m pytest -q tests
+      - run: uv run --project Renderers/LaTeX hypolatex build Renderers/LaTeX/examples/showcase/hypolatex-showcase.md --output /tmp/hypodoc-showcase.pdf
+      - run: pdfinfo /tmp/hypodoc-showcase.pdf | grep -E "Pages|Page size"
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.5.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: python3 -m pip install --user playwright pillow
+      - run: python3 -m playwright install --with-deps chromium
+      - name: Run browser regression
+        shell: bash
+        run: |
+          pnpm --filter @hypodoc/desktop dev > /tmp/hypodoc-vite.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:4317/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4317/ > /dev/null
+          python3 Apps/Desktop/test/playwright_smoke.py
