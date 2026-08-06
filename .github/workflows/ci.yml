@@ -56,6 +56,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Initialize pinned HypoDoc-Spec
+        run: |
+          git config --global url."https://github.com/".insteadOf git@github.com:
+          git submodule update --init --depth 1 Spec
       - uses: astral-sh/setup-uv@v6
       - run: sudo apt-get update && sudo apt-get install -y texlive-xetex latexmk poppler-utils fonts-noto-cjk
       - name: Provision pinned Pandoc
