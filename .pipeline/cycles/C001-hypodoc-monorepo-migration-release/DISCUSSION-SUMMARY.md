@@ -1,7 +1,7 @@
 ---
 kind: discussion-summary
 cycle: C001-hypodoc-monorepo-migration-release
-updated: 2026-08-06T17:53:26+08:00
+updated: 2026-08-06T17:56:09+08:00
 raw_discussion: local/discussions/C001-hypodoc-monorepo-migration-release/
 ---
 
@@ -21,10 +21,11 @@ raw_discussion: local/discussions/C001-hypodoc-monorepo-migration-release/
 
 - 用户已选择“确认并开始”，接受完整 Proposal，并授权执行 `M1`；后续仍受 `S1`、`S2`、`S3` 人工审阅门约束。
 - `M1` 审阅包已完成，当前等待用户对 `S1` 的接受或拒绝；尚未授权进入 `M2`。
+- 用户选择保持 `S1` 等待审阅，没有授权进入 `M2`，并要求用日常业务语言解释清楚审阅内容。
 
 ## 纠正与分歧
 
-- 无。
+- `S1` 首次说明过于工程化。后续审阅说明应先讲清业务含义、授权范围和实际风险，再给技术证据。
 
 ## 未决问题
 
