@@ -1,0 +1,40 @@
+{
+  "name": "@hypodoc/render-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./styles.css": "./src/styles.css"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@shikijs/langs": "4.4.2",
+    "@shikijs/themes": "4.4.2",
+    "@hypodoc/parser-core": "workspace:*",
+    "@hypodoc/render-model": "workspace:*",
+    "@hypodoc/theme": "workspace:*",
+    "dompurify": "3.4.13",
+    "katex": "0.18.1",
+    "lucide-react": "1.28.0",
+    "mermaid": "11.16.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-markdown": "10.1.0",
+    "rehype-katex": "7.0.1",
+    "rehype-sanitize": "6.0.0",
+    "remark-gfm": "4.0.1",
+    "remark-math": "6.0.0",
+    "shiki": "4.4.2"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "jsdom": "26.1.0",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
+  }
+}

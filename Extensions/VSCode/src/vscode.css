@@ -1,0 +1,35 @@
+:root,
+[data-theme="light"],
+[data-theme="dark"] {
+  --hd-bg: var(--vscode-editor-background);
+  --hd-surface: var(--vscode-editor-background);
+  --hd-surface-raised: var(--vscode-editorWidget-background, var(--vscode-editor-background));
+  --hd-surface-muted: var(--vscode-textBlockQuote-background, var(--vscode-editor-inactiveSelectionBackground));
+  --hd-text: var(--vscode-editor-foreground);
+  --hd-text-muted: var(--vscode-descriptionForeground);
+  --hd-text-faint: var(--vscode-disabledForeground);
+  --hd-border: var(--vscode-panel-border, var(--vscode-widget-border));
+  --hd-border-strong: var(--vscode-contrastBorder, var(--vscode-widget-border));
+  --hd-accent: var(--vscode-textLink-foreground);
+  --hd-accent-hover: var(--vscode-textLink-activeForeground);
+  --hd-accent-soft: var(--vscode-editor-selectionHighlightBackground);
+  --hd-success: var(--vscode-testing-iconPassed);
+  --hd-success-soft: var(--vscode-diffEditor-insertedTextBackground);
+  --hd-warning: var(--vscode-editorWarning-foreground);
+  --hd-warning-soft: var(--vscode-inputValidation-warningBackground);
+  --hd-danger: var(--vscode-editorError-foreground);
+  --hd-danger-soft: var(--vscode-inputValidation-errorBackground);
+  --hd-info: var(--vscode-editorInfo-foreground);
+  --hd-info-soft: var(--vscode-editor-selectionBackground);
+  --hd-code-bg: var(--vscode-textCodeBlock-background);
+  --hd-code-text: var(--vscode-editor-foreground);
+  --hd-selection: var(--vscode-editor-selectionBackground);
+  --hd-font-ui: var(--vscode-font-family);
+  --hd-font-mono: var(--vscode-editor-font-family);
+}
+
+html,
+body,
+#root { min-height: 100%; margin: 0; }
+body { color: var(--hd-text); background: var(--hd-bg); }
+.hd-document { max-width: 820px; }

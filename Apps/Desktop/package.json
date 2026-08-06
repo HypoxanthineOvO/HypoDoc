@@ -1,0 +1,39 @@
+{
+  "name": "@hypodoc/desktop",
+  "version": "0.1.0",
+  "description": "Offline source-first HypoDoc Markdown editor and renderer.",
+  "author": "HypoDoc contributors",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "build:desktop": "electron-builder --config electron-builder.yml",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "electron": "electron ."
+  },
+  "dependencies": {
+    "@codemirror/commands": "6.10.4",
+    "@codemirror/lang-markdown": "6.5.2",
+    "@codemirror/state": "6.7.1",
+    "@codemirror/view": "6.43.8",
+    "@hypodoc/parser-core": "workspace:*",
+    "@hypodoc/render-model": "workspace:*",
+    "@hypodoc/render-web": "workspace:*",
+    "@hypodoc/theme": "workspace:*",
+    "lucide-react": "1.28.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "electron": "43.3.0",
+    "typescript": "7.0.2",
+    "vite": "8.2.0",
+    "vitest": "4.1.10"
+  }
+}

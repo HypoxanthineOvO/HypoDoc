@@ -1,0 +1,224 @@
+@import "@hypodoc/theme/tokens.css";
+@import "katex/dist/katex.min.css";
+
+.hd-document {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 72px) clamp(22px, 6vw, 64px) 96px;
+  color: var(--hd-text);
+  font-family: var(--hd-font-reading);
+  font-size: 17px;
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+}
+
+.hd-document h1,
+.hd-document h2,
+.hd-document h3,
+.hd-document h4,
+.hd-document h5,
+.hd-document h6 {
+  margin: 1.7em 0 0.55em;
+  color: var(--hd-text);
+  font-family: var(--hd-font-ui);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0;
+  scroll-margin-top: 72px;
+}
+
+.hd-document h1 { font-size: 34px; }
+.hd-document h2 { font-size: 25px; }
+.hd-document h3 { font-size: 20px; }
+.hd-document h4 { font-size: 17px; }
+.hd-document p { margin: 0.8em 0; }
+.hd-document a { color: var(--hd-accent); text-underline-offset: 3px; }
+.hd-document blockquote {
+  margin: 20px 0;
+  padding: 4px 0 4px 18px;
+  color: var(--hd-text-muted);
+  border-left: 3px solid var(--hd-border-strong);
+}
+
+.hd-document hr {
+  height: 1px;
+  margin: 44px 0;
+  border: 0;
+  background: var(--hd-border);
+}
+
+.hd-document table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+  font-family: var(--hd-font-ui);
+  font-size: 14px;
+}
+
+.hd-document th,
+.hd-document td {
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+  border: 1px solid var(--hd-border);
+}
+
+.hd-document th { background: var(--hd-surface-muted); font-weight: 650; }
+.hd-document input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--hd-accent); }
+
+.hd-directive {
+  margin: 22px 0;
+  border: 1px solid var(--hd-border);
+  border-left: 3px solid var(--hd-accent);
+  border-radius: var(--hd-radius-md);
+  background: var(--hd-surface-raised);
+  overflow: hidden;
+}
+
+.hd-directive-header {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 13px;
+  color: var(--hd-text);
+  background: var(--hd-accent-soft);
+  font-family: var(--hd-font-ui);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.hd-directive-body { padding: 8px 16px 12px; }
+.hd-directive-kind {
+  margin-left: auto;
+  color: var(--hd-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.hd-warning { border-left-color: var(--hd-warning); }
+.hd-warning > .hd-directive-header { background: var(--hd-warning-soft); }
+.hd-answer,
+.hd-solution { border-left-color: var(--hd-success); }
+.hd-answer > .hd-directive-header,
+.hd-solution > .hd-directive-header { background: var(--hd-success-soft); }
+.hd-question,
+.hd-qa { border-left-color: var(--hd-info); }
+.hd-question > .hd-directive-header,
+.hd-qa > .hd-directive-header { background: var(--hd-info-soft); }
+
+.hd-choices { display: grid; gap: 9px; margin: 12px 0; }
+.hd-choice {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--hd-border);
+  border-radius: var(--hd-radius-sm);
+}
+.hd-choice-marker {
+  width: 14px;
+  height: 14px;
+  margin-top: 7px;
+  border: 2px solid var(--hd-border-strong);
+  border-radius: 50%;
+}
+.hd-choice p { margin: 0; }
+
+.hd-code,
+.hd-code-highlight pre {
+  margin: 18px 0;
+  padding: 16px 18px;
+  border: 1px solid color-mix(in srgb, var(--hd-border), transparent 35%);
+  border-radius: var(--hd-radius-md);
+  background: var(--hd-code-bg) !important;
+  color: var(--hd-code-text);
+  font: 13px/1.6 var(--hd-font-mono);
+  overflow: auto;
+}
+.hd-code-highlight code { font-family: var(--hd-font-mono); }
+
+.hd-mermaid { margin: 24px 0; padding: 18px; overflow: auto; text-align: center; }
+.hd-mermaid svg { max-width: 100%; height: auto; }
+.hd-diagram-loading {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin: 24px 0;
+  color: var(--hd-text-muted);
+  border-radius: var(--hd-radius-md);
+  background: var(--hd-surface-muted);
+  font: 13px var(--hd-font-ui);
+}
+.hd-diagram-loading svg { animation: hd-spin 900ms linear infinite; }
+@keyframes hd-spin { to { transform: rotate(360deg); } }
+
+.hd-inline-error,
+.hd-resource-blocked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  color: var(--hd-danger);
+  background: var(--hd-danger-soft);
+  border-radius: var(--hd-radius-sm);
+  font-family: var(--hd-font-ui);
+  font-size: 13px;
+}
+
+.hd-figure { margin: 28px 0; text-align: center; }
+.hd-figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.hd-figure-placeholder {
+  min-height: 180px;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  color: var(--hd-text-muted);
+  border: 1px dashed var(--hd-border-strong);
+  border-radius: var(--hd-radius-md);
+  background: var(--hd-surface-muted);
+  font: 13px var(--hd-font-ui);
+}
+.hd-figure figcaption,
+.hd-controlled-table figcaption { margin-top: 8px; color: var(--hd-text-muted); font: 13px var(--hd-font-ui); }
+
+.hd-preview-blocked {
+  width: min(100% - 32px, 680px);
+  margin: 48px auto;
+  padding: 24px;
+  color: var(--hd-text);
+  border: 1px solid var(--hd-danger);
+  border-radius: var(--hd-radius-md);
+  background: var(--hd-danger-soft);
+  font-family: var(--hd-font-ui);
+}
+.hd-preview-blocked h2 { margin: 10px 0 4px; font-size: 20px; }
+.hd-preview-blocked p { color: var(--hd-text-muted); }
+.hd-preview-blocked ol { display: grid; gap: 8px; padding: 0; list-style: none; }
+.hd-preview-blocked button {
+  width: 100%;
+  min-height: 44px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  padding: 10px 12px;
+  color: inherit;
+  text-align: left;
+  border: 1px solid var(--hd-border);
+  border-radius: var(--hd-radius-sm);
+  background: var(--hd-surface);
+  cursor: pointer;
+}
+.hd-preview-blocked button strong { color: var(--hd-danger); font-size: 12px; }
+.hd-preview-blocked button span { grid-column: 1; }
+.hd-preview-blocked button small { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--hd-text-muted); }
+
+@media (max-width: 600px) {
+  .hd-document { padding: 28px 20px 72px; font-size: 16px; }
+  .hd-document h1 { font-size: 29px; }
+  .hd-document h2 { font-size: 23px; }
+  .hd-directive-body { padding-inline: 12px; }
+}

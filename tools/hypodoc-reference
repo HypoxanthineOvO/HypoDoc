@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+python=${HYPODOC_PYTHON:-python3}
+
+export PYTHONPATH="$root/Spec/src${PYTHONPATH:+:$PYTHONPATH}"
+
+if [ "${1:-}" = "registry" ] && [ "${2:-}" = "check" ]; then
+  cd "$root/Spec"
+fi
+
+exec "$python" -m hypodoc.cli "$@"

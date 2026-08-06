@@ -1,6 +1,10 @@
 # Extensions
 
-Editor integrations live here. The first planned integration is HypoDoc for VS
-Code with direct live preview.
+Editor integrations. The first integration is HypoDoc for VS Code with direct
+live preview and validation commands.
 
-No extension has been migrated yet.
+| Extension | Responsibility |
+| --- | --- |
+| `VSCode` | HypoDoc Markdown preview inside VS Code |
+
+Imported from `Hypo-Markdown` source anchor `e4e7148` as curated product content.

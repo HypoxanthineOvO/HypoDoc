@@ -1,0 +1,684 @@
+{
+  "protocol": "hypodoc.performance-baseline/v1",
+  "environment": {
+    "node": "v20.20.0",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "parser": {
+    "sampleBytes": 856,
+    "sample": {
+      "averageMs": 0.228,
+      "maxMs": 0.924
+    },
+    "oneMiBBytes": 1047085,
+    "oneMiB": {
+      "averageMs": 10.603,
+      "maxMs": 14.694
+    }
+  },
+  "budgets": {
+    "sampleAverageMs": 12,
+    "oneMiBAverageMs": 600,
+    "desktopInitialGzipBytes": 400000,
+    "desktopMermaidGzipBytes": 900000
+  },
+  "checks": {
+    "sampleParser": true,
+    "oneMiBParser": true,
+    "desktopInitial": true,
+    "desktopMermaid": true
+  },
+  "bundles": {
+    "desktop": [
+      {
+        "file": "assets/mermaid-Cu6hGdcx.js",
+        "bytes": 3096677,
+        "gzipBytes": 817697
+      },
+      {
+        "file": "assets/index-BIuWYtcK.js",
+        "bytes": 970622,
+        "gzipBytes": 315128
+      },
+      {
+        "file": "assets/shiki-CGnSGOO7.js",
+        "bytes": 820777,
+        "gzipBytes": 129741
+      },
+      {
+        "file": "assets/katex-iU9GhQje.js",
+        "bytes": 288463,
+        "gzipBytes": 86674
+      },
+      {
+        "file": "assets/rolldown-runtime-hePW80VL.js",
+        "bytes": 716,
+        "gzipBytes": 428
+      }
+    ],
+    "vscodeWebview": [
+      {
+        "file": "webview.js",
+        "bytes": 1751367,
+        "gzipBytes": 322820
+      },
+      {
+        "file": "chunks/chunk-DFDO5X7F.js",
+        "bytes": 1270636,
+        "gzipBytes": 208589
+      },
+      {
+        "file": "chunks/chunk-O6GXFJLK.js",
+        "bytes": 961520,
+        "gzipBytes": 203344
+      },
+      {
+        "file": "chunks/chunk-5RHVKKW4.js",
+        "bytes": 490983,
+        "gzipBytes": 103703
+      },
+      {
+        "file": "chunks/architectureDiagram-T3A2C74G-CIIFY3Z3.js",
+        "bytes": 427532,
+        "gzipBytes": 64686
+      },
+      {
+        "file": "chunks/swimlanes-SLNWSIFB-QMPKCVOY.js",
+        "bytes": 304666,
+        "gzipBytes": 62007
+      },
+      {
+        "file": "chunks/chunk-RM5Q6D26.js",
+        "bytes": 293029,
+        "gzipBytes": 30768
+      },
+      {
+        "file": "chunks/chunk-GYT2XRGE.js",
+        "bytes": 222060,
+        "gzipBytes": 46971
+      },
+      {
+        "file": "chunks/cose-bilkent-JH36ORCC-PNCDBGQK.js",
+        "bytes": 216668,
+        "gzipBytes": 34312
+      },
+      {
+        "file": "chunks/chunk-4WHI35I2.js",
+        "bytes": 215762,
+        "gzipBytes": 30896
+      },
+      {
+        "file": "chunks/sequenceDiagram-SI44F4Z6-3P2SBODU.js",
+        "bytes": 204124,
+        "gzipBytes": 38324
+      },
+      {
+        "file": "chunks/core-6JLVHNLI.js",
+        "bytes": 201432,
+        "gzipBytes": 42953
+      },
+      {
+        "file": "chunks/typescript-HXWQCDNM.js",
+        "bytes": 181265,
+        "gzipBytes": 15825
+      },
+      {
+        "file": "chunks/chunk-2UGOCU4B.js",
+        "bytes": 174971,
+        "gzipBytes": 16233
+      },
+      {
+        "file": "chunks/blockDiagram-VBNYF7ZC-LU6JH4MO.js",
+        "bytes": 138010,
+        "gzipBytes": 26618
+      },
+      {
+        "file": "chunks/chunk-F67TZE7M.js",
+        "bytes": 129534,
+        "gzipBytes": 24330
+      },
+      {
+        "file": "chunks/c4Diagram-5PPSVZJV-ITAQL5BK.js",
+        "bytes": 120489,
+        "gzipBytes": 24230
+      },
+      {
+        "file": "chunks/engine-javascript-KTF3ZIXO.js",
+        "bytes": 113067,
+        "gzipBytes": 30492
+      },
+      {
+        "file": "chunks/chunk-MYXYJNV6.js",
+        "bytes": 105196,
+        "gzipBytes": 23946
+      },
+      {
+        "file": "chunks/ganttDiagram-PKOTCBZU-3AGG3CI2.js",
+        "bytes": 95321,
+        "gzipBytes": 21920
+      },
+      {
+        "file": "chunks/chunk-5HPO4TEG.js",
+        "bytes": 93472,
+        "gzipBytes": 20054
+      },
+      {
+        "file": "chunks/vennDiagram-T6HMQDX7-W2RGXUCS.js",
+        "bytes": 89851,
+        "gzipBytes": 21717
+      },
+      {
+        "file": "chunks/chunk-U7UN2MHU.js",
+        "bytes": 86432,
+        "gzipBytes": 20292
+      },
+      {
+        "file": "chunks/xychartDiagram-ELKLHX3M-NMSKNCDS.js",
+        "bytes": 76888,
+        "gzipBytes": 14985
+      },
+      {
+        "file": "chunks/chunk-QJXCIQ75.js",
+        "bytes": 74679,
+        "gzipBytes": 17275
+      },
+      {
+        "file": "chunks/gitGraphDiagram-DS77QQ5N-RZN3NBVL.js",
+        "bytes": 73153,
+        "gzipBytes": 13850
+      },
+      {
+        "file": "chunks/python-N6K4CINW.js",
+        "bytes": 70125,
+        "gzipBytes": 9157
+      },
+      {
+        "file": "chunks/chunk-OENAHD2V.js",
+        "bytes": 67768,
+        "gzipBytes": 17802
+      },
+      {
+        "file": "chunks/chunk-WQ7CAPNY.js",
+        "bytes": 67080,
+        "gzipBytes": 16048
+      },
+      {
+        "file": "chunks/quadrantDiagram-CIZ2JOQS-DZ77LDWG.js",
+        "bytes": 62775,
+        "gzipBytes": 12525
+      },
+      {
+        "file": "chunks/timeline-definition-Z64GVDOM-QR5ZZJFL.js",
+        "bytes": 61416,
+        "gzipBytes": 13658
+      },
+      {
+        "file": "chunks/mermaid.core-YFHENAUR.js",
+        "bytes": 61291,
+        "gzipBytes": 15437
+      },
+      {
+        "file": "chunks/markdown-ALMEWOU5.js",
+        "bytes": 59514,
+        "gzipBytes": 5705
+      },
+      {
+        "file": "chunks/chunk-NMSLFJRX.js",
+        "bytes": 59231,
+        "gzipBytes": 13414
+      },
+      {
+        "file": "chunks/html-AC7XRQHE.js",
+        "bytes": 57893,
+        "gzipBytes": 11717
+      },
+      {
+        "file": "chunks/chunk-UWGLTW3J.js",
+        "bytes": 56050,
+        "gzipBytes": 9655
+      },
+      {
+        "file": "chunks/requirementDiagram-LRYGKXZP-ASMYMC6Z.js",
+        "bytes": 54486,
+        "gzipBytes": 12346
+      },
+      {
+        "file": "chunks/erDiagram-JOGREHBK-AARDI2GN.js",
+        "bytes": 51008,
+        "gzipBytes": 12191
+      },
+      {
+        "file": "chunks/chunk-OLBWNVOB.js",
+        "bytes": 49164,
+        "gzipBytes": 11915
+      },
+      {
+        "file": "chunks/sankeyDiagram-W5VNT64P-432QYFGP.js",
+        "bytes": 47499,
+        "gzipBytes": 11729
+      },
+      {
+        "file": "chunks/journeyDiagram-NVQOT4AX-BR2XGDQD.js",
+        "bytes": 46026,
+        "gzipBytes": 11319
+      },
+      {
+        "file": "chunks/wardleyDiagram-T6FBY63Y-EFOCORGI.js",
+        "bytes": 45244,
+        "gzipBytes": 8993
+      },
+      {
+        "file": "chunks/mindmap-definition-FAOFIHXS-ANPWNANZ.js",
+        "bytes": 45231,
+        "gzipBytes": 11015
+      },
+      {
+        "file": "chunks/chunk-PNEEOEFU.js",
+        "bytes": 42692,
+        "gzipBytes": 10768
+      },
+      {
+        "file": "chunks/bash-KQKIIM65.js",
+        "bytes": 41667,
+        "gzipBytes": 6148
+      },
+      {
+        "file": "chunks/chunk-IGDXCZTK.js",
+        "bytes": 41485,
+        "gzipBytes": 9520
+      },
+      {
+        "file": "chunks/kanban-definition-27J2QSJJ-KDWQCE2P.js",
+        "bytes": 39588,
+        "gzipBytes": 9644
+      },
+      {
+        "file": "chunks/ishikawaDiagram-WSZJBQD7-I7E4W52X.js",
+        "bytes": 35822,
+        "gzipBytes": 9448
+      },
+      {
+        "file": "chunks/chunk-NYWJW2PA.js",
+        "bytes": 34704,
+        "gzipBytes": 8386
+      },
+      {
+        "file": "chunks/chunk-EZQ3LKB7.js",
+        "bytes": 31023,
+        "gzipBytes": 5953
+      },
+      {
+        "file": "chunks/diagram-Q27KOJAE-SKPBEHEJ.js",
+        "bytes": 23309,
+        "gzipBytes": 5582
+      },
+      {
+        "file": "chunks/diagram-B4RE2ZJO-HVOAK2XJ.js",
+        "bytes": 22540,
+        "gzipBytes": 5810
+      },
+      {
+        "file": "chunks/stateDiagram-OKZ733FA-72GIFI7L.js",
+        "bytes": 19767,
+        "gzipBytes": 4951
+      },
+      {
+        "file": "chunks/cynefinDiagram-MW4NZA55-H2Q5CRCA.js",
+        "bytes": 19090,
+        "gzipBytes": 4825
+      },
+      {
+        "file": "chunks/dagre-VZM6K2ZE-GBH4NKS3.js",
+        "bytes": 18727,
+        "gzipBytes": 4583
+      },
+      {
+        "file": "chunks/diagram-7IWD3JNH-7TQ46YED.js",
+        "bytes": 17063,
+        "gzipBytes": 5207
+      },
+      {
+        "file": "chunks/chunk-SRDR6OD5.js",
+        "bytes": 15533,
+        "gzipBytes": 3742
+      },
+      {
+        "file": "chunks/chunk-LQ7OQS5X.js",
+        "bytes": 14153,
+        "gzipBytes": 4053
+      },
+      {
+        "file": "chunks/diagram-UB23O5K3-CAIU6S2L.js",
+        "bytes": 12145,
+        "gzipBytes": 3567
+      },
+      {
+        "file": "chunks/github-dark-7F2QWRB7.js",
+        "bytes": 11578,
+        "gzipBytes": 2628
+      },
+      {
+        "file": "chunks/github-light-2N7QKGB4.js",
+        "bytes": 11360,
+        "gzipBytes": 2587
+      },
+      {
+        "file": "chunks/pieDiagram-7S7Q4E2Y-N47FWAVT.js",
+        "bytes": 11121,
+        "gzipBytes": 3065
+      },
+      {
+        "file": "chunks/yaml-763E5RXN.js",
+        "bytes": 10673,
+        "gzipBytes": 2366
+      },
+      {
+        "file": "chunks/diagram-LBJQPF4R-7LFJWRNG.js",
+        "bytes": 8080,
+        "gzipBytes": 2599
+      },
+      {
+        "file": "chunks/chunk-C2VK4HPO.js",
+        "bytes": 6798,
+        "gzipBytes": 1492
+      },
+      {
+        "file": "chunks/chunk-U6OBKIPL.js",
+        "bytes": 5976,
+        "gzipBytes": 1495
+      },
+      {
+        "file": "chunks/ebnfDiagram-BXEA7PRR-OT3BMMAF.js",
+        "bytes": 4530,
+        "gzipBytes": 1377
+      },
+      {
+        "file": "chunks/pegDiagram-VL7TDLO6-WY24N7C5.js",
+        "bytes": 4359,
+        "gzipBytes": 1429
+      },
+      {
+        "file": "chunks/abnfDiagram-N423BO3Z-MY5PNI3N.js",
+        "bytes": 4123,
+        "gzipBytes": 1400
+      },
+      {
+        "file": "chunks/chunk-3SGWT2QO.js",
+        "bytes": 4087,
+        "gzipBytes": 1357
+      },
+      {
+        "file": "chunks/chunk-5W25BRJL.js",
+        "bytes": 4073,
+        "gzipBytes": 1181
+      },
+      {
+        "file": "chunks/chunk-DG3E62WP.js",
+        "bytes": 4070,
+        "gzipBytes": 1234
+      },
+      {
+        "file": "chunks/chunk-XYJEPSR2.js",
+        "bytes": 3792,
+        "gzipBytes": 1168
+      },
+      {
+        "file": "chunks/chunk-3YIAHORS.js",
+        "bytes": 3776,
+        "gzipBytes": 1275
+      },
+      {
+        "file": "chunks/chunk-S2E5CKQ2.js",
+        "bytes": 3709,
+        "gzipBytes": 1239
+      },
+      {
+        "file": "chunks/railroadDiagram-AXF67PYL-XPUNGD3W.js",
+        "bytes": 3577,
+        "gzipBytes": 1192
+      },
+      {
+        "file": "chunks/json-HD2N3SGJ.js",
+        "bytes": 2991,
+        "gzipBytes": 880
+      },
+      {
+        "file": "chunks/chunk-VRX63NVO.js",
+        "bytes": 2868,
+        "gzipBytes": 978
+      },
+      {
+        "file": "chunks/chunk-COVP4IVB.js",
+        "bytes": 2753,
+        "gzipBytes": 949
+      },
+      {
+        "file": "chunks/chunk-5AKTHETZ.js",
+        "bytes": 2694,
+        "gzipBytes": 938
+      },
+      {
+        "file": "chunks/chunk-LBSFUSBI.js",
+        "bytes": 2167,
+        "gzipBytes": 751
+      },
+      {
+        "file": "chunks/chunk-RNCGGMSX.js",
+        "bytes": 2122,
+        "gzipBytes": 838
+      },
+      {
+        "file": "chunks/chunk-2ICVBFNY.js",
+        "bytes": 2117,
+        "gzipBytes": 758
+      },
+      {
+        "file": "chunks/chunk-YVN6VCUN.js",
+        "bytes": 2081,
+        "gzipBytes": 747
+      },
+      {
+        "file": "chunks/sizeCapture-X5ZJPWSS-2UA5N4I7.js",
+        "bytes": 1885,
+        "gzipBytes": 778
+      },
+      {
+        "file": "chunks/infoDiagram-6WML65LV-6LOKPPAJ.js",
+        "bytes": 1717,
+        "gzipBytes": 766
+      },
+      {
+        "file": "chunks/chunk-CQ52GEHY.js",
+        "bytes": 1549,
+        "gzipBytes": 713
+      },
+      {
+        "file": "chunks/chunk-WSN5BB6U.js",
+        "bytes": 1520,
+        "gzipBytes": 636
+      },
+      {
+        "file": "chunks/chunk-KJE3MIMP.js",
+        "bytes": 1322,
+        "gzipBytes": 583
+      },
+      {
+        "file": "chunks/chunk-EYZHEBLO.js",
+        "bytes": 1290,
+        "gzipBytes": 535
+      },
+      {
+        "file": "chunks/chunk-Y6YJA6ES.js",
+        "bytes": 1279,
+        "gzipBytes": 536
+      },
+      {
+        "file": "chunks/chunk-Y46JLJNT.js",
+        "bytes": 1258,
+        "gzipBytes": 533
+      },
+      {
+        "file": "chunks/chunk-4KP6ZOKW.js",
+        "bytes": 1247,
+        "gzipBytes": 536
+      },
+      {
+        "file": "chunks/chunk-W6JTI7YG.js",
+        "bytes": 1238,
+        "gzipBytes": 539
+      },
+      {
+        "file": "chunks/chunk-NOW7NPTU.js",
+        "bytes": 1237,
+        "gzipBytes": 556
+      },
+      {
+        "file": "chunks/swimlanesDiagram-ULZ7WXOC-WZCYIZ6N.js",
+        "bytes": 1224,
+        "gzipBytes": 547
+      },
+      {
+        "file": "chunks/classDiagram-v2-OCEON4UE-WTGAEJGG.js",
+        "bytes": 1220,
+        "gzipBytes": 527
+      },
+      {
+        "file": "chunks/classDiagram-JCYQIIEL-EJ3Y6TAC.js",
+        "bytes": 1217,
+        "gzipBytes": 526
+      },
+      {
+        "file": "chunks/stateDiagram-v2-UEYNNEHI-IXX2ZKRK.js",
+        "bytes": 1191,
+        "gzipBytes": 517
+      },
+      {
+        "file": "chunks/flowDiagram-UKHOOZJN-FW6CDY7T.js",
+        "bytes": 743,
+        "gzipBytes": 278
+      },
+      {
+        "file": "chunks/chunk-AA7HEHDK.js",
+        "bytes": 708,
+        "gzipBytes": 386
+      },
+      {
+        "file": "chunks/katex-245RUBDD.js",
+        "bytes": 661,
+        "gzipBytes": 275
+      },
+      {
+        "file": "chunks/chunk-U7NZYP3Q.js",
+        "bytes": 646,
+        "gzipBytes": 367
+      },
+      {
+        "file": "chunks/chunk-XBCSXVLT.js",
+        "bytes": 529,
+        "gzipBytes": 349
+      },
+      {
+        "file": "chunks/chunk-ESLUD33N.js",
+        "bytes": 474,
+        "gzipBytes": 289
+      },
+      {
+        "file": "chunks/chunk-DI5EJZOP.js",
+        "bytes": 465,
+        "gzipBytes": 258
+      },
+      {
+        "file": "chunks/chunk-N64IAGJC.js",
+        "bytes": 400,
+        "gzipBytes": 253
+      },
+      {
+        "file": "chunks/eventmodeling-45OFAUF4-DQSP6KFT.js",
+        "bytes": 217,
+        "gzipBytes": 132
+      },
+      {
+        "file": "chunks/architecture-TIHT7OUA-EYSCG2VO.js",
+        "bytes": 213,
+        "gzipBytes": 130
+      },
+      {
+        "file": "chunks/railroad-abnf-AHOZXSZD-WOFDQACD.js",
+        "bytes": 213,
+        "gzipBytes": 131
+      },
+      {
+        "file": "chunks/railroad-ebnf-EBAXGLYW-KD7AEK2L.js",
+        "bytes": 213,
+        "gzipBytes": 131
+      },
+      {
+        "file": "chunks/railroad-peg-LSFZ7HO6-SOYCM7N5.js",
+        "bytes": 209,
+        "gzipBytes": 130
+      },
+      {
+        "file": "chunks/gitGraph-TEB2WS4Q-N7TYGMDT.js",
+        "bytes": 197,
+        "gzipBytes": 127
+      },
+      {
+        "file": "chunks/railroad-3IZDKUUU-UZPUBYOY.js",
+        "bytes": 197,
+        "gzipBytes": 127
+      },
+      {
+        "file": "chunks/treeView-QDETBFTQ-VXR5PWCN.js",
+        "bytes": 197,
+        "gzipBytes": 127
+      },
+      {
+        "file": "chunks/cynefin-VYW2F7L2-NKZRDYPE.js",
+        "bytes": 193,
+        "gzipBytes": 126
+      },
+      {
+        "file": "chunks/treemap-6X3UGDF4-UCIJ2VZJ.js",
+        "bytes": 193,
+        "gzipBytes": 126
+      },
+      {
+        "file": "chunks/wardley-OPB4EBWU-ABWFTICQ.js",
+        "bytes": 193,
+        "gzipBytes": 126
+      },
+      {
+        "file": "chunks/packet-7NZHBO7P-QI2BWDLN.js",
+        "bytes": 189,
+        "gzipBytes": 125
+      },
+      {
+        "file": "chunks/radar-I7S5WNFK-IQK4CSQL.js",
+        "bytes": 185,
+        "gzipBytes": 124
+      },
+      {
+        "file": "chunks/info-DKCQHKI2-AQ47JZ6X.js",
+        "bytes": 181,
+        "gzipBytes": 123
+      },
+      {
+        "file": "chunks/pie-RZYD4A2V-AU6ISXBQ.js",
+        "bytes": 177,
+        "gzipBytes": 123
+      },
+      {
+        "file": "chunks/javascript-GH6Y6BGA.js",
+        "bytes": 134,
+        "gzipBytes": 107
+      },
+      {
+        "file": "chunks/css-FWBY4B5Y.js",
+        "bytes": 120,
+        "gzipBytes": 100
+      }
+    ]
+  },
+  "valid": true
+}

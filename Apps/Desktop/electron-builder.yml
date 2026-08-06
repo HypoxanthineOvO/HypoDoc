@@ -1,0 +1,29 @@
+appId: org.hypodoc.markdown
+productName: Hypo Markdown
+executableName: hypo-markdown
+copyright: Copyright 2026 HypoDoc contributors
+asar: true
+npmRebuild: false
+directories:
+  output: release
+files:
+  - dist/**/*
+  - electron/**/*
+  - package.json
+artifactName: "${productName}-${version}-${os}-${arch}.${ext}"
+mac:
+  category: public.app-category.productivity
+  target:
+    - dmg
+    - zip
+win:
+  target:
+    - nsis
+linux:
+  category: Office
+  target:
+    - AppImage
+    - deb
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true

@@ -1,6 +1,10 @@
 # Apps
 
-End-user applications live here. The first planned host is HypoDoc Desktop for
-Windows, macOS, and Linux.
+End-user host applications. The first host is HypoDoc Desktop for Windows,
+macOS, and Linux, built on Electron with a hardened main/preload boundary.
 
-No application has been migrated yet.
+| App | Responsibility |
+| --- | --- |
+| `Desktop` | Offline source-first HypoDoc editor and live preview |
+
+Imported from `Hypo-Markdown` source anchor `e4e7148` as curated product content.

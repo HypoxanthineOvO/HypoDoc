@@ -1,0 +1,53 @@
+{
+  "name": "hypodoc-vscode",
+  "displayName": "HypoDoc Markdown",
+  "description": "Offline HypoDoc validation and theme-integrated preview.",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "hypodoc",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onLanguage:markdown", "onCommand:hypodoc.openPreview", "onCommand:hypodoc.openPreviewToSide"],
+  "main": "./dist/extension.cjs",
+  "contributes": {
+    "commands": [
+      {"command": "hypodoc.openPreview", "title": "HypoDoc: Open Preview"},
+      {"command": "hypodoc.openPreviewToSide", "title": "HypoDoc: Open Preview to the Side", "icon": "$(open-preview)"}
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "hypodoc.openPreviewToSide",
+          "alt": "hypodoc.openPreview",
+          "when": "editorLangId == markdown",
+          "group": "navigation@20"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "pnpm clean && pnpm build:extension && pnpm build:webview",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build:extension": "esbuild src/extension.ts --bundle --platform=node --format=cjs --external:vscode --outfile=dist/extension.cjs",
+    "build:webview": "esbuild src/webview.tsx --bundle --platform=browser --format=esm --splitting --outdir=dist --entry-names=[name] --chunk-names=chunks/[name]-[hash] --loader:.woff=file --loader:.woff2=file --loader:.ttf=file --asset-names=fonts/[name]",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@hypodoc/parser-core": "workspace:*",
+    "@hypodoc/render-model": "workspace:*",
+    "@hypodoc/render-web": "workspace:*",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@types/vscode": "1.95.0",
+    "esbuild": "0.28.1",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
+  }
+}
