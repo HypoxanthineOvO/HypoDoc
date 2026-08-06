@@ -1,0 +1,35 @@
+# JavaScript / TypeScript
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# LaTeX and generated documents
+build/
+*.aux
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.synctex.gz
+
+# Distribution output
+release/
+Apps/Desktop/release/
+
+# Local tooling
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Hypo-Workflow runtime is local execution state.
+.pipeline/runtime/

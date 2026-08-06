@@ -1,0 +1,76 @@
+active_by_dedupe_key:
+  adoption_brief: decision-4988194e8da4729f6e146acd82ad6894
+  business_integration_authority_policy: decision-1261e60c4cd0c7209ca2e010550440f0
+  hypolatex_integrated_version_policy: decision-784dfeca0076cda345dbe529e6d46a85
+  project_intent: requirement-2e7f4647c6eae580736b790153c9e69e
+authority_role: derived
+records:
+  - active: true
+    confidence: confirmed
+    created_at: 2026-08-06T09:43:19.585Z
+    dedupe_key: business_integration_authority_policy
+    id: decision-1261e60c4cd0c7209ca2e010550440f0
+    kind: decision
+    path: .pipeline/memory/records/project-9ee4882526c8/decision/decision-1261e60c4cd0c7209ca2e010550440f0.md
+    scope:
+      ref: project:HypoDoc
+      type: project
+    semantic_hash: 1261e60c4cd0c7209ca2e010550440f05fefc35ce2cbaa65e8ff3efbb371ac59
+    source_refs:
+      - locator: request.integration-authority
+        ref: plan
+        type: user_feedback
+    supersedes: []
+    updated_at: 2026-08-06T09:43:19.585Z
+  - active: true
+    confidence: medium
+    created_at: 2026-08-05T16:19:44.156Z
+    dedupe_key: adoption_brief
+    id: decision-4988194e8da4729f6e146acd82ad6894
+    kind: decision
+    path: .pipeline/memory/records/project-9ee4882526c8/decision/decision-4988194e8da4729f6e146acd82ad6894.md
+    scope:
+      ref: project:HypoDoc
+      type: project
+    semantic_hash: 4988194e8da4729f6e146acd82ad68943da89b088c30d700558ca24ecfc5bc49
+    source_refs:
+      - locator: README.md
+        ref: README.md
+        type: repository_file
+    supersedes: []
+    updated_at: 2026-08-05T16:19:44.156Z
+  - active: true
+    confidence: confirmed
+    created_at: 2026-08-06T09:35:46.000Z
+    dedupe_key: hypolatex_integrated_version_policy
+    id: decision-784dfeca0076cda345dbe529e6d46a85
+    kind: decision
+    path: .pipeline/memory/records/project-9ee4882526c8/decision/decision-784dfeca0076cda345dbe529e6d46a85.md
+    scope:
+      ref: project:HypoDoc
+      type: project
+    semantic_hash: 784dfeca0076cda345dbe529e6d46a854fc55d0758b8abffc648eecf30e63ca1
+    source_refs:
+      - locator: request.hypolatex-version
+        ref: plan
+        type: user_request
+    supersedes: []
+    updated_at: 2026-08-06T09:35:46.000Z
+  - active: true
+    confidence: confirmed
+    created_at: 2026-08-05T16:19:44.156Z
+    dedupe_key: project_intent
+    id: requirement-2e7f4647c6eae580736b790153c9e69e
+    kind: requirement
+    path: .pipeline/memory/records/project-9ee4882526c8/requirement/requirement-2e7f4647c6eae580736b790153c9e69e.md
+    scope:
+      ref: project:HypoDoc
+      type: project
+    semantic_hash: 2e7f4647c6eae580736b790153c9e69ea7a82f5daecb7a9ca26b8ff51bcea9bb
+    source_refs:
+      - locator: request.intent
+        ref: init
+        type: user_request
+    supersedes: []
+    updated_at: 2026-08-05T16:19:44.156Z
+schema_version: '1'
