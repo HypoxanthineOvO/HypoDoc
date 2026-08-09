@@ -78,6 +78,7 @@ const report = {
   valid: Object.values(checks).every(Boolean),
 };
 mkdirSync(resolve(root, "reports"), { recursive: true });
-writeFileSync(resolve(root, "reports/performance-baseline.json"), `${JSON.stringify(report, null, 2)}\n`);
+const output = resolve(root, process.env.HYPODOC_PERF_OUTPUT ?? "reports/performance-baseline.json");
+writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`);
 console.log(JSON.stringify({ protocol: report.protocol, valid: report.valid, parser, checks }));
 if (!report.valid) process.exitCode = 1;

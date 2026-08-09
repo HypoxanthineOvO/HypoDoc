@@ -1,0 +1,69 @@
+{
+  "protocol": "hypodoc.slides-gap-baseline/v1",
+  "source": "Skills/LaTeX/templates/beamer.md",
+  "sourceDeclares": "document_type: beamer",
+  "publishedTemplate": {
+    "desktop": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "surface": "blocked",
+      "renderedProfile": null,
+      "diagnostics": [
+        "REQUIRED_IDENTIFIER\n.table requires a stable #identifier.\nLine 61"
+      ],
+      "frameSurfaceCount": 0,
+      "thematicBreakCount": 0,
+      "documentScrollHeight": 900,
+      "screenshot": "reports/visual-baseline/web-beamer-current-desktop.png"
+    },
+    "mobile": {
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "surface": "blocked",
+      "renderedProfile": null,
+      "diagnostics": [
+        "REQUIRED_IDENTIFIER\n.table requires a stable #identifier.\nLine 61"
+      ],
+      "frameSurfaceCount": 0,
+      "thematicBreakCount": 0,
+      "documentScrollHeight": 812,
+      "screenshot": "reports/visual-baseline/web-beamer-current-mobile.png"
+    }
+  },
+  "minimalCanonicalRepair": {
+    "changes": [
+      "document_type: beamer -> profile: beamer",
+      "add stable #tab:function-matrix-evidence to .table"
+    ],
+    "desktop": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "surface": "document",
+      "renderedProfile": "beamer",
+      "diagnostics": [],
+      "frameSurfaceCount": 0,
+      "thematicBreakCount": 1,
+      "documentScrollHeight": 900,
+      "screenshot": "reports/visual-baseline/web-beamer-canonical-desktop.png"
+    },
+    "mobile": {
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "surface": "document",
+      "renderedProfile": "beamer",
+      "diagnostics": [],
+      "frameSurfaceCount": 0,
+      "thematicBreakCount": 1,
+      "documentScrollHeight": 812,
+      "screenshot": "reports/visual-baseline/web-beamer-canonical-mobile.png"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "protocol": "hypodoc.rendering-audit-baseline/v1",
+  "environment": {
+    "node": "v20.20.0",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "fixtures": {
+    "sampleBytes": 856,
+    "oneMiBBytes": 1046972,
+    "oneMiBSlidesBytes": 1046493
+  },
+  "pipeline": {
+    "sample": {
+      "iterations": 100,
+      "medianMs": 0.373,
+      "p95Ms": 0.685,
+      "maxMs": 1.6
+    },
+    "oneMiB": {
+      "iterations": 15,
+      "medianMs": 6.089,
+      "p95Ms": 9.097,
+      "maxMs": 9.097
+    }
+  },
+  "projectionOnly": {
+    "sample": {
+      "iterations": 100,
+      "medianMs": 0.003,
+      "p95Ms": 0.003,
+      "maxMs": 0.005
+    },
+    "oneMiB": {
+      "iterations": 15,
+      "medianMs": 0.035,
+      "p95Ms": 0.046,
+      "maxMs": 0.046
+    }
+  },
+  "slideDeck": {
+    "sample": {
+      "iterations": 100,
+      "medianMs": 0.046,
+      "p95Ms": 0.057,
+      "maxMs": 0.169
+    },
+    "oneMiB": {
+      "iterations": 15,
+      "medianMs": 2.981,
+      "p95Ms": 3.417,
+      "maxMs": 3.417
+    }
+  },
+  "slidePipeline": {
+    "sample": {
+      "iterations": 100,
+      "medianMs": 0.043,
+      "p95Ms": 0.045,
+      "maxMs": 0.051
+    },
+    "oneMiB": {
+      "iterations": 15,
+      "medianMs": 2.71,
+      "p95Ms": 2.984,
+      "maxMs": 2.984
+    }
+  },
+  "memory": {
+    "projectionIterations": 30,
+    "heapBeforeBytes": 13771544,
+    "heapAfterBytes": 18007664,
+    "retainedDeltaBytes": 4236120,
+    "note": "Coarse process-level signal without forced GC; compare only on the same runtime and host."
+  }
+}

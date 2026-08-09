@@ -1,0 +1,117 @@
+Function Matrix
+
+Beamer Slides DSL Template
+
+
+Hypo-LaTeX
+2026 年 8 月 9 日
+   1
+   Function Matrix
+
+
+Function Matrix
+  Function Matrix / Mapping Contract
+
+  Function Matrix Overview
+
+
+
+
+   Slide Goal
+   Connect a function’s domain, codomain, kernel, image, and rank to the matrix used to repre-
+   sent a linear map.
+
+       A function matrix records how input coordinates determine output coordinates.
+       The public template is synthetic and contains no private course or corpus text.
+
+
+
+
+Function Matrix                                                                    Hypo-LaTeX · 3 / 8
+  Function Matrix / Mapping Contract
+
+  Function Matrix Overview (continued 2/3)
+
+
+
+
+       Separator-driven frames inherit the previous H3 frame title while the inheritance limit
+       allows it.
+       Use this pattern only when a topic needs one short continuation frame.
+
+
+
+
+Function Matrix                                                                      Hypo-LaTeX · 4 / 8
+  Function Matrix / Mapping Contract
+
+  Domain And Codomain
+
+
+
+
+   Notation
+   For a linear map 𝑇 ∶ 𝑉 → 𝑊 , the domain is 𝑉 and the codomain is 𝑊 .
+
+       Matrix columns correspond to basis vectors from the domain.
+       Matrix rows correspond to output coordinates in the codomain.
+
+
+
+
+Function Matrix                                                           Hypo-LaTeX · 5 / 8
+  Function Matrix / Matrix Evidence
+
+  Kernel, Image, Rank
+
+
+
+   Reader Check
+   Use the matrix to locate the kernel, image, and rank before drawing conclusions about injec-
+   tivity or surjectivity.
+
+       Kernel: all input vectors mapped to zero.
+       Image: all reachable output vectors.
+       Rank: the dimension of the image.
+
+
+
+
+Function Matrix                                                                   Hypo-LaTeX · 6 / 8
+  Function Matrix / Matrix Evidence
+
+  Function Matrix Table
+
+
+
+                                           表: Function matrix evidence
+      Object                          Matrix evidence                    Slide check
+      Domain                          Number of input coordinates        Match column count
+      Codomain                        Number of output coordinates       Match row count
+      Kernel                          Solutions of 𝐴𝑥 = 0                Detect null vectors
+      Image                           Span of columns of 𝐴               Count pivot columns
+      Rank                            Dimension of image                 Compare with target
+                                                                         dimension
+
+
+
+Function Matrix                                                                            Hypo-LaTeX · 7 / 8
+  Function Matrix / Matrix Evidence
+
+  Local Asset Rule
+
+
+   Asset Discipline
+   Slide decks may reference local assets with relative paths, but public templates must not fetch
+   remote or private files during builds.
+
+       Keep public examples self-contained unless a local fixture asset is committed.
+       Use resource-root only for local project assets that belong with the deck.
+       Image dimensions preserve aspect ratio by default; add stretch=true only when an
+       image should deliberately fill both width and height.
+       Standalone caption-less image lines are centered automatically with a
+       0.75\textheight height cap; place side-by-side figures on one line and give each a
+       width=NN% that sums below 100%.
+
+Function Matrix                                                                      Hypo-LaTeX · 8 / 8
+

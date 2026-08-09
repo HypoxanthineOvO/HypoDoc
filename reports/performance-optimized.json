@@ -8,13 +8,13 @@
   "parser": {
     "sampleBytes": 856,
     "sample": {
-      "averageMs": 0.242,
-      "maxMs": 1.12
+      "averageMs": 0.22,
+      "maxMs": 0.606
     },
     "oneMiBBytes": 1047085,
     "oneMiB": {
-      "averageMs": 8.702,
-      "maxMs": 11.472
+      "averageMs": 9.109,
+      "maxMs": 11.556
     }
   },
   "budgets": {
@@ -37,9 +37,9 @@
         "gzipBytes": 817697
       },
       {
-        "file": "assets/index-MqYqOotP.js",
-        "bytes": 984033,
-        "gzipBytes": 318870
+        "file": "assets/index-DU4t54zD.js",
+        "bytes": 982443,
+        "gzipBytes": 318216
       },
       {
         "file": "assets/shiki-CGnSGOO7.js",
@@ -60,8 +60,8 @@
     "vscodeWebview": [
       {
         "file": "webview.js",
-        "bytes": 1767563,
-        "gzipBytes": 326139
+        "bytes": 1765061,
+        "gzipBytes": 325487
       },
       {
         "file": "chunks/chunk-DFDO5X7F.js",

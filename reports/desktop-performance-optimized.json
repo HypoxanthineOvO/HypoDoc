@@ -1,0 +1,19 @@
+{
+  "protocol": "hypodoc.desktop-performance-baseline/v1",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "coldStart": {
+    "documentReadyMs": 2132.155,
+    "optionalContentAfterDocumentMs": 38.065
+  },
+  "editToPreview": {
+    "iterations": 10,
+    "medianMs": 188.396,
+    "p95Ms": 489.672,
+    "maxMs": 489.672
+  },
+  "consoleErrors": [],
+  "measurementNote": "Includes Playwright input and mode-switch overhead; use for same-host before/after comparisons, not as a universal latency claim."
+}
