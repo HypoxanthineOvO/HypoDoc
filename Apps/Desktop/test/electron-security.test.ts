@@ -25,9 +25,22 @@ describe("Electron security contract", () => {
     expect(main).toContain("approvedDocuments.add(filePath)");
   });
 
-  it("exposes only the typed open and save bridge", () => {
+  it("limits folder access to dialog-approved Markdown documents", () => {
+    expect(main).toContain('properties: ["openDirectory"]');
+    expect(main).toContain("entry.isSymbolicLink()");
+    expect(main).toContain("MAX_WORKSPACE_DEPTH");
+    expect(main).toContain("MAX_WORKSPACE_DOCUMENTS");
+    expect(main).toContain("approvedDocuments.has(approvedPath)");
+    expect(main).toContain("approvedWorkspaceDocuments.get(approvedPath)");
+    expect(main).toContain("currentCanonicalPath !== expectedCanonicalPath");
+    expect(main).toContain("allowedDocumentPath(approvedPath)");
+  });
+
+  it("exposes only the typed document and workspace bridge", () => {
     expect(preload).toContain('exposeInMainWorld("hypodocDesktop"');
     expect(preload).toContain("openDocument");
+    expect(preload).toContain("openWorkspace");
+    expect(preload).toContain("readWorkspaceDocument");
     expect(preload).toContain("saveDocument");
     expect(preload).not.toContain("ipcRenderer: ipcRenderer");
   });

@@ -11,6 +11,7 @@ export interface EditorHandle {
 interface EditorProps {
   value: string;
   theme: "light" | "dark";
+  showLineNumbers: boolean;
   onChange(value: string): void;
 }
 
@@ -45,7 +46,7 @@ function editorTheme(theme: "light" | "dark") {
 }
 
 export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
-  { value, theme, onChange },
+  { value, theme, showLineNumbers, onChange },
   ref,
 ) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -72,7 +73,7 @@ export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
       state: EditorState.create({
         doc: value,
         extensions: [
-          lineNumbers(),
+          ...(showLineNumbers ? [lineNumbers()] : []),
           highlightActiveLine(),
           history(),
           keymap.of([...defaultKeymap, ...historyKeymap]),
@@ -90,7 +91,7 @@ export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
       view.destroy();
       viewRef.current = null;
     };
-  }, [theme]);
+  }, [showLineNumbers, theme]);
 
   useEffect(() => {
     const view = viewRef.current;

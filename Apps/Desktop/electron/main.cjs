@@ -1,10 +1,13 @@
 const { app, BrowserWindow, dialog, ipcMain, shell } = require("electron");
-const { readFile, writeFile } = require("node:fs/promises");
-const { basename, extname, resolve } = require("node:path");
+const { readFile, readdir, realpath, writeFile } = require("node:fs/promises");
+const { basename, extname, relative, resolve } = require("node:path");
 
 const ALLOWED_EXTENSIONS = new Set([".md", ".markdown"]);
 const MAX_DOCUMENT_BYTES = 2 * 1024 * 1024;
+const MAX_WORKSPACE_DEPTH = 8;
+const MAX_WORKSPACE_DOCUMENTS = 250;
 const approvedDocuments = new Set();
+const approvedWorkspaceDocuments = new Map();
 
 function allowedDocumentPath(filePath) {
   return typeof filePath === "string" && ALLOWED_EXTENSIONS.has(extname(filePath).toLowerCase());
@@ -21,6 +24,51 @@ async function openDocument(window) {
   if (Buffer.byteLength(content, "utf8") > MAX_DOCUMENT_BYTES) throw new Error("Document exceeds the 2 MB safety limit.");
   const approvedPath = resolve(filePath);
   approvedDocuments.add(approvedPath);
+  return { path: approvedPath, name: basename(approvedPath), content };
+}
+
+async function collectWorkspaceDocuments(rootPath, directoryPath = rootPath, depth = 0, documents = []) {
+  if (depth > MAX_WORKSPACE_DEPTH || documents.length >= MAX_WORKSPACE_DOCUMENTS) return documents;
+  const entries = await readdir(directoryPath, { withFileTypes: true });
+  entries.sort((left, right) => left.name.localeCompare(right.name));
+  for (const entry of entries) {
+    if (documents.length >= MAX_WORKSPACE_DOCUMENTS) break;
+    if (entry.isSymbolicLink()) continue;
+    const entryPath = resolve(directoryPath, entry.name);
+    if (entry.isDirectory()) {
+      await collectWorkspaceDocuments(rootPath, entryPath, depth + 1, documents);
+    } else if (entry.isFile() && allowedDocumentPath(entryPath)) {
+      const relativePath = relative(rootPath, entryPath);
+      if (!relativePath.startsWith("..")) {
+        const canonicalPath = await realpath(entryPath);
+        approvedDocuments.add(entryPath);
+        approvedWorkspaceDocuments.set(entryPath, canonicalPath);
+        documents.push({ path: entryPath, name: entry.name, relativePath });
+      }
+    }
+  }
+  return documents;
+}
+
+async function openWorkspace(window) {
+  const result = await dialog.showOpenDialog(window, { properties: ["openDirectory"] });
+  const selectedPath = result.filePaths[0];
+  if (result.canceled || !selectedPath) return null;
+  const workspacePath = resolve(selectedPath);
+  const documents = await collectWorkspaceDocuments(workspacePath);
+  return { path: workspacePath, name: basename(workspacePath), documents };
+}
+
+async function readWorkspaceDocument(filePath) {
+  const approvedPath = typeof filePath === "string" && filePath.length <= 4096 ? resolve(filePath) : null;
+  const expectedCanonicalPath = approvedPath ? approvedWorkspaceDocuments.get(approvedPath) : null;
+  if (!approvedPath || !expectedCanonicalPath || !approvedDocuments.has(approvedPath) || !allowedDocumentPath(approvedPath)) {
+    throw new Error("Document was not authorized by the workspace dialog.");
+  }
+  const currentCanonicalPath = await realpath(approvedPath);
+  if (currentCanonicalPath !== expectedCanonicalPath) throw new Error("Authorized document path changed after selection.");
+  const content = await readFile(approvedPath, "utf8");
+  if (Buffer.byteLength(content, "utf8") > MAX_DOCUMENT_BYTES) throw new Error("Document exceeds the 2 MB safety limit.");
   return { path: approvedPath, name: basename(approvedPath), content };
 }
 
@@ -98,6 +146,8 @@ function createWindow() {
 app.whenReady().then(() => {
   const window = createWindow();
   ipcMain.handle("hypodoc:open-document", () => openDocument(window));
+  ipcMain.handle("hypodoc:open-workspace", () => openWorkspace(window));
+  ipcMain.handle("hypodoc:read-workspace-document", (_event, filePath) => readWorkspaceDocument(filePath));
   ipcMain.handle("hypodoc:save-document", (_event, input) => saveDocument(window, input));
 });
 
