@@ -8,7 +8,9 @@ status: active
 
 ## 当前工作
 
-- [Cycle 索引](cycles/INDEX.md)：`C001-hypodoc-monorepo-migration-release` 已 completed；HypoDoc `v0.1.0` 已发布。
+- [Cycle 索引](cycles/INDEX.md)：当前 Session 聚焦
+  `C003-v0.2.0-rc.1-commit-preparation`，正在把 C002 交付拆为原子本地提交并准备 RC 版本；
+  不 push、不 tag、不发布。
 - [Experiment 索引](experiments/INDEX.md)：当前没有 Experiment。
 - [Memory 索引](memory/INDEX.md)：长期项目意图、采用状态与已确认决策。
 
