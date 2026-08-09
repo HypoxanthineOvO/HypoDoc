@@ -21,6 +21,12 @@ build/
 *.out
 *.synctex.gz
 
+# Skill evaluation binaries are embedded in the committed review artifact.
+Skills/LaTeX-workspace/**/outputs/*.pdf
+Skills/LaTeX-workspace/**/outputs/*.png
+Skills/LaTeX-workspace/**/outputs/.*.pdf
+Skills/LaTeX-workspace/**/outputs/.*.png
+
 # Distribution output
 /release/
 Apps/Desktop/release/

@@ -2,13 +2,13 @@
 title: Function Matrix
 subtitle: Public Beamer Slides DSL Template
 author: Hypo-LaTeX
-profile: beamer
-theme: minimal
+theme: plain
+document_type: beamer
 palette: red
 aspectratio: "169"
 footline: full
 section_dividers: true
-subsection_dividers: true
+subsection_dividers: false
 frame_title_inheritance_limit: 3
 continued_title_style: subtle
 strict_structure: true
@@ -58,7 +58,21 @@ about injectivity or surjectivity.
 
 ### Function Matrix Table
 
-::: {.table #function-matrix-evidence kind="comparison" caption="Function matrix evidence"}
+::: {.table}
+```yaml
+type: comparison
+density: compact
+caption: Function matrix evidence
+label: tab:function-matrix-evidence
+columns:
+  - align: left
+    width: 0.24
+  - align: left
+    width: 0.34
+  - align: left
+    width: 0.28
+```
+
 | Object | Matrix evidence | Slide check |
 |---|---|---|
 | Domain | Number of input coordinates | Match column count |

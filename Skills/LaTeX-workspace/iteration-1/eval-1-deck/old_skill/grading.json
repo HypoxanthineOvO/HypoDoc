@@ -1,0 +1,57 @@
+{
+  "expectations": [
+    {
+      "text": "deck.md, deck.pdf, and evidence.md exist and are non-empty",
+      "passed": true,
+      "evidence": "Required source, PDF, and evidence files are non-empty."
+    },
+    {
+      "text": "deck.md uses canonical profile: beamer without document_type/documentclass and selects theme minimal with palette blue",
+      "passed": false,
+      "evidence": "Frontmatter keys: ['aspectratio', 'author', 'continued_title_style', 'date', 'document_type', 'footline', 'frame_title_inheritance_limit', 'palette', 'section_dividers', 'strict_structure', 'subsection_dividers', 'subtitle', 'theme', 'title']; profile=None."
+    },
+    {
+      "text": "deck.md contains one H1, one H2, exactly three H3 content frames, subsection_dividers: true, and the requested objective/table/math/code content",
+      "passed": true,
+      "evidence": "Heading counts H1/H2/H3: 1/1/3."
+    },
+    {
+      "text": "deck.pdf is exactly 6 pages with 16:9 geometry and extractable representative text from all three content frames",
+      "passed": true,
+      "evidence": "pdfinfo reports 6 pages at 453.54 x 255.12 pt and requested frame text is extractable."
+    },
+    {
+      "text": "evidence.md records the pinned Pandoc 3.10/doctor result, PDF page geometry/count, and extracted text checks",
+      "passed": true,
+      "evidence": "Evidence names Pandoc 3.10, page facts, and pdftotext checks."
+    },
+    {
+      "text": "No output uses --allow-placeholders or references missing, absolute, parent-traversing, or remote assets",
+      "passed": true,
+      "evidence": "No placeholder flag or local/external asset reference is present."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  },
+  "execution_metrics": {
+    "total_tool_calls": 0,
+    "errors_encountered": 0,
+    "output_chars": 0,
+    "transcript_chars": 0,
+    "artifact_bytes": 36142
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions inspect source, PDF, and evidence."
+  }
+}

@@ -6,9 +6,9 @@ organization: Hypo Research Lab
 course: Reliable Document Workflows
 date: 2026-06-28
 version: v0.1
+logo: assets/hypo-logo.pdf
 icon: book-open
 abstract: This demo shows the minimum longform structure for Hypo-LaTeX authoring, conversion, and PDF build review.
-profile: book
 theme: classic-readable
 ---
 
@@ -28,17 +28,17 @@ Draft the document in Markdown, review the generated TeX, then build the PDF whe
 Keep each section focused on one idea so later edits stay easy to review.
 :::
 
-## Optional Figure Pattern
+## Figure Placeholder
 
-Add a figure only after its workspace-relative asset exists. Missing assets fail by default, so this non-executing example is safer than a silent placeholder:
+The figure directive can point at an asset that is not present yet. The current MVP renders a fallback box so the PDF still builds.
 
-````markdown
 ::: {.figure label="fig:workflow-overview" src="assets/workflow-overview.png" caption="Hypo-LaTeX authoring and build overview" width="0.92" placement="H"}
 :::
 
+The previous placeholder is referenced below.
+
 ::: {.ref target="fig:workflow-overview"}
 :::
-````
 
 :::warning
 Check dependency diagnostics before assuming that a build failure is caused by document content.

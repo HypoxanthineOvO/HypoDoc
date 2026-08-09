@@ -5,7 +5,6 @@ author: Example Author
 organization: Hypo Research Lab
 course: Flexible Project Studio
 date: 2026-06-29
-profile: article
 theme: tech-minimal
 cover_layout: info-panel
 ---

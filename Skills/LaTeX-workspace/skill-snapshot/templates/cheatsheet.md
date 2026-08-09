@@ -2,8 +2,8 @@
 title: Signals & Systems CH1-CH4 Midterm Cheatsheet
 subtitle: 手写稿电子转写示例：FS / CTFT
 author: Example Author
-profile: article
 theme: tech-minimal
+document_type: article
 layout: cheatsheet
 ---
 

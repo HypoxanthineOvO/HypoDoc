@@ -1,0 +1,57 @@
+{
+  "expectations": [
+    {
+      "text": "project.md, project.pdf, and evidence.md exist and are non-empty",
+      "passed": true,
+      "evidence": "Required source, PDF, and evidence files are non-empty."
+    },
+    {
+      "text": "project.md uses canonical profile: article and theme: tech-minimal without legacy profile aliases or advanced style fields",
+      "passed": false,
+      "evidence": "Frontmatter keys: ['answer_mode', 'author', 'document_type', 'subtitle', 'theme', 'title']; profile=None."
+    },
+    {
+      "text": "project.md contains objective, task, requirement, deliverable, checklist, rubric, question, hint, answer, and solution blocks",
+      "passed": true,
+      "evidence": "All requested block names present: True."
+    },
+    {
+      "text": "project.md contains one controlled .table with YAML columns and a comparison type",
+      "passed": true,
+      "evidence": "Exactly one controlled comparison table with YAML columns is present."
+    },
+    {
+      "text": "The reviewer PDF includes the supplied answer and solution concepts, demonstrating the intentional answer-mode override",
+      "passed": true,
+      "evidence": "Extracted PDF contains Answer, Solution, and supplied semantic comparison concepts."
+    },
+    {
+      "text": "evidence.md records doctor/toolchain, build command, page count/geometry, and extracted content markers without placeholders",
+      "passed": true,
+      "evidence": "Evidence records pinned toolchain, review override, A4 page facts, and no-placeholder status."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  },
+  "execution_metrics": {
+    "total_tool_calls": 0,
+    "errors_encountered": 0,
+    "output_chars": 0,
+    "transcript_chars": 0,
+    "artifact_bytes": 339353
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions inspect source, PDF, and evidence."
+  }
+}

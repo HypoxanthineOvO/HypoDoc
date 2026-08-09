@@ -5,7 +5,6 @@ author: Example Author
 organization: Hypo Research Lab
 course: Review Packet Studio
 date: 2026-06-29
-profile: article
 theme: warm-handbook
 answer_mode: student
 cover_layout: info-panel
