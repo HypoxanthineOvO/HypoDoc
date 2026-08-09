@@ -1,14 +1,16 @@
 ---
 kind: cycle
 name: C003-v0.2.0-rc.1-commit-preparation
-status: active
+status: closed
 started: 2026-08-09
+closed: 2026-08-09
 updated: 2026-08-09
 builds_on:
   - C002-hypodoc-rendering-quality-performance
 plan: PLAN.md
 progress: PROGRESS.md
 execution: EXECUTION.md
+summary: SUMMARY.md
 ---
 
 # HypoDoc v0.2.0-rc.1 原子提交准备

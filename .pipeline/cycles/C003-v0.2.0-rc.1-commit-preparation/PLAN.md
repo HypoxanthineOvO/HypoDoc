@@ -2,7 +2,7 @@
 kind: plan
 cycle: C003-v0.2.0-rc.1-commit-preparation
 mode: goal
-status: active
+status: completed
 updated: 2026-08-09
 progress: PROGRESS.md
 execution: EXECUTION.md
