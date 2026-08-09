@@ -6,6 +6,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SKILL_FILE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "SKILL.md"
+SKILL_REFERENCE_ROOT = SKILL_FILE.parent / "references"
 TEMPLATE_FILE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "templates" / "longform.md"
 BEAMER_TEMPLATE_FILE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "templates" / "beamer.md"
 MIN_PDF_BYTES = 1024
@@ -18,7 +19,7 @@ REQUIRED_TEMPLATE_METADATA = (
     "course",
     "date",
     "version",
-    "logo",
+    "profile",
     "icon",
     "abstract",
     "theme",
@@ -367,10 +368,14 @@ def test_skill_markdown_names_mvp_limits():
 
 
 def test_skill_markdown_guides_beamer_slides_dsl_contract():
-    normalized = _normalized(_read_required_file(SKILL_FILE))
+    normalized = _normalized(
+        _read_required_file(SKILL_FILE)
+        + "\n"
+        + (SKILL_REFERENCE_ROOT / "slides.md").read_text(encoding="utf-8")
+    )
 
     for required in (
-        "document_type: beamer",
+        "profile: beamer",
         "presentation",
         "slides",
         "h1",
@@ -385,9 +390,9 @@ def test_skill_markdown_guides_beamer_slides_dsl_contract():
 
     _assert_near_any(
         normalized,
-        ("document_type: beamer",),
-        ("presentation", "slides", "alias", "aliases"),
-        "Skill should document the relevant Beamer document_type aliases.",
+        ("profile: beamer",),
+        ("presentation", "slides", "canonical"),
+        "Skill should document canonical Beamer profile selection.",
     )
     _assert_near_any(
         normalized,
@@ -454,7 +459,8 @@ def test_beamer_template_is_public_function_matrix_deck_contract():
     normalized = _normalized(text)
     frontmatter = _frontmatter(text)
 
-    assert frontmatter.get("document_type") == "beamer"
+    assert frontmatter.get("profile") == "beamer"
+    assert "document_type" not in frontmatter
     assert frontmatter.get("title")
     assert frontmatter.get("theme")
     assert "function matrix" in normalized
@@ -496,7 +502,12 @@ def test_skill_longform_template_builds_to_non_empty_pdf(runner, cli_app, tmp_pa
 
     result = runner.invoke(
         cli_app,
-        ["build", str(TEMPLATE_FILE), "--output", str(output_path)],
+        [
+            "build",
+            str(TEMPLATE_FILE),
+            "--output",
+            str(output_path),
+        ],
     )
 
     assert result.exit_code == 0, result.output

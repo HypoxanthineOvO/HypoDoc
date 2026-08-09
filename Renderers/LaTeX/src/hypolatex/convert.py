@@ -11,6 +11,7 @@ import subprocess
 import tempfile
 
 from hypolatex import document_options
+from hypolatex import diagnostics
 from hypolatex import slides
 from hypolatex import themes as themes_module
 
@@ -44,15 +45,17 @@ def convert_markdown(
         raise ConversionError(f"Output path is a directory: {target}")
 
     try:
-        effective_theme = themes_module.resolve_theme(source, override=theme)
-    except themes_module.ThemeError as exc:
-        raise ConversionError(str(exc)) from exc
-
-    try:
         options = document_options.resolve_document_options(
             source, answer_mode=answer_mode
         )
     except document_options.DocumentOptionsError as exc:
+        raise ConversionError(str(exc)) from exc
+
+    try:
+        effective_theme = themes_module.resolve_theme(
+            source, override=theme, document_type=options.document_type
+        )
+    except themes_module.ThemeError as exc:
         raise ConversionError(str(exc)) from exc
 
     pandoc = shutil.which("pandoc")
@@ -61,6 +64,9 @@ def convert_markdown(
             "Pandoc executable was not found on PATH. Install Pandoc and retry "
             "`hypolatex convert`."
         )
+    pandoc_check = diagnostics.check_pandoc_version(pandoc)
+    if not pandoc_check.ok:
+        raise ConversionError(pandoc_check.detail + "\n" + pandoc_check.remediation)
 
     target_parent = target.parent if target.parent != Path("") else Path(".")
     target_parent.mkdir(parents=True, exist_ok=True)

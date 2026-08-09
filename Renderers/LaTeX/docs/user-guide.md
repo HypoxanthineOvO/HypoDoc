@@ -164,7 +164,7 @@ columns:
 
 Beamer 是当前 Slides DSL 的一等输出类型，但范围限定为受支持的 Markdown 合同；Hypo-LaTeX 不提供自动 Marp/任意 LaTeX deck converter。
 
-在 frontmatter 中使用 `document_type: beamer`，别名 `slides` 和 `presentation` 会解析到同一 Beamer 分支。H1 (`#`) 是 section，H2 (`##`) 是 subsection，H3 (`###`) 是 frame title，单独一行 `---` 是 frame separator/new frame。`strict_structure: true` 时，H2 without H1 invalid，即 H2 前没有 H1 会被拒绝。
+在 frontmatter 中使用 canonical `profile: beamer`；旧 `document_type: beamer` 以及 `slides`、`presentation` 仅作为读入兼容别名。H1 (`#`) 是 section，H2 (`##`) 是 subsection，H3 (`###`) 是 frame title，单独一行 `---` 是 frame separator/new frame。`strict_structure: true` 时，H2 without H1 invalid，即 H2 前没有 H1 会被拒绝。
 
 Beamer 选项包括 `section_dividers`、`subsection_dividers`、`strict_structure`、`frame_title_inheritance_limit` 和 `continued_title_style`。`frame_title_inheritance_limit` default `3`；`continued_title_style` 可用值是 `subtle`、`suffix`、`none`。density/overfull lint 只是 heuristic/limited lint signal，不是 not a layout guarantee。
 
@@ -178,7 +178,7 @@ Slides 支持 semantic blocks：`objective`、`info`、`task`、`requirement`、
 ---
 title: Midterm Cheatsheet
 theme: tech-minimal
-document_type: article
+profile: article
 layout: cheatsheet
 ---
 ```

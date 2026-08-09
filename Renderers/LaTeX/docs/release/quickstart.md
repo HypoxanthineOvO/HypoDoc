@@ -2,7 +2,7 @@
 title: Hypo-LaTeX Quickstart
 author: Hypo-LaTeX Maintainers
 theme: tech-minimal
-document_type: article
+profile: article
 ---
 
 # 检查环境

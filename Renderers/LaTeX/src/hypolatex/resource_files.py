@@ -6,7 +6,6 @@ from dataclasses import dataclass
 import json
 from pathlib import Path
 import shutil
-import struct
 import subprocess
 from typing import Iterable
 import zlib
@@ -37,6 +36,7 @@ def prepare_markdown_resources(
     input_path: Path | str,
     output_dir: Path | str,
     resource_roots: Iterable[Path | str] = (),
+    allow_missing: bool = False,
 ) -> ResourcePreparationResult:
     """Copy Markdown-referenced local resources into a LaTeX build directory."""
 
@@ -63,6 +63,11 @@ def prepare_markdown_resources(
             )
         )
 
+    if missing and not allow_missing:
+        formatted = "\n".join(f"  - {reference}" for reference in missing)
+        raise ResourceError(
+            "Local resources are missing or outside the allowed roots:\n" + formatted
+        )
     return ResourcePreparationResult(copied=tuple(copied), missing=tuple(missing))
 
 
@@ -223,10 +228,10 @@ def _resource_roots(
 
 
 def _copy_resource(source: Path, destination: Path) -> None:
+    if source.suffix.lower() == ".png" and not _is_valid_png(source):
+        raise ResourceError(f"Invalid PNG resource: {source}")
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source, destination)
-    if destination.suffix.lower() == ".png" and not _is_valid_png(destination):
-        destination.write_bytes(_minimal_png())
 
 
 def _resolve_resource(reference: str, roots: tuple[Path, ...]) -> Path | None:
@@ -235,10 +240,14 @@ def _resolve_resource(reference: str, roots: tuple[Path, ...]) -> Path | None:
 
     reference_path = Path(reference)
     if reference_path.is_absolute():
-        return reference_path if reference_path.is_file() else None
+        return None
 
     for root in roots:
         candidate = (root / reference_path).resolve()
+        try:
+            candidate.relative_to(root.resolve())
+        except ValueError:
+            continue
         if candidate.is_file():
             return candidate
     return None
@@ -297,24 +306,3 @@ def _is_valid_png(path: Path) -> bool:
         offset = checksum_end
 
     return False
-
-
-def _minimal_png() -> bytes:
-    def chunk(name: bytes, payload: bytes) -> bytes:
-        checksum = zlib.crc32(name + payload)
-        return (
-            len(payload).to_bytes(4, "big")
-            + name
-            + payload
-            + checksum.to_bytes(4, "big")
-        )
-
-    signature = b"\x89PNG\r\n\x1a\n"
-    ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0)
-    idat = zlib.compress(b"\x00\xff\xff\xff\x00")
-    return (
-        signature
-        + chunk(b"IHDR", ihdr)
-        + chunk(b"IDAT", idat)
-        + chunk(b"IEND", b"")
-    )

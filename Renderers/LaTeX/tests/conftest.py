@@ -138,6 +138,10 @@ case ",${HYPOLATEX_FAKE_MISSING_TEX_PACKAGES}," in
 esac
 printf '/fake/texmf/tex/latex/%s/%s.sty\\n' "$package" "$package"
 """
+    elif executable == "pandoc":
+        script = """#!/bin/sh
+printf 'pandoc 3.10\\n'
+"""
     elif executable == "python3":
         script = """#!/bin/sh
 printf 'Python 3.12.0\\n'

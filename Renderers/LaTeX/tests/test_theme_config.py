@@ -1,6 +1,10 @@
 import re
 from pathlib import Path
 
+import pytest
+
+from hypolatex import themes
+
 
 TEST_ROOT = Path(__file__).parent
 FIXTURE_ROOT = TEST_ROOT / "fixtures"
@@ -161,6 +165,37 @@ def test_invalid_theme_fails_before_toolchain_and_lists_valid_theme_ids(
     assert "vaporwave-debug" in diagnostic
     for valid_theme in ("classic-readable", "plain"):
         assert valid_theme in diagnostic
+
+
+def test_theme_capability_rejects_beamer_theme_for_longform(tmp_path):
+    module = themes
+    input_path = tmp_path / "longform-glass.md"
+    input_path.write_text("---\nprofile: book\ntheme: glass\n---\n# Title\n", encoding="utf-8")
+
+    with pytest.raises(module.ThemeError) as excinfo:
+        module.resolve_theme(input_path, document_type="book")
+
+    diagnostic = str(excinfo.value).lower()
+    assert "glass" in diagnostic
+    assert "book" in diagnostic
+    assert "classic-readable" in diagnostic
+
+
+def test_theme_capability_rejects_longform_theme_for_beamer(tmp_path):
+    module = themes
+    input_path = tmp_path / "beamer-classic.md"
+    input_path.write_text(
+        "---\nprofile: beamer\ntheme: classic-readable\n---\n### Frame\nBody.\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(module.ThemeError) as excinfo:
+        module.resolve_theme(input_path, document_type="beamer")
+
+    diagnostic = str(excinfo.value).lower()
+    assert "classic-readable" in diagnostic
+    assert "beamer" in diagnostic
+    assert "glass" in diagnostic
     for late_failure in ("latexmk", "xelatex", "pandoc"):
         assert late_failure not in diagnostic
 

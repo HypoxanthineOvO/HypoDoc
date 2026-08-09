@@ -166,6 +166,24 @@ def test_doctor_fails_and_names_missing_executable(
     _assert_actionable_failure(result.output)
 
 
+def test_doctor_fails_when_pandoc_version_is_not_pinned(
+    runner,
+    cli_app,
+    fake_toolchain_factory,
+):
+    fake_toolchain = fake_toolchain_factory()
+    pandoc = fake_toolchain.bin_dir / "pandoc"
+    pandoc.write_text("#!/bin/sh\nprintf 'pandoc 3.1.3\\n'\n", encoding="utf-8")
+    pandoc.chmod(0o755)
+
+    result = runner.invoke(cli_app, ["doctor"], env=fake_toolchain.env())
+
+    assert result.exit_code != 0, result.output
+    output = _normalized(result.output)
+    assert "pandoc 3.10" in output
+    assert "pandoc 3.1.3" in output
+
+
 @pytest.mark.parametrize("missing_tool", PDF_EVIDENCE_TOOLS)
 def test_doctor_fails_and_names_missing_pdf_evidence_tool(
     runner,

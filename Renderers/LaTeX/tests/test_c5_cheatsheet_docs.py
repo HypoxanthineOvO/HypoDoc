@@ -6,6 +6,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SKILL_FILE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "SKILL.md"
+SKILL_REFERENCE_ROOT = SKILL_FILE.parent / "references"
 DOCS_C5_CHEATSHEET = PROJECT_ROOT / "docs" / "c5-cheatsheet.md"
 CHEATSHEET_TEMPLATE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "templates" / "cheatsheet.md"
 
@@ -20,7 +21,13 @@ ARG_TERMINATORS = frozenset("`'\"()[]{}<>.,;:!?")
 
 def _read_required_file(path: Path) -> str:
     assert path.is_file(), f"Expected required C5 cheatsheet file to exist: {path}"
-    return path.read_text(encoding="utf-8")
+    text = path.read_text(encoding="utf-8")
+    if path == SKILL_FILE:
+        text += "\n" + "\n".join(
+            (SKILL_REFERENCE_ROOT / name).read_text(encoding="utf-8")
+            for name in ("authoring.md", "export-and-evidence.md")
+        )
+    return text
 
 
 def _normalized(text: str) -> str:
@@ -307,7 +314,8 @@ def test_cheatsheet_template_exists_with_article_frontmatter_and_public_safe_con
     normalized = _normalized(text)
     frontmatter = _frontmatter(text)
 
-    assert frontmatter.get("document_type") == "article"
+    assert frontmatter.get("profile") == "article"
+    assert "document_type" not in frontmatter
     assert frontmatter.get("layout") == "cheatsheet"
 
     _assert_contains_all(

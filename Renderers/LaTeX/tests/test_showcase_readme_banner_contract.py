@@ -212,7 +212,13 @@ def test_showcase_builds_to_tmp_pdf_with_extractable_text(
 
     result = runner.invoke(
         cli_app,
-        ["build", str(SHOWCASE_SOURCE), "--output", str(output_path)],
+        [
+            "build",
+            str(SHOWCASE_SOURCE),
+            "--output",
+            str(output_path),
+            "--allow-placeholders",
+        ],
     )
 
     assert result.exit_code == 0, result.output

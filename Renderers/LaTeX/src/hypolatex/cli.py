@@ -124,6 +124,13 @@ def build(
             ),
         ),
     ] = None,
+    allow_placeholders: Annotated[
+        bool,
+        typer.Option(
+            "--allow-placeholders",
+            help="Allow missing local assets to render as explicit PDF placeholders.",
+        ),
+    ] = False,
 ) -> None:
     """Convert HypoDoc Markdown and compile a PDF with XeLaTeX."""
 
@@ -134,6 +141,7 @@ def build(
             paper=paper,
             theme=theme,
             answer_mode=answer_mode,
+            allow_placeholders=allow_placeholders,
         )
     except (build_module.BuildError, convert_module.ConversionError) as exc:
         typer.echo(str(exc), err=True)

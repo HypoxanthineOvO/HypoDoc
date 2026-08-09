@@ -3,7 +3,7 @@ title: Hypo-LaTeX Release Handbook
 author: Hypo-LaTeX Maintainers
 theme: warm-handbook
 answer_mode: review
-document_type: article
+profile: article
 ---
 
 # 项目定位
@@ -126,7 +126,7 @@ HypoDoc Markdown 子集面向可构建、可审阅、可同步的长文资料。
 
 # Cheatsheet 紧凑布局
 
-需要一页或两页的紧凑速查表时，在 frontmatter 中声明 `document_type: article` 加 `layout: cheatsheet`。cheatsheet 是 `article` 之上的布局模式，不是新的文档类型：正文、标题、语义模块和受控表格保持兼容；不写该 layout 时文档仍走标准 article 版式。
+需要一页或两页的紧凑速查表时，在 frontmatter 中声明 `profile: article` 加 `layout: cheatsheet`。cheatsheet 是 `article` 之上的布局模式，不是新的文档类型：正文、标题、语义模块和受控表格保持兼容；不写该 layout 时文档仍走标准 article 版式。
 
 写作约定是：
 

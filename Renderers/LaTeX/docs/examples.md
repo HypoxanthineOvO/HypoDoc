@@ -161,13 +161,13 @@ columns:
 
 ## Beamer function matrix deck
 
-Beamer slides 使用 `document_type: beamer`，也接受 `slides` 和 `presentation` 别名。H1 是 section，H2 是 subsection，H3 是 frame title；`---` 是 frame separator/new frame。`strict_structure: true` 时 H2 without H1 invalid。`frame_title_inheritance_limit` default `3`，`continued_title_style` 可设为 `subtle`、`suffix` 或 `none`；`section_dividers` 和 `subsection_dividers` 控制分隔页。
+Beamer slides 使用 canonical `profile: beamer`，旧 `document_type: beamer`、`slides` 和 `presentation` 仅作为读入兼容别名。H1 是 section，H2 是 subsection，H3 是 frame title；`---` 是 frame separator/new frame。`strict_structure: true` 时 H2 without H1 invalid。`frame_title_inheritance_limit` default `3`，`continued_title_style` 可设为 `subtle`、`suffix` 或 `none`；`section_dividers` 和 `subsection_dividers` 控制分隔页。
 
 ````markdown
 ---
 title: Function Matrix
 theme: plain
-document_type: beamer
+profile: beamer
 section_dividers: true
 subsection_dividers: false
 frame_title_inheritance_limit: 3

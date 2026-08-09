@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib
 from collections.abc import Mapping
 from pathlib import Path
+from textwrap import dedent
 
 import pytest
 
@@ -22,7 +23,10 @@ def _document_options_module():
 
 def _write_markdown(path: Path, frontmatter: str = "") -> Path:
     if frontmatter:
-        path.write_text(f"---\n{frontmatter.strip()}\n---\n\n# Title\n", encoding="utf-8")
+        path.write_text(
+            f"---\n{dedent(frontmatter).strip()}\n---\n\n# Title\n",
+            encoding="utf-8",
+        )
     else:
         path.write_text("# Title\n\nPlain body.\n", encoding="utf-8")
     return path
@@ -84,6 +88,31 @@ def test_document_options_reads_frontmatter_document_type(tmp_path):
     options = _resolve(module, input_path)
 
     assert _option_value(options, "document_type") == "article"
+
+
+def test_document_options_prefers_canonical_profile(tmp_path):
+    module = _document_options_module()
+    input_path = _write_markdown(tmp_path / "canonical.md", "profile: beamer")
+
+    options = _resolve(module, input_path)
+
+    assert _option_value(options, "document_type") == "beamer"
+
+
+def test_document_options_rejects_canonical_and_legacy_profile_together(tmp_path):
+    module = _document_options_module()
+    input_path = _write_markdown(
+        tmp_path / "conflict.md",
+        """
+        profile: beamer
+        document_type: beamer
+        """,
+    )
+
+    with pytest.raises(module.DocumentOptionsError) as excinfo:
+        _resolve(module, input_path)
+
+    assert "canonical" in str(excinfo.value).lower()
 
 
 @pytest.mark.parametrize(

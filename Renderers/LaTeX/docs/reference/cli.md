@@ -10,8 +10,8 @@ hypolatex convert INPUT_PATH --output OUTPUT.tex
 hypolatex build INPUT_PATH --output OUTPUT.pdf
 ```
 
-`hypolatex convert` and `hypolatex build` also accept `document_type: beamer`
-sources. `slides` and `presentation` are aliases for Beamer document type.
+`hypolatex convert` and `hypolatex build` use canonical `profile: beamer`
+sources. Legacy `document_type: beamer`, `slides`, and `presentation` remain read aliases.
 
 ## `hypolatex doctor`
 
@@ -89,8 +89,8 @@ uv run hypolatex build skill/templates/beamer.md \
   --output build/skill-beamer.pdf
 ```
 
-Beamer contract summary: `document_type: beamer`; aliases `slides` and
-`presentation`; H1 is section, H2 is subsection, H3 is frame title; `---` is a
+Beamer contract summary: canonical `profile: beamer`; legacy aliases
+`document_type: beamer`, `slides`, and `presentation`; H1 is section, H2 is subsection, H3 is frame title; `---` is a
 frame separator/new frame. `frame_title_inheritance_limit` default is `3`;
 `continued_title_style` values are `subtle`, `suffix`, and `none`.
 `section_dividers`, `subsection_dividers`, and `strict_structure` tune the deck

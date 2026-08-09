@@ -6,6 +6,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SKILL_FILE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "SKILL.md"
+SKILL_REFERENCE_ROOT = SKILL_FILE.parent / "references"
 PUBLIC_DOC_FILES = (
     PROJECT_ROOT / "docs" / "user-guide.md",
     PROJECT_ROOT / "docs" / "examples.md",
@@ -32,7 +33,10 @@ SEMANTIC_SLIDE_BLOCKS = (
 
 def _read_required_file(path: Path) -> str:
     assert path.is_file(), f"Expected required public Beamer artifact: {path}"
-    return path.read_text(encoding="utf-8")
+    text = path.read_text(encoding="utf-8")
+    if path == SKILL_FILE:
+        text += "\n" + (SKILL_REFERENCE_ROOT / "slides.md").read_text(encoding="utf-8")
+    return text
 
 
 def _normalized(text: str) -> str:
@@ -71,7 +75,7 @@ def _assert_beamer_dsl_contract_documented(text: str, label: str) -> None:
     _assert_contains_all(
         text,
         (
-            "document_type: beamer",
+            "profile: beamer",
             "presentation",
             "slides",
             "h1",
@@ -91,9 +95,9 @@ def _assert_beamer_dsl_contract_documented(text: str, label: str) -> None:
 
     _assert_near_any(
         text,
-        ("document_type: beamer",),
-        ("presentation", "slides", "alias", "aliases"),
-        f"{label} should name relevant Beamer document_type aliases.",
+        ("profile: beamer",),
+        ("presentation", "slides", "canonical"),
+        f"{label} should name canonical Beamer profile selection.",
     )
     _assert_near_any(
         text,

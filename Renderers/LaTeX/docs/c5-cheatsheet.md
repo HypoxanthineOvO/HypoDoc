@@ -1,7 +1,7 @@
 # C5 Cheatsheet Layout
 
 C5 增加的是面向紧凑速查表的 layout API。作者在 Markdown frontmatter 中写
-`document_type: article` 与 `layout: cheatsheet`，即可让同一篇 `article`
+`profile: article` 与 `layout: cheatsheet`，即可让同一篇 `article`
 进入 cheatsheet 版式路径。这里的 API 是文档版式约定，不是新的命令行入口；
 构建 PDF 仍使用已有 build 流程。
 
@@ -11,7 +11,7 @@ C5 增加的是面向紧凑速查表的 layout API。作者在 Markdown frontmat
 
 ```yaml
 ---
-document_type: article
+profile: article
 layout: cheatsheet
 ---
 ```
@@ -45,7 +45,7 @@ C3 语义块保持兼容。
 
 ## article fallback
 
-当文档是 `document_type: article` 但没有设置 `layout: cheatsheet` 时，系统走
+当文档是 `profile: article` 但没有设置 `layout: cheatsheet` 时，系统走
 普通 article fallback 行为，也就是标准文章布局。换句话说，`article` 是稳定的
 基础文档类型，`layout: cheatsheet` 是在这个基础上打开紧凑速查表布局；没有该
 layout 时不会破坏原有 article 渲染。

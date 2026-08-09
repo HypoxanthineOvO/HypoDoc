@@ -10,6 +10,12 @@ import os
 import re
 from typing import Any
 
+from hypolatex.configuration import (
+    ConfigurationError,
+    optional_scalar,
+    split_frontmatter as split_yaml_frontmatter,
+)
+
 
 class SlidesError(ValueError):
     """Raised when slide options or slide structure are invalid."""
@@ -452,42 +458,16 @@ def _trim_blank_lines(lines: list[str]) -> list[str]:
 
 
 def _split_frontmatter(text: str) -> tuple[dict[str, str], str]:
-    lines = text.splitlines()
-    if not lines or lines[0].strip() != "---":
-        return {}, text
-
-    frontmatter_lines: list[str] = []
-    for index, line in enumerate(lines[1:], start=1):
-        if line.strip() in {"---", "..."}:
-            body = "\n".join(lines[index + 1 :])
-            if text.endswith("\n"):
-                body += "\n"
-            return _parse_flat_frontmatter(frontmatter_lines), body
-        frontmatter_lines.append(line)
-
-    return {}, text
-
-
-def _parse_flat_frontmatter(lines: list[str]) -> dict[str, str]:
-    values: dict[str, str] = {}
-    for line in lines:
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#") or ":" not in stripped:
-            continue
-        key, value = stripped.split(":", 1)
-        key = key.strip()
-        if key in _OPTION_NAMES:
-            values[key] = _clean_scalar(value)
-    return values
-
-
-def _clean_scalar(value: str) -> str:
-    value = value.strip()
-    if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
-        return value[1:-1].strip()
-    if "#" in value:
-        value = value.split("#", 1)[0].strip()
-    return value
+    try:
+        metadata, body = split_yaml_frontmatter(text)
+        values = {
+            key: value
+            for key in _OPTION_NAMES
+            if (value := optional_scalar(metadata, key)) is not None
+        }
+        return values, body
+    except ConfigurationError as exc:
+        raise SlidesError(str(exc)) from exc
 
 
 def _parse_bool(name: str, value: str) -> bool:

@@ -21,6 +21,7 @@ class BuildError(RuntimeError):
 
 DEFAULT_PAPER = "a4paper"
 SUPPORTED_PAPERS = frozenset({"a4paper", "letterpaper"})
+DEFAULT_SOURCE_DATE_EPOCH = "946684800"
 
 
 @dataclass(frozen=True)
@@ -37,6 +38,7 @@ def build_pdf(
     paper: str = DEFAULT_PAPER,
     theme: str | None = None,
     answer_mode: str | None = None,
+    allow_placeholders: bool = False,
 ) -> BuildResult:
     """Convert a HypoDoc Markdown file and compile it with latexmk/XeLaTeX."""
 
@@ -50,15 +52,17 @@ def build_pdf(
         raise BuildError(f"Output path is a directory: {target}")
 
     try:
-        themes_module.resolve_theme(source, override=theme)
-    except themes_module.ThemeError as exc:
-        raise BuildError(str(exc)) from exc
-
-    try:
         options = document_options.resolve_document_options(
             source, answer_mode=answer_mode
         )
     except document_options.DocumentOptionsError as exc:
+        raise BuildError(str(exc)) from exc
+
+    try:
+        themes_module.resolve_theme(
+            source, override=theme, document_type=options.document_type
+        )
+    except themes_module.ThemeError as exc:
         raise BuildError(str(exc)) from exc
 
     latexmk = shutil.which("latexmk")
@@ -88,7 +92,9 @@ def build_pdf(
         )
         _apply_paper_override(tex_path, paper)
         try:
-            resource_files.prepare_markdown_resources(source, work_dir)
+            resource_files.prepare_markdown_resources(
+                source, work_dir, allow_missing=allow_placeholders
+            )
         except resource_files.ResourceError as exc:
             raise BuildError(f"Resource preparation failed.\n{exc}") from exc
 
@@ -170,6 +176,9 @@ def _replace_pdf(source: Path, target: Path) -> None:
 
 def _latex_environment() -> dict[str, str]:
     env = os.environ.copy()
+    env.setdefault("SOURCE_DATE_EPOCH", DEFAULT_SOURCE_DATE_EPOCH)
+    env.setdefault("FORCE_SOURCE_DATE", "1")
+    env.setdefault("TZ", "UTC")
     texinputs = [f"{path}//" for path in _texinputs_paths()]
     existing_texinputs = env.get("TEXINPUTS")
     texinputs.append(existing_texinputs if existing_texinputs is not None else "")

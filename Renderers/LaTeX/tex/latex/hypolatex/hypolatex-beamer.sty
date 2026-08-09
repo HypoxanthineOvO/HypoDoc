@@ -10,6 +10,7 @@
 \RequirePackage[UTF8]{ctex}
 \RequirePackage{fontspec}
 \RequirePackage{etoolbox}
+\RequirePackage{amssymb}
 \RequirePackage{xparse}
 \RequirePackage{xcolor}
 \RequirePackage{tcolorbox}
@@ -329,6 +330,27 @@
     \HypoAgendaStrip
   \end{beamercolorbox}%
   \vfill
+}
+
+\setbeamertemplate{subsection page}{%
+  \vspace*{3.2em}%
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=1.6em,rightskip=1.6em]{section page}%
+    {\color{HypoBeamerMain!16!white}\fontsize{30}{32}\selectfont\bfseries
+      \thesection.\thesubsection\par}%
+    \vspace{0.25em}%
+    {\usebeamerfont{section page}\usebeamercolor[fg]{section page}\insertsubsection\par}%
+    \vspace{0.7ex}%
+    \HypoHeadRule
+  \end{beamercolorbox}%
+  \vfill
+}
+
+\newcommand{\HypoEnableSubsectionDividers}{%
+  \AtBeginSubsection[]{%
+    \begin{frame}[plain]%
+      \subsectionpage%
+    \end{frame}%
+  }%
 }
 
 \AtBeginSection[]{%

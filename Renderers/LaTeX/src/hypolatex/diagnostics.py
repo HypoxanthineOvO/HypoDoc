@@ -28,6 +28,7 @@ PDF_EVIDENCE_TOOLS = (
 REQUIRED_TEX_PACKAGES = (
     "ctex",
     "fontspec",
+    "amssymb",
     "tcolorbox",
     "fancyhdr",
     "geometry",
@@ -54,6 +55,8 @@ RECOMMENDED_CHINESE_FONTS = (
     "Alibaba PuHuiTi 3.0",
     "DingTalk JinBuTi",
 )
+
+REQUIRED_PANDOC_VERSION = "3.10"
 
 
 @dataclass(frozen=True)
@@ -119,6 +122,8 @@ def check_executable(name: str) -> CheckResult:
 
     found = shutil.which(name)
     if found:
+        if name == "pandoc":
+            return check_pandoc_version(found)
         return CheckResult(name=name, ok=True, detail=found)
 
     if name == "python3":
@@ -135,6 +140,31 @@ def check_executable(name: str) -> CheckResult:
         ok=False,
         detail=f"{name} was not found on PATH.",
         remediation=f"Install {name} and ensure it is available on PATH.",
+    )
+
+
+def check_pandoc_version(executable: str) -> CheckResult:
+    """Require the exact Pandoc release pinned by the renderer contract."""
+
+    result = subprocess.run(
+        [executable, "--version"],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    first_line = (result.stdout or result.stderr).splitlines()
+    actual = first_line[0].strip() if first_line else "<no version output>"
+    expected = f"pandoc {REQUIRED_PANDOC_VERSION}"
+    if result.returncode == 0 and actual == expected:
+        return CheckResult(name="pandoc", ok=True, detail=f"{executable} ({actual})")
+    return CheckResult(
+        name="pandoc",
+        ok=False,
+        detail=f"Expected {expected}, found {actual} at {executable}.",
+        remediation=(
+            f"Use the pinned Pandoc {REQUIRED_PANDOC_VERSION} binary before running "
+            "doctor, convert, or build."
+        ),
     )
 
 

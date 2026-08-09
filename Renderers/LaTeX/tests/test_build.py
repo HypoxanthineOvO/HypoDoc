@@ -52,12 +52,15 @@ def _invoke_build(
     output_path,
     paper=None,
     answer_mode=None,
+    allow_placeholders=False,
 ):
     args = ["build", str(input_path), "--output", str(output_path)]
     if paper is not None:
         args.extend(["--paper", paper])
     if answer_mode is not None:
         args.extend(["--answer-mode", answer_mode])
+    if allow_placeholders:
+        args.append("--allow-placeholders")
     return runner.invoke(cli_app, args)
 
 
@@ -139,7 +142,9 @@ def test_build_compiles_core_fixtures_to_pdf(
     input_path = FIXTURE_ROOT / fixture_name
     output_path = tmp_path / pdf_name
 
-    result = _invoke_build(runner, cli_app, input_path, output_path)
+    result = _invoke_build(
+        runner, cli_app, input_path, output_path, allow_placeholders=True
+    )
 
     assert result.exit_code == 0, result.output
     _assert_non_empty_pdf(output_path)
@@ -315,6 +320,43 @@ def test_build_minimal_beamer_fixture_to_non_empty_pdf(runner, cli_app, tmp_path
     _assert_non_empty_pdf(output_path)
 
 
+def test_repeated_beamer_builds_are_byte_deterministic(runner, cli_app, tmp_path):
+    first = tmp_path / "first.pdf"
+    second = tmp_path / "second.pdf"
+
+    first_result = _invoke_build(runner, cli_app, BEAMER_MINIMAL_FIXTURE, first)
+    second_result = _invoke_build(runner, cli_app, BEAMER_MINIMAL_FIXTURE, second)
+
+    assert first_result.exit_code == 0, first_result.output
+    assert second_result.exit_code == 0, second_result.output
+    assert first.read_bytes() == second.read_bytes()
+
+
+def test_beamer_subsection_dividers_add_explicit_pdf_pages(runner, cli_app, tmp_path):
+    source = tmp_path / "subsection-dividers.md"
+    source.write_text(
+        """---
+title: Divider Contract
+profile: beamer
+theme: plain
+section_dividers: true
+subsection_dividers: true
+---
+# Part
+## Section
+### Frame
+Body.
+""",
+        encoding="utf-8",
+    )
+    output = tmp_path / "subsection-dividers.pdf"
+
+    result = _invoke_build(runner, cli_app, source, output)
+
+    assert result.exit_code == 0, result.output
+    assert _pdf_pages(output) == 4
+
+
 def test_build_function_matrix_beamer_fixture_to_pdf_evidence(
     runner,
     cli_app,
@@ -384,6 +426,57 @@ def test_build_skill_beamer_template_to_pdf_evidence(runner, cli_app, tmp_path):
         "Rank",
     ):
         assert expected_text in pdf_text
+
+
+@pytest.mark.parametrize(
+    ("profile", "body"),
+    (
+        pytest.param(
+            "article",
+            "# Checklist\n\n::: {.checklist title=\"Release Checklist\"}",
+            id="article",
+        ),
+        pytest.param(
+            "beamer",
+            "# Checklist\n\n## Release\n\n### Task Markers\n\n::: {.checklist title=\"Release Checklist\"}",
+            id="beamer",
+        ),
+    ),
+)
+def test_build_task_list_markers_define_checkbox_symbols(
+    runner,
+    cli_app,
+    tmp_path,
+    profile,
+    body,
+):
+    source = tmp_path / f"task-list-{profile}.md"
+    source.write_text(
+        f"""---
+title: Task List Symbols
+profile: {profile}
+theme: plain
+section_dividers: false
+subsection_dividers: false
+---
+
+{body}
+
+- [ ] Pending evidence
+- [x] Verified evidence
+:::
+""",
+        encoding="utf-8",
+    )
+    output = tmp_path / f"task-list-{profile}.pdf"
+
+    result = _invoke_build(runner, cli_app, source, output)
+
+    assert result.exit_code == 0, result.output
+    _assert_non_empty_pdf(output)
+    extracted = _extract_pdf_text(output)
+    assert "Pending evidence" in extracted
+    assert "Verified evidence" in extracted
 
 
 def test_build_rejects_conversion_errors_with_actionable_diagnostic(

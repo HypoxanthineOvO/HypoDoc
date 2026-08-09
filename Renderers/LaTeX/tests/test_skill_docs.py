@@ -10,6 +10,7 @@ import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SKILL_FILE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "SKILL.md"
+SKILL_REFERENCE_ROOT = SKILL_FILE.parent / "references"
 DOCS_C3_GUIDANCE = PROJECT_ROOT / "docs" / "c3-authoring.md"
 PROJECT_TEMPLATE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "templates" / "project.md"
 REVIEW_TEMPLATE = PROJECT_ROOT / ".." / ".." / "Skills" / "LaTeX" / "templates" / "review.md"
@@ -43,7 +44,13 @@ TABLE_DENSITIES = ("compact", "normal", "comfortable")
 
 def _read_required_file(path: Path) -> str:
     assert path.is_file(), f"Expected required M6 skill/docs file to exist: {path}"
-    return path.read_text(encoding="utf-8")
+    text = path.read_text(encoding="utf-8")
+    if path == SKILL_FILE:
+        text += "\n" + "\n".join(
+            reference.read_text(encoding="utf-8")
+            for reference in sorted(SKILL_REFERENCE_ROOT.glob("*.md"))
+        )
+    return text
 
 
 def _normalized(text: str) -> str:

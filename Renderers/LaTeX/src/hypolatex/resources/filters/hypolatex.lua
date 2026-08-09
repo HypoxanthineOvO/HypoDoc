@@ -1472,14 +1472,29 @@ function Div(div)
   return div
 end
 
--- Path-valued metadata (cover logos) must reach the template verbatim:
--- pandoc would otherwise escape underscores or reinterpret markup in file
--- paths, producing names like logoTU\textunderscore negative.png.
+local function safe_resource_metadata(key, value)
+  local path = pandoc.utils.stringify(value)
+  if path:find("[\\{}%c]") then
+    error("metadata '" .. key .. "' must be a plain relative resource path")
+  end
+  if path:match("^/") or path:match("^%a:[/\\]") or path:match("^[%a][%w+.-]*:") then
+    error("metadata '" .. key .. "' must not be absolute or external")
+  end
+  for segment in path:gmatch("[^/]+") do
+    if segment == "." or segment == ".." then
+      error("metadata '" .. key .. "' must stay inside the document resource roots")
+    end
+  end
+  return pandoc.RawInline("latex", "\\detokenize{" .. path .. "}")
+end
+
+-- Path-valued metadata uses one validated relative-path representation. The
+-- detokenize wrapper preserves underscores without allowing TeX injection.
 function Meta(meta)
-  for _, key in ipairs({ "logo", "logolong", "logonegative" }) do
+  for _, key in ipairs({ "logo", "logolong", "logonegative", "cover_image" }) do
     local value = meta[key]
     if value ~= nil then
-      meta[key] = { pandoc.RawInline("latex", pandoc.utils.stringify(value)) }
+      meta[key] = { safe_resource_metadata(key, value) }
     end
   end
   return meta

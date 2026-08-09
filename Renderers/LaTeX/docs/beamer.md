@@ -4,13 +4,13 @@ Hypo-LaTeX treats Beamer as a first-class document type for the current Slides D
 
 ## Frontmatter
 
-Use `document_type: beamer`. The aliases `slides` and `presentation` resolve to the same Beamer branch.
+Use canonical `profile: beamer`. Legacy `document_type: beamer`, `slides`, and `presentation` resolve to the same Beamer branch for compatibility.
 
 ```yaml
 ---
 title: Function Matrix
 theme: plain
-document_type: beamer
+profile: beamer
 palette: red
 aspectratio: "169"
 footline: full

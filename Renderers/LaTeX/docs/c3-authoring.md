@@ -244,7 +244,7 @@ Real artifacts and results are local only. Do not commit real source files, priv
 
 ## Beamer Note
 
-C3 semantic blocks also work on Beamer slides. For `document_type: beamer`
+C3 semantic blocks also work on Beamer slides. For canonical `profile: beamer`
 (`slides`/`presentation` aliases), H1 maps to section, H2 maps to subsection,
 H3 maps to frame title, and `---` is a frame separator/new frame. The same
 semantic blocks are supported on slides: `objective`, `info`, `task`,

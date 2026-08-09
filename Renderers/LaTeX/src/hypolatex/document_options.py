@@ -5,7 +5,8 @@ from __future__ import annotations
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from pathlib import Path
-import re
+
+from hypolatex.configuration import ConfigurationError, load_frontmatter, optional_scalar
 
 
 class DocumentOptionsError(ValueError):
@@ -24,17 +25,6 @@ DEFAULT_BEAMER_ASPECTRATIO = "169"
 SUPPORTED_BEAMER_ASPECTRATIOS = ("43", "54", "149", "1610", "169", "32")
 DEFAULT_BEAMER_FOOTLINE = "full"
 SUPPORTED_BEAMER_FOOTLINES = ("full", "page", "none")
-
-_ANSWER_MODE_LINE_RE = re.compile(r"^answer_mode\s*:\s*(?P<value>.*?)\s*$")
-_DOCUMENT_TYPE_LINE_RE = re.compile(
-    r"^(?:document_type|documentclass)\s*:\s*(?P<value>.*?)\s*$"
-)
-_LAYOUT_LINE_RE = re.compile(r"^layout\s*:\s*(?P<value>.*?)\s*$")
-_BEAMER_PALETTE_LINE_RE = re.compile(r"^palette\s*:\s*(?P<value>.*?)\s*$")
-_BEAMER_ASPECTRATIO_LINE_RE = re.compile(r"^aspectratio\s*:\s*(?P<value>.*?)\s*$")
-_BEAMER_FOOTLINE_LINE_RE = re.compile(r"^footline\s*:\s*(?P<value>.*?)\s*$")
-_BEAMER_LOGO_LINE_RE = re.compile(r"^logo\s*:\s*(?P<value>.*?)\s*$")
-
 
 @dataclass(frozen=True)
 class DocumentOptions(Mapping[str, str]):
@@ -220,8 +210,13 @@ def resolve_document_options(
     """Resolve document options from CLI overrides and YAML frontmatter."""
 
     source = Path(input_path).expanduser().resolve()
-    frontmatter_document_type = _read_frontmatter_document_type(source)
-    frontmatter_layout = _read_frontmatter_layout(source)
+    try:
+        metadata = load_frontmatter(source)
+        frontmatter_document_type = _document_type_value(metadata)
+        frontmatter_layout = optional_scalar(metadata, "layout")
+        frontmatter_answer_mode = optional_scalar(metadata, "answer_mode")
+    except ConfigurationError as exc:
+        raise DocumentOptionsError(str(exc)) from exc
     document_type = (
         DEFAULT_DOCUMENT_TYPE
         if frontmatter_document_type is None
@@ -238,10 +233,8 @@ def resolve_document_options(
             answer_mode=validate_answer_mode(answer_mode),
             document_type=document_type,
             layout=layout,
-            **_resolve_beamer_options(source, document_type),
+            **_resolve_beamer_options(metadata, document_type),
         )
-
-    frontmatter_answer_mode = _read_frontmatter_answer_mode(source)
 
     return DocumentOptions(
         answer_mode=(
@@ -251,47 +244,35 @@ def resolve_document_options(
         ),
         document_type=document_type,
         layout=layout,
-        **_resolve_beamer_options(source, document_type),
+        **_resolve_beamer_options(metadata, document_type),
     )
 
 
-def _read_frontmatter_answer_mode(path: Path) -> str | None:
-    return _read_frontmatter_scalar(path, _ANSWER_MODE_LINE_RE)
-
-
-def _read_frontmatter_document_type(path: Path) -> str | None:
-    return _read_frontmatter_scalar(path, _DOCUMENT_TYPE_LINE_RE)
-
-
-def _read_frontmatter_layout(path: Path) -> str | None:
-    return _read_frontmatter_scalar(path, _LAYOUT_LINE_RE)
-
-
-def _read_frontmatter_beamer_palette(path: Path) -> str | None:
-    return _read_frontmatter_scalar(path, _BEAMER_PALETTE_LINE_RE)
-
-
-def _read_frontmatter_beamer_aspectratio(path: Path) -> str | None:
-    return _read_frontmatter_scalar(path, _BEAMER_ASPECTRATIO_LINE_RE)
-
-
-def _read_frontmatter_beamer_footline(path: Path) -> str | None:
-    return _read_frontmatter_scalar(path, _BEAMER_FOOTLINE_LINE_RE)
-
-
-def _read_frontmatter_beamer_logo(path: Path) -> str | None:
-    return _read_frontmatter_scalar(path, _BEAMER_LOGO_LINE_RE)
+def _document_type_value(metadata: Mapping[str, object]) -> str | None:
+    canonical = optional_scalar(metadata, "profile")
+    legacy_values = [
+        value
+        for key in ("document_type", "documentclass")
+        if (value := optional_scalar(metadata, key)) is not None
+    ]
+    if canonical is not None and legacy_values:
+        raise ConfigurationError(
+            "Use canonical frontmatter field 'profile' without document_type/documentclass aliases."
+        )
+    if len(legacy_values) > 1 and len(set(legacy_values)) > 1:
+        raise ConfigurationError("Conflicting document_type and documentclass aliases.")
+    return canonical if canonical is not None else (legacy_values[0] if legacy_values else None)
 
 
 def _resolve_beamer_options(
-    source: Path, document_type: str
+    metadata: Mapping[str, object], document_type: str
 ) -> dict[str, str | None]:
     if document_type != "beamer":
         return {}
 
-    frontmatter_palette = _read_frontmatter_beamer_palette(source)
-    frontmatter_aspectratio = _read_frontmatter_beamer_aspectratio(source)
-    frontmatter_footline = _read_frontmatter_beamer_footline(source)
+    frontmatter_palette = optional_scalar(metadata, "palette")
+    frontmatter_aspectratio = optional_scalar(metadata, "aspectratio")
+    frontmatter_footline = optional_scalar(metadata, "footline")
 
     return {
         "palette": (
@@ -309,41 +290,5 @@ def _resolve_beamer_options(
             if frontmatter_footline is None
             else validate_beamer_footline(frontmatter_footline)
         ),
-        "logo": _read_frontmatter_beamer_logo(source),
+        "logo": optional_scalar(metadata, "logo"),
     }
-
-
-def _read_frontmatter_scalar(path: Path, pattern: re.Pattern[str]) -> str | None:
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---"):
-        return None
-
-    lines = text.splitlines()
-    if not lines or lines[0].strip() != "---":
-        return None
-
-    frontmatter_lines: list[str] = []
-    for line in lines[1:]:
-        if line.strip() in {"---", "..."}:
-            break
-        frontmatter_lines.append(line)
-    else:
-        return None
-
-    for line in frontmatter_lines:
-        match = pattern.match(line.strip())
-        if match is None:
-            continue
-        return _clean_scalar(match.group("value"))
-
-    return None
-
-
-def _clean_scalar(value: str) -> str:
-    value = value.strip()
-    if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
-        return value[1:-1].strip()
-
-    if "#" in value:
-        value = value.split("#", 1)[0].strip()
-    return value

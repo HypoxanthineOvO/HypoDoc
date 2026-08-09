@@ -138,6 +138,7 @@ def _invoke_build(runner, cli_app, input_path: Path, output_path: Path, theme: s
             theme,
             "--output",
             str(output_path),
+            "--allow-placeholders",
         ],
     )
 
