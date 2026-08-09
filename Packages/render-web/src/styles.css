@@ -216,6 +216,213 @@
 .hd-preview-blocked button span { grid-column: 1; }
 .hd-preview-blocked button small { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--hd-text-muted); }
 
+.hd-slide-deck {
+  width: 100%;
+  min-height: 100%;
+  color: var(--hd-text);
+  font-family: var(--hd-font-reading);
+}
+.hd-slide-palette-red { --hd-accent: #b91c1c; --hd-accent-soft: #fee2e2; }
+.hd-slide-palette-blue { --hd-accent: #1d4ed8; --hd-accent-soft: #dbeafe; }
+.hd-slide-palette-yellow { --hd-accent: #b45309; --hd-accent-soft: #fef3c7; }
+.hd-slide-palette-gray { --hd-accent: #374151; --hd-accent-soft: #e5e7eb; }
+.hd-slide-palette-mono { --hd-accent: #111827; --hd-accent-soft: #f3f4f6; }
+
+[data-theme="dark"] .hd-slide-palette-red { --hd-accent: #ff8f85; --hd-accent-soft: #512824; }
+[data-theme="dark"] .hd-slide-palette-blue { --hd-accent: #9bb8f0; --hd-accent-soft: #283a60; }
+[data-theme="dark"] .hd-slide-palette-yellow { --hd-accent: #f0bd5b; --hd-accent-soft: #493714; }
+[data-theme="dark"] .hd-slide-palette-gray { --hd-accent: #c6c6c1; --hd-accent-soft: #3b3b38; }
+[data-theme="dark"] .hd-slide-palette-mono { --hd-accent: #eeeeeb; --hd-accent-soft: #333330; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hd-slide-palette-red { --hd-accent: #ff8f85; --hd-accent-soft: #512824; }
+  :root:not([data-theme="light"]) .hd-slide-palette-blue { --hd-accent: #9bb8f0; --hd-accent-soft: #283a60; }
+  :root:not([data-theme="light"]) .hd-slide-palette-yellow { --hd-accent: #f0bd5b; --hd-accent-soft: #493714; }
+  :root:not([data-theme="light"]) .hd-slide-palette-gray { --hd-accent: #c6c6c1; --hd-accent-soft: #3b3b38; }
+  :root:not([data-theme="light"]) .hd-slide-palette-mono { --hd-accent: #eeeeeb; --hd-accent-soft: #333330; }
+}
+
+.hd-slide-deck-waterfall {
+  display: grid;
+  justify-items: center;
+  gap: 28px;
+  padding: 56px clamp(18px, 5vw, 64px) 88px;
+  background: var(--hd-bg);
+}
+
+.hd-slide-preamble {
+  width: min(100%, 960px);
+  padding: 20px 24px;
+  border-left: 3px solid var(--hd-border-strong);
+  background: var(--hd-surface);
+}
+.hd-slide-preamble h2 { margin: 0 0 12px; font: 650 20px/1.3 var(--hd-font-ui); }
+
+.hd-slide-frame {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) 30px;
+  overflow: hidden;
+  color: var(--hd-text);
+  border: 1px solid var(--hd-border-strong);
+  border-radius: var(--hd-radius-md);
+  background: var(--hd-surface);
+  box-shadow: 0 8px 24px rgb(29 42 49 / 9%);
+}
+
+.hd-slide-viewport {
+  min-width: 0;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hd-border-strong) transparent;
+}
+.hd-slide-viewport-waterfall {
+  width: min(100%, 960px);
+  overflow: hidden;
+}
+.hd-slide-viewport-presentation {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: safe center;
+  overflow: auto;
+}
+.hd-slide-scale-box {
+  position: relative;
+  flex: 0 0 auto;
+  margin: auto;
+}
+.hd-slide-logical-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 960px;
+  height: 540px;
+  transform-origin: top left;
+}
+
+.hd-slide-header {
+  min-height: 84px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 44px 14px;
+  border-bottom: 1px solid var(--hd-border);
+  font-family: var(--hd-font-ui);
+}
+.hd-slide-header p {
+  margin: 0 0 4px;
+  color: var(--hd-text-muted);
+  font-size: 12px;
+}
+.hd-slide-header button {
+  display: block;
+  padding: 0;
+  color: var(--hd-text);
+  text-align: left;
+  border: 0;
+  background: transparent;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.15;
+  cursor: pointer;
+}
+.hd-slide-header > span {
+  flex: 0 0 auto;
+  padding: 4px 7px;
+  color: var(--hd-text-muted);
+  border: 1px solid var(--hd-border);
+  border-radius: var(--hd-radius-sm);
+  font-size: 11px;
+  font-family: var(--hd-font-ui);
+}
+
+.hd-slide-body {
+  min-height: 0;
+  padding: 34px 44px;
+  overflow: auto;
+  font-size: 18px;
+  line-height: 1.48;
+  overflow-wrap: anywhere;
+}
+.hd-slide-body > :first-child { margin-top: 0; }
+.hd-slide-body > :last-child { margin-bottom: 0; }
+.hd-slide-body .hd-directive { margin: 12px 0; }
+.hd-slide-body .hd-directive-header { min-height: 34px; padding-block: 6px; }
+.hd-slide-body .hd-directive-body { padding-block: 6px 9px; }
+.hd-slide-body table { width: 100%; border-collapse: collapse; font: 13px/1.4 var(--hd-font-ui); }
+.hd-slide-body th,
+.hd-slide-body td { padding: 7px 9px; border: 1px solid var(--hd-border); }
+.hd-slide-body th { background: var(--hd-surface-muted); }
+.hd-slide-body .hd-code,
+.hd-slide-body .hd-code-highlight pre { max-height: 220px; margin: 10px 0; padding: 12px 14px; }
+.hd-slide-body .hd-mermaid { margin: 10px 0; padding: 10px; }
+.hd-slide-body .hd-mermaid svg { max-height: 240px; }
+
+.hd-slide-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 44px;
+  color: var(--hd-text-muted);
+  border-top: 1px solid var(--hd-border);
+  font: 11px var(--hd-font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.hd-slide-title,
+.hd-slide-section-divider,
+.hd-slide-subsection-divider {
+  grid-template-rows: minmax(0, 1fr);
+}
+.hd-slide-divider-content {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  padding: 72px;
+  border-left: 7px solid var(--hd-accent);
+}
+.hd-slide-divider-content span {
+  color: var(--hd-accent);
+  font: 650 13px var(--hd-font-ui);
+  text-transform: uppercase;
+}
+.hd-slide-divider-content h2 {
+  max-width: 18ch;
+  margin: 0;
+  font: 700 56px/1.08 var(--hd-font-ui);
+}
+.hd-slide-divider-content .hd-slide-subtitle {
+  margin: 4px 0 0;
+  font: 400 22px/1.4 var(--hd-font-ui);
+  color: var(--hd-muted);
+}
+.hd-slide-divider-content .hd-slide-byline {
+  margin: 10px 0 0;
+  font: 600 16px/1.4 var(--hd-font-ui);
+  color: var(--hd-ink);
+}
+
+.hd-slide-deck-presentation {
+  height: 100%;
+  min-height: 0;
+  background: var(--hd-bg);
+}
+.hd-slide-deck-presentation .hd-slide-frame {
+  box-shadow: 0 16px 44px rgb(15 23 42 / 18%);
+}
+
+@media (max-width: 720px) {
+  .hd-slide-deck-waterfall { gap: 18px; padding: 48px 12px 72px; }
+}
+
 @media (max-width: 600px) {
   .hd-document { padding: 28px 20px 72px; font-size: 16px; }
   .hd-document h1 { font-size: 29px; }

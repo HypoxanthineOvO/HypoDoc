@@ -1,8 +1,8 @@
 import { createRoot } from "react-dom/client";
 
 import { parseHypoDoc } from "@hypodoc/parser-core";
-import { createRenderDocument } from "@hypodoc/render-model";
-import { HypoDocRenderer } from "@hypodoc/render-web";
+import { createRenderDocument, createSlideDeck } from "@hypodoc/render-model";
+import { HypoDocRenderer, HypoDocSlideDeckRenderer } from "@hypodoc/render-web";
 import "@hypodoc/render-web/styles.css";
 import "./vscode.css";
 
@@ -33,11 +33,23 @@ window.addEventListener("message", (event: MessageEvent<unknown>) => {
   const resources = message.resources as Record<string, string>;
   const parsed = parseHypoDoc(message.source);
   const model = createRenderDocument(parsed, { theme: "system", answerMode: "review" });
+  const deck = model.profile === "beamer" ? createSlideDeck(model) : null;
+  const resolveResource = (path: string) => resources[path] ?? null;
+  const navigateSource = (line: number) => vscode.postMessage({ type: "navigate", line });
   root.render(
-    <HypoDocRenderer
-      document={model}
-      resolveResource={(path) => resources[path] ?? null}
-      onNavigateSource={(line) => vscode.postMessage({ type: "navigate", line })}
-    />,
+    deck?.valid ? (
+      <HypoDocSlideDeckRenderer
+        deck={deck}
+        mode="waterfall"
+        resolveResource={resolveResource}
+        onNavigateSource={navigateSource}
+      />
+    ) : (
+      <HypoDocRenderer
+        document={model}
+        resolveResource={resolveResource}
+        onNavigateSource={navigateSource}
+      />
+    ),
   );
 });

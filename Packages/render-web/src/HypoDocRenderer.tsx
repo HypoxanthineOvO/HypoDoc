@@ -18,10 +18,10 @@ import {
   Target,
   TriangleAlert,
 } from "lucide-react";
-import type { ComponentType, ReactNode } from "react";
+import { useEffect, useRef, useState, type ComponentType, type ReactNode } from "react";
 
 import type { DirectiveNode, HypoDocNode } from "@hypodoc/parser-core";
-import type { HypoDocRenderDocument } from "@hypodoc/render-model";
+import type { HypoDocRenderDocument, HypoDocSlideDeck, SlideFrame } from "@hypodoc/render-model";
 
 import { AsyncCode } from "./AsyncCode";
 import { Markdown } from "./Markdown";
@@ -31,6 +31,15 @@ export interface HypoDocRendererProps {
   document: HypoDocRenderDocument;
   resolveResource?: (relativePath: string) => string | null;
   onNavigateSource?: (line: number) => void;
+}
+
+export interface HypoDocSlideDeckRendererProps {
+  deck: HypoDocSlideDeck;
+  mode: "waterfall" | "presentation";
+  activeFrame?: number;
+  scaleMode?: "fit" | "readable";
+  resolveResource?: HypoDocRendererProps["resolveResource"];
+  onNavigateSource?: HypoDocRendererProps["onNavigateSource"];
 }
 
 const icons: Record<string, ComponentType<{ size?: number; "aria-hidden"?: boolean }>> = {
@@ -148,6 +157,138 @@ function renderNodes(nodes: HypoDocNode[], resolveResource?: HypoDocRendererProp
   return nodes.map((node) => renderNode(node, resolveResource));
 }
 
+function FrameSurface({
+  frame,
+  index,
+  total,
+  resolveResource,
+  onNavigateSource,
+}: {
+  frame: SlideFrame;
+  index: number;
+  total: number;
+  resolveResource?: HypoDocRendererProps["resolveResource"];
+  onNavigateSource?: HypoDocRendererProps["onNavigateSource"];
+}) {
+  const breadcrumb = [frame.part?.title, frame.section?.title].filter(Boolean).join(" / ");
+  const divider = frame.kind !== "content";
+  return (
+    <section
+      className={`hd-slide-frame hd-slide-${frame.kind}`}
+      data-slide-frame={frame.id}
+      data-slide-index={index}
+      aria-label={`Slide ${index + 1} of ${total}: ${frame.title}`}
+    >
+      {divider ? (
+        <div className="hd-slide-divider-content">
+          <span>
+            {frame.kind === "title"
+              ? "Presentation"
+              : frame.kind === "section-divider"
+                ? "Part"
+                : "Section"}
+          </span>
+          <h2>{frame.title}</h2>
+          {frame.subtitle ? <p className="hd-slide-subtitle">{frame.subtitle}</p> : null}
+          {frame.byline ? <p className="hd-slide-byline">{frame.byline}</p> : null}
+        </div>
+      ) : (
+        <>
+          <header className="hd-slide-header">
+            <div>
+              {breadcrumb ? <p>{breadcrumb}</p> : null}
+              <button
+                type="button"
+                onClick={() => onNavigateSource?.(frame.position.start.line)}
+                title="Go to slide source"
+              >
+                {frame.title}
+              </button>
+            </div>
+            {frame.continuation > 1 ? <span>Continued {frame.continuation}</span> : null}
+          </header>
+          <div className="hd-slide-body">{renderNodes(frame.nodes, resolveResource)}</div>
+        </>
+      )}
+      {frame.kind === "content" ? (
+        <footer className="hd-slide-footer">
+          <span>{frame.part?.title ?? deckTitleFallback(frame)}</span>
+          <span>{index + 1} / {total}</span>
+        </footer>
+      ) : null}
+    </section>
+  );
+}
+
+const SLIDE_LOGICAL_WIDTH = 960;
+const SLIDE_LOGICAL_HEIGHT = 540;
+
+function ScaledFrameSurface({
+  mode,
+  scaleMode,
+  ...frameProps
+}: Parameters<typeof FrameSurface>[0] & {
+  mode: "waterfall" | "presentation";
+  scaleMode: "fit" | "readable";
+}) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [bounds, setBounds] = useState({ width: SLIDE_LOGICAL_WIDTH, height: SLIDE_LOGICAL_HEIGHT });
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || typeof ResizeObserver === "undefined") return;
+    const updateBounds = () => {
+      const next = viewport.getBoundingClientRect();
+      if (next.width > 0 && next.height > 0) {
+        setBounds({ width: next.width, height: next.height });
+      }
+    };
+    updateBounds();
+    const observer = new ResizeObserver(updateBounds);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, []);
+
+  const fitScale = Math.min(
+    1,
+    bounds.width / SLIDE_LOGICAL_WIDTH,
+    mode === "presentation" ? bounds.height / SLIDE_LOGICAL_HEIGHT : 1,
+  );
+  const minimumReadableScale = mode === "presentation" && scaleMode === "readable" && bounds.width < 720
+    ? 0.62
+    : 0;
+  const scale = Math.max(fitScale, minimumReadableScale);
+  const scaledWidth = SLIDE_LOGICAL_WIDTH * scale;
+  const scaledHeight = SLIDE_LOGICAL_HEIGHT * scale;
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || viewport.scrollWidth <= viewport.clientWidth) return;
+    viewport.scrollLeft = (viewport.scrollWidth - viewport.clientWidth) / 2;
+  }, [scale]);
+
+  return (
+    <div
+      ref={viewportRef}
+      className={`hd-slide-viewport hd-slide-viewport-${mode}`}
+      data-slide-viewport={mode}
+      data-slide-scale={scale.toFixed(4)}
+      data-slide-logical-size={`${SLIDE_LOGICAL_WIDTH}x${SLIDE_LOGICAL_HEIGHT}`}
+      style={mode === "waterfall" ? { height: `${scaledHeight}px` } : undefined}
+    >
+      <div className="hd-slide-scale-box" style={{ width: `${scaledWidth}px`, height: `${scaledHeight}px` }}>
+        <div className="hd-slide-logical-canvas" style={{ transform: `scale(${scale})` }}>
+          <FrameSurface {...frameProps} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function deckTitleFallback(frame: SlideFrame): string {
+  return frame.section?.title ?? "HypoDoc";
+}
+
 function BlockedPreview({ document, onNavigateSource }: Pick<HypoDocRendererProps, "document" | "onNavigateSource">) {
   return (
     <section className="hd-preview-blocked" role="alert">
@@ -175,6 +316,60 @@ export function HypoDocRenderer({ document, resolveResource, onNavigateSource }:
     <article className="hd-document" data-profile={document.profile}>
       {document.metadata.subtitle ? <p className="hd-subtitle">{String(document.metadata.subtitle)}</p> : null}
       {renderNodes(document.nodes, resolveResource)}
+    </article>
+  );
+}
+
+export function HypoDocSlideDeckRenderer({
+  deck,
+  mode,
+  activeFrame = 0,
+  scaleMode = "fit",
+  resolveResource,
+  onNavigateSource,
+}: HypoDocSlideDeckRendererProps) {
+  if (!deck.valid) {
+    return (
+      <section className="hd-preview-blocked" role="alert">
+        <AlertCircle aria-hidden="true" size={28} />
+        <h2>Slides unavailable</h2>
+        <p>The deck projection is invalid. The host can fall back to document view.</p>
+      </section>
+    );
+  }
+  const safeIndex = Math.min(Math.max(0, activeFrame), Math.max(0, deck.frames.length - 1));
+  const frames = mode === "presentation" ? deck.frames.slice(safeIndex, safeIndex + 1) : deck.frames;
+  const palette = ["red", "blue", "yellow", "gray", "mono"].includes(String(deck.metadata.palette))
+    ? String(deck.metadata.palette)
+    : "red";
+  return (
+    <article
+      className={`hd-slide-deck hd-slide-deck-${mode} hd-slide-palette-${palette}`}
+      data-slide-count={deck.frames.length}
+      aria-label={`${deck.title} slide deck`}
+      aria-live={mode === "presentation" ? "polite" : undefined}
+    >
+      {mode === "waterfall" && deck.preambleNodes.length ? (
+        <section className="hd-slide-preamble">
+          <h2>{deck.title}</h2>
+          {renderNodes(deck.preambleNodes, resolveResource)}
+        </section>
+      ) : null}
+      {frames.map((frame, offset) => {
+        const index = mode === "presentation" ? safeIndex : offset;
+        return (
+          <ScaledFrameSurface
+            key={frame.id}
+            mode={mode}
+            scaleMode={scaleMode}
+            frame={frame}
+            index={index}
+            total={deck.frames.length}
+            resolveResource={resolveResource}
+            onNavigateSource={onNavigateSource}
+          />
+        );
+      })}
     </article>
   );
 }
