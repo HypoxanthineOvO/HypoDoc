@@ -2,7 +2,7 @@
 kind: plan
 cycle: C004-v0.2.0-stable-release
 mode: goal
-status: active
+status: completed
 updated: 2026-08-28
 progress: PROGRESS.md
 execution: EXECUTION.md

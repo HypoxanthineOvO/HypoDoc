@@ -8,9 +8,8 @@ status: active
 
 ## 当前工作
 
-- [Cycle 索引](cycles/INDEX.md)：当前聚焦
-  `C004-v0.2.0-stable-release`，正在把本地 RC 候选稳定化为 `v0.2.0`，执行本地验证、
-  远端 CI、跨平台打包与 Release。
+- [Cycle 索引](cycles/INDEX.md)：当前没有 Active Cycle；`C004-v0.2.0-stable-release` 已完成，
+  `v0.2.0` 已在 GitHub 发布并同步 GitLab mirror。
 - [Experiment 索引](experiments/INDEX.md)：当前没有 Experiment。
 - [Memory 索引](memory/INDEX.md)：长期项目意图、采用状态与已确认决策。
 

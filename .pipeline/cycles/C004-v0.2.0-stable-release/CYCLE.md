@@ -1,8 +1,9 @@
 ---
 kind: cycle
 name: C004-v0.2.0-stable-release
-status: active
+status: closed
 started: 2026-08-28
+closed: 2026-08-28
 updated: 2026-08-28
 builds_on:
   - C003-v0.2.0-rc.1-commit-preparation

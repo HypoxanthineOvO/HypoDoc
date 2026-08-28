@@ -43,3 +43,20 @@ updated: 2026-08-28
 - **本地证据：** Desktop typecheck、4 tests、Playwright desktop/mobile flows 全通过；桌面 split、移动导航与
   移动 read 截图人工检查无重叠或横向溢出。
 - **下一步：** 提交并推送修复，等待新的四组 CI 全绿。
+
+## 2026-08-28 - M2-M5 完成，v0.2.0 发布
+
+- **最终候选：** `3f84e76`；CI run `33161677765` 的 portable-runtime、reference-differential、
+  browser、latex-renderer 四组全绿。
+- **跨平台构建：** Build Hosts run `33162169706` 锁定 `3f84e76`，Linux、Windows、macOS arm64、
+  VSIX 四 jobs 全绿。
+- **快速发布路径：** 本机下载大 artifact 受网络限制后，停止全部下载进程；新增可复用的
+  `Publish Existing Build` workflow，由 GitHub runner 内部下载已验证 artifacts、构建 Hypo-LaTeX
+  wheel/sdist、检查 8 个非空包、生成 SHA-256，并以 draft-first 方式发布。
+- **发布结果：** publish run `33164168894` 用时 26 秒；`v0.2.0` stable Release 已公开，9 个附件
+  均为 uploaded，tag 指向 `3f84e76`。Release URL：
+  https://github.com/HypoxanthineOvO/HypoDoc/releases/tag/v0.2.0
+- **镜像：** GitLab `main` 同步至 `c266fda`，`v0.2.0` 同样指向 `3f84e76`。
+- **非阻断维护项：** GitHub actions v4 的 Node 20 compatibility warning；VSIX 缺 repository/LICENSE
+  package metadata 且文件数较多；安装器仍 unsigned，macOS 未 notarize。
+- **结果：** M1-M5 全部完成，C004 closed。
