@@ -29,3 +29,17 @@ updated: 2026-08-28
   `valid=true`、Spec 268 tests、differential 13/13、Hypo-LaTeX 269 passed/12 skipped、strict 13-page
   showcase PDF 与 189-file VSIX 全通过。
 - **下一步：** 创建稳定 release commit，推送 GitHub main 并监督四组 CI jobs。
+
+## 2026-08-28 - M2 首次远端 CI 反馈与修复
+
+- **推送：** GitHub `main` 从 `d2fcab0` 更新到稳定候选 `cee4d9c`；未创建 tag/Release。
+- **CI run:** `33160024801`；portable-runtime、reference-differential、latex-renderer 全绿，browser 失败。
+- **browser 根因：** app grid 明确使用 46px topbar，而 smoke contract 要求至少 48px；测试还保留了 C002
+  UI 调整前的 `Use dark theme` / `Toggle navigation` accessible names，前一断言长期提前终止使后续路径未暴露。
+- **修复：** desktop/mobile topbar 与 sidebar/scrim offset 统一为 48px；smoke 使用 Settings 的 Dark 选项、
+  Show/Hide sidebar 和显式 Chromium channel，并让布局断言输出 metrics。
+- **版本标签：** 状态栏原以 `HypoDoc` 标注独立 Spec 版本，改为明确的 `Spec 0.2.0-rc.1`，避免与产品
+  `0.2.0` 混淆并加入 smoke 断言。
+- **本地证据：** Desktop typecheck、4 tests、Playwright desktop/mobile flows 全通过；桌面 split、移动导航与
+  移动 read 截图人工检查无重叠或横向溢出。
+- **下一步：** 提交并推送修复，等待新的四组 CI 全绿。

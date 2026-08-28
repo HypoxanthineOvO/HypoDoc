@@ -38,8 +38,8 @@ def assert_layout(page: Page) -> None:
         })"""
     )
     assert metrics["scrollWidth"] <= metrics["viewport"], metrics
-    assert metrics["workspace"]["width"] > 0 and metrics["workspace"]["height"] > 0
-    assert metrics["topbar"]["height"] >= 48
+    assert metrics["workspace"]["width"] > 0 and metrics["workspace"]["height"] > 0, metrics
+    assert metrics["topbar"]["height"] >= 48, metrics
 
 
 def wait_for_preview(page: Page) -> None:
@@ -74,6 +74,7 @@ def desktop_flow(page: Page, console_errors: list[str]) -> None:
     assert_layout(page)
     assert page.get_by_text("HypoDoc", exact=True).is_visible()
     assert page.get_by_role("button", name="Split").get_attribute("aria-pressed") == "true"
+    assert page.get_by_text("Spec 0.2.0-rc.1", exact=True).is_visible()
     assert page.locator('[data-pane="editor"]').is_visible()
     assert page.locator('[data-pane="preview"]').is_visible()
     screenshot(page, "desktop-light-split.png")
@@ -83,7 +84,11 @@ def desktop_flow(page: Page, console_errors: list[str]) -> None:
     assert page.locator('[data-pane="editor"]').count() == 0
     screenshot(page, "desktop-light-read.png")
 
-    page.get_by_role("button", name="Use dark theme").click()
+    page.get_by_role("button", name="More document actions").click()
+    page.get_by_role("menuitem", name="Settings", exact=True).click()
+    settings = page.get_by_role("dialog", name="Settings")
+    settings.get_by_role("button", name="Dark", exact=True).click()
+    settings.get_by_role("button", name="Close settings").click()
     assert page.locator("html").get_attribute("data-theme") == "dark"
     screenshot(page, "desktop-dark-read.png")
 
@@ -108,10 +113,10 @@ def mobile_flow(page: Page, console_errors: list[str]) -> None:
     assert_layout(page)
     navigation = page.get_by_role("complementary", name="Document navigation")
     if not navigation.is_visible():
-        page.get_by_role("button", name="Toggle navigation").click()
+        page.get_by_role("button", name="Show sidebar").click()
     assert navigation.is_visible()
     screenshot(page, "mobile-light-navigation.png")
-    page.get_by_role("button", name="Toggle navigation").click()
+    page.get_by_role("button", name="Hide sidebar").click()
     assert not navigation.is_visible()
     screenshot(page, "mobile-light-read.png")
     assert not console_errors, console_errors
@@ -121,7 +126,7 @@ def main() -> None:
     BASELINES.mkdir(parents=True, exist_ok=True)
     ACTUAL.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True)
+        browser = playwright.chromium.launch(channel="chromium", headless=True)
 
         desktop_errors: list[str] = []
         desktop_context = browser.new_context(viewport={"width": 1440, "height": 900})

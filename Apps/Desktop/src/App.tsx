@@ -710,7 +710,7 @@ export function App() {
         </button>
         <span>{parsed.profile}</span>
         <span>{semanticCount} semantic nodes</span>
-        <span>HypoDoc {parsed.specVersion}</span>
+        <span>Spec {parsed.specVersion}</span>
       </footer>
 
       <input
