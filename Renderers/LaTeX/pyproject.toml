@@ -1,6 +1,6 @@
 [project]
 name = "hypolatex"
-version = "0.2.0rc1"
+version = "0.2.0"
 description = "HypoDoc LaTeX/PDF renderer and CLI"
 readme = "README.md"
 license = { file = "LICENSE" }

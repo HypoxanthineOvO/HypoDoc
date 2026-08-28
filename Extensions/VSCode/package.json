@@ -2,7 +2,7 @@
   "name": "hypodoc-vscode",
   "displayName": "HypoDoc",
   "description": "Offline HypoDoc validation and theme-integrated preview.",
-  "version": "0.2.0-rc.1",
+  "version": "0.2.0",
   "private": true,
   "publisher": "hypodoc",
   "engines": {

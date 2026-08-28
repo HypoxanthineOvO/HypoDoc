@@ -7,7 +7,9 @@ status: active
 
 ## Active Cycles
 
-当前没有 Active Cycle。
+| Cycle | 目的 | 状态 | 当前位置 / 下一步 |
+| --- | --- | --- | --- |
+| [C004-v0.2.0-stable-release](C004-v0.2.0-stable-release/CYCLE.md) | 将已接受的 RC 候选验证并发布为稳定版 `v0.2.0` | active | M1：稳定版本地候选与完整验证 |
 
 ## Closed Cycles
 

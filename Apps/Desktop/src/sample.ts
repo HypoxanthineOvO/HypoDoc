@@ -1,6 +1,6 @@
 export const SAMPLE_DOCUMENT = `---
 title: Portable renderer workbench
-subtitle: HypoDoc 0.2.0-rc.1 live document
+subtitle: HypoDoc 0.2.0 live document
 profile: article
 answer_mode: review
 ---
