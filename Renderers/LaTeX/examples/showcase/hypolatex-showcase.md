@@ -98,8 +98,8 @@ columns:
 
 # Figures Images 图片
 
-Figure / image support should keep captions and labels even when a public
-example image is represented by the renderer's placeholder path.
+Figure / image support should keep captions and labels while resolving a
+committed local asset under the public example workspace.
 
 ::: {.figure label="fig:showcase-flow" src="assets/showcase-flow.png" caption="Showcase PDF render and README banner screenshot flow" width="0.86" placement="H"}
 :::

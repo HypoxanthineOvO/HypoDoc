@@ -12,6 +12,7 @@ import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SHOWCASE_SOURCE = PROJECT_ROOT / "examples" / "showcase" / "hypolatex-showcase.md"
+SHOWCASE_FIGURE = PROJECT_ROOT / "examples" / "showcase" / "assets" / "showcase-flow.png"
 README = PROJECT_ROOT / "README.md"
 BANNER_SCRIPT = PROJECT_ROOT / "scripts" / "release" / "render_showcase_banner.sh"
 BANNER_IMAGE = PROJECT_ROOT / "assets" / "readme" / "showcase-banner.png"
@@ -171,6 +172,16 @@ def test_showcase_banner_png_exists_and_is_non_empty():
     assert BANNER_IMAGE.stat().st_size > len(PNG_MAGIC), "Banner PNG must be non-empty."
     assert BANNER_IMAGE.read_bytes().startswith(PNG_MAGIC), (
         "README banner must be a PNG file with valid PNG magic bytes."
+    )
+
+
+def test_showcase_figure_png_exists_and_is_non_empty():
+    assert SHOWCASE_FIGURE.is_file(), f"Expected showcase figure: {SHOWCASE_FIGURE}"
+    assert SHOWCASE_FIGURE.stat().st_size > len(PNG_MAGIC), (
+        "Showcase figure PNG must be non-empty."
+    )
+    assert SHOWCASE_FIGURE.read_bytes().startswith(PNG_MAGIC), (
+        "Showcase figure must be a PNG file with valid PNG magic bytes."
     )
 
 
