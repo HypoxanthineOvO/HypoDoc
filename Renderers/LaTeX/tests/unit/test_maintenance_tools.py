@@ -127,8 +127,11 @@ def test_manifest_records_real_bytes_and_checksums(repo_root, tmp_path, monkeypa
     monkeypatch.setattr(release, "check", lambda: ("0.3.0-rc.1", "0.3.0rc1"))
     monkeypatch.setattr(release, "source_state", lambda *args: ("abc123", True))
     (tmp_path / "example.whl").write_bytes(b"distribution")
+    (tmp_path / ".gitignore").write_text("*")
     report = release.finalize(tmp_path, allow_dirty=True)
     assert report["dirty"] and report["prerelease"]
     assert report["files"][0]["bytes"] == len(b"distribution")
+    assert len(report["files"]) == 1
+    assert ".gitignore" not in (tmp_path / "CHECKSUMS.txt").read_text()
     assert "manifest.json" in (tmp_path / "CHECKSUMS.txt").read_text()
     assert json.loads((tmp_path / "manifest.json").read_text())["source_commit"] == "abc123"

@@ -78,7 +78,7 @@ def finalize(output, allow_dirty=False):
     sha, dirty = source_state(allow_dirty)
     files = []
     for path in sorted(output.iterdir()):
-        if path.name in {"manifest.json", "CHECKSUMS.txt"} or not path.is_file():
+        if path.name.startswith(".") or path.name in {"manifest.json", "CHECKSUMS.txt"} or not path.is_file():
             continue
         files.append({"name": path.name, "bytes": path.stat().st_size,
                       "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
