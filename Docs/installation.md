@@ -2,10 +2,10 @@
 
 ## 推荐：源码准备脚本
 
-安装 Python 3.11+ 和 Git，克隆仓库后运行：
+安装 Python 3.11+，克隆仓库或下载 [v0.3.0 源码 ZIP](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.0/hypodoc-source-0.3.0.zip) 并解压，在含 `scripts/` 的目录运行（ZIP 方式不需要 Git）：
 
 ```sh
-python3 scripts/setup.py
+python3 scripts/setup.py --smoke-test
 ```
 
 重复运行会更新由 HypoDoc 自己创建的用户级 `hypolatex` 启动器，使它指向当前仓库；同名但由用户或其他工具创建的命令不会被覆盖。安装后可用 `hypolatex --version` 和 `hypolatex themes` 确认实际运行的版本与可用主题。
@@ -16,6 +16,8 @@ Windows 将 `python3` 换成 `python` 或 `py -3`。脚本在仓库根 `.venv` �
 
 常用选项：
 
+- `--smoke-test`：安装后实际生成上科大 standard / diagonal 两种封面，确认宏包、字体和主题资源可用；临时样例不会覆盖用户文件。
+- `--installer pip`：强制使用标准 Python venv + pip，不依赖 uv；默认自动优先已有 uv。
 - `--dry-run`：只看计划，不安装、不写文件。
 - `--no-launcher`：只准备本地环境，不创建用户级命令。
 - `--install-system`：明确授权在 apt 系 Linux 上执行打印出的系统安装命令。TeX 可能占用数 GB；AI 必须先说明并获得确认，再使用此选项。
@@ -62,6 +64,8 @@ sudo apt-get install -y python3-venv pandoc texlive-xetex texlive-latex-extra te
 
 ## 从 Release 安装 CLI
 
+首次使用推荐源码 ZIP + setup。wheel 面向已有 Python/Pandoc/TeX 环境的用户；**下载 wheel 本身不会安装 Pandoc 或 TeX**。本次仅发布 LaTeX，不需要下载 v0.2.0 的 Desktop 或 VSIX 来获得新主题。
+
 已有 uv 时，可以安装下载好的 wheel：
 
 ```sh
@@ -88,6 +92,8 @@ doctor 不要求 Pandoc 精确等于某个版本；通过真实 Lua filter 探�
 
 | 问题 | 处理 |
 | --- | --- |
+| `school` 是未知主题／切换上科大后失败 | 先核对 `hypolatex --version` 为 0.3.0+；重新运行本次 ZIP/仓库的 setup，再用它打印的完整 CLI 路径运行 `themes`。不要混用 PATH 中的旧 v0.2.0 命令 |
+| `school` 与 `shanghaitech` 混淆 | 新主题用 `profile: beamer`、`theme: school`、`school_cover: standard`；`shanghaitech` 是旧版兼容主题，不与新主题共用封面选项 |
 | `hypolatex` 找不到 | 使用 setup 打印的完整 CLI 路径；POSIX 为 `.venv/bin/hypolatex`，Windows 为 `.venv\Scripts\hypolatex.exe` |
 | Pandoc / XeLaTeX / latexmk 找不到 | 补齐系统工具并重开终端；不要重装整套开发依赖 |
 | 某个 `.sty` 不存在 | 用 TeX 发行版安装错误中指出的宏包 |
@@ -95,6 +101,8 @@ doctor 不要求 Pandoc 精确等于某个版本；通过真实 Lua filter 探�
 | 图片找不到 | 将真实图片放在源文件旁，使用本地相对路径，不使用绝对路径或 `..` 越界 |
 | 构建成功但提示溢出 | 修正内容或布局；`--strict` 可将溢出/缺字变成失败，不会覆盖已有 PDF |
 | 导出的 TeX 如何保留 | 新主题的 TeX 旁会有带哈希的 `hypodoc-resources-*` 目录；移动时一起带上，以及原文图片 |
+
+如果仍失败，请保留 `--version`、`themes`、`doctor --json` 和 `build slides.md --json` 的输出，以及操作系统、安装方式和源文件开头的 YAML。不要只提供“切主题失败”的截图，也不要先卸载整个 TeX。新版 doctor 会检查 `tabularray`、`unicode-math`、`truncate` 等 Slides 需要的宏包。
 
 ## 更新与卸载
 

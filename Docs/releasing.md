@@ -1,5 +1,19 @@
 # 发布：同一提交，先验证，再生成草稿
 
+## LaTeX 专项发布
+
+仅发布 PDF 后端和主题、不等待 HTML/宿主应用时，用 **Release LaTeX** workflow。它不安装 Node.js、不构建 Desktop/VSIX、不拉取 Spec；在干净提交上运行 Python/真实 PDF 回归，构建 wheel、sdist、源码 ZIP、指南/Skill ZIP 和 School PDF/Markdown，再对这些实际附件执行解压安装测试，最后创建草稿。
+
+```sh
+python3 tools/release.py check
+python3 tools/release.py build --latex-only --output release/latex
+python3 tools/test-install.py --source-zip release/latex/hypodoc-source-0.3.0.zip --wheel release/latex/hypolatex-0.3.0-py3-none-any.whl
+```
+
+构建要求干净提交；源码 ZIP 取自同一 HEAD，不接受 dirty 预览混入正式附件。版本需替换为实际目标版本。确认 Actions 成功、manifest 提交和哈希正确后，经用户授权公开草稿并标为 latest。**草稿不是用户可见的交付**：发布后用 GitHub Release API 和匿名下载核实附件可见、可下载且哈希一致。
+
+仅 LaTeX 发布不宣称新 Desktop/HTML 功能已发布。以下流程保留用于包含所有宿主安装包的完整产品发布。
+
 不创建 Cycle，不把执行日志放进用户 README。版本从根 `package.json` 读取，Python RC 版本按 PEP 440 映射。
 
 ## 本地准备

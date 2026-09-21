@@ -4,7 +4,11 @@
 
 适合中文技术文档、项目说明、复习资料、速查表和学术演示。源文件始终可编辑；不需要手工维护生成的 LaTeX。
 
-以下介绍当前源码提供的功能；已发布安装包的能力以对应 Release 说明为准。用 `hypolatex --version` 查看安装版本。
+**v0.3.0 已整理为 LaTeX 专项版本**：发布 CLI、文档/Slides 主题和安装指南；HTML、Desktop、VS Code 的后续功能不包含在本次发布中。
+
+**[下载 v0.3.0](https://github.com/HypoxanthineOvO/HypoDoc/releases/tag/v0.3.0)** · [直接下载源码 ZIP](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.0/hypodoc-source-0.3.0.zip) · [查看上科大 PDF 示例](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.0/School-standard.pdf)
+
+新上科大主题的 ID 是 `school`，需要 **0.3.0 或更新版本**；不要拿 v0.2.0 的安装包配合新版文档。用 `hypolatex --version`、`hypolatex themes` 检查实际运行的安装。
 
 ![文档排版示例](Renderers/LaTeX/assets/readme/showcase-banner.png)
 
@@ -23,12 +27,14 @@
 ```sh
 git clone https://github.com/HypoxanthineOvO/HypoDoc.git
 cd HypoDoc
-python3 scripts/setup.py
+python3 scripts/setup.py --smoke-test
 ```
 
 脚本准备独立 Python 环境和用户级 `hypolatex` 命令，检查 Pandoc / TeX；**不自动执行系统安装，不修改 shell 配置**。缺依赖时会告诉你怎么补齐。普通用户不需要 Node.js、Spec 子模块或实验仓库。
 
-如果命令目录不在 PATH 中，可以重开终端或使用脚本打印的完整 CLI 路径。Windows 使用 `python scripts/setup.py`。系统安装、更新、卸载与平台说明见 [安装指南](Docs/installation.md)。
+也可以下载上面的源码 ZIP，解压后进入含 `scripts/setup.py` 的目录执行准备命令，无需 Git、Node.js 或子模块。`--smoke-test` 会真正生成两种上科大封面的测试 PDF，确认主题也能运行，而不是只检查命令是否存在。
+
+如果命令目录不在 PATH 中，**直接使用本次安装路径**：Linux/macOS 为 `.venv/bin/hypolatex`，Windows PowerShell 为 `.\.venv\Scripts\hypolatex.exe`。不要继续调用 PATH 中旧版本的同名命令。Windows 的准备命令为 `python scripts/setup.py --smoke-test`。系统安装、更新、卸载与平台说明见 [安装指南](Docs/installation.md)。
 
 ## 三条命令，得到第一份 Slides
 
@@ -67,6 +73,10 @@ school_cover: diagonal
 ```
 
 `school_cover` 可选 `standard`、`diagonal`。主题与素材随包提供，普通构建不会联网克隆主题。
+
+![上科大标准圆角封面](Docs/assets/school-cover.png)
+
+圆角内容块、居中的章节导航、带日期的双行页脚；多章节自动改用章节进度，长元数据不会挤占相邻栏。参见 [主题排版说明](Examples/ThemeComparison/README.md)。
 
 `init --template` 可选 `document`（长文）、`article`（项目／报告）、`slides`、`review`（复习题）、`cheatsheet`（速查表）。用 `hypolatex themes` 查看全部主题；常用写法见 [写作指南](Docs/authoring.md)。
 

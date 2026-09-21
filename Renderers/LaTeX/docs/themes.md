@@ -16,6 +16,12 @@ theme: classic-readable
 
 ## 公开主题预设
 
+### `school`（推荐上科大主题，0.3.0+）
+
+使用 `profile: beamer`、`theme: school`。封面参数为 `school_cover: standard`（圆角色块、右上角小校标）或 `diagonal`（斜切色块）。学校标识随包提供，不需要手动配置图片路径。导航、内容块、多作者和页脚排版见 [School 说明](../../../Examples/ThemeComparison/README.md)。
+
+另外提供 `simple`、`nature` 两个正式 Slides 主题，使用相同的正文转换与字体后备。用 `hypolatex themes` 查看安装版本实际支持的主题。下述 `shanghaitech` 为旧兼容主题，封面参数不与 `school` 混用。
+
 ### `plain`
 
 基础兼容主题，适合调试、最小文档和渲染器测试。需要尽量排除视觉样式干扰时使用它。

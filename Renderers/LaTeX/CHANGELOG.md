@@ -1,5 +1,11 @@
 # Changelog
 
+## HypoDoc 0.3.0（2026-09-22，统一产品版本）
+
+正式发布 school / simple / nature 主题、源码 ZIP 安装、School 圆角封面与多作者排版、完整主题宏包诊断及实际构建自检。更新启动器避免误用旧主题版本。发布附件与验证范围见 [统一更新记录](../../CHANGELOG.md)。
+
+以下 v0.4.0 等为合并进 HypoDoc 前的历史独立后端版本号，不代表 GitHub 当前可下载版本；不要根据这些历史编号选择安装包。
+
 ## v0.4.0
 
 本版本为 Beamer 视觉系统专项版本：主题机制激活，新增 shanghaitech / minimal / glass 三个 Beamer 主题，目录与章节分隔页系统重做，数学与正文切换 Times/宋体系。仍为本地发布：release assets 只在本地生成和检查，尚未上传 CTAN 或 PyPI。

@@ -6,7 +6,7 @@
 
 1. 阅读 [README](../README.md)，确认用户要文档还是 Slides、读者是谁、内容来自哪里。缺少材料时问清楚，不凭空补造事实或来源。
 2. 没有本地仓库时，通过 README 的 HTTPS 地址克隆。普通生成工作不需要 Spec 子模块或 Node.js。
-3. 按 [安装指南](installation.md) 运行 `python3 scripts/setup.py`，复用已有工具。系统安装、大体积下载或修改全局设置先说明并确认，不擅自添加 `--install-system`。
+3. 按 [安装指南](installation.md) 运行 `python3 scripts/setup.py --smoke-test`，复用已有工具。也支持下载 Release 源码 ZIP 后运行，不依赖 Git。系统安装、大体积下载或修改全局设置先说明并确认，不擅自添加 `--install-system`。
 4. 阅读 [LaTeX Skill](../Skills/LaTeX/SKILL.md)。直接阅读即可，不要求用户先把 Skill 注册到某种 AI 产品；需要长期安装时，保留整个 Skill 目录及其 references、templates。
 
 ## 从材料到成品
@@ -14,6 +14,7 @@
 - 根据用户材料组织标题、大纲和内容。长文先给结构，Slides 每页聚焦一个观点；不要把长段落机械地塞到幻灯片中。
 - 用 `hypolatex init` 从五个内置模板中创建源文件。图片保存在源文件旁的 `assets/`，用户文档不要混进工具源码目录。
 - 使用 canonical `profile: book`、`article` 或 `beamer`，选择匹配主题。普通任务无需设置大量字体、纸张和封面参数。
+- 新上科大 Slides 使用 `profile: beamer` + `theme: school`，不是旧 `shanghaitech`。安装后用 setup 打印的完整 CLI 路径确认版本为 0.3.0+、主题表包含 school；不直接信任 PATH 里的同名旧命令。
 - 使用 [写作指南](authoring.md) 的共享语法；专用排版需求再查 LaTeX 详细指南。
 - 从仓库根目录调用 CLI，输入输出可以使用明确的路径；图片仍用相对源文件的路径：
 

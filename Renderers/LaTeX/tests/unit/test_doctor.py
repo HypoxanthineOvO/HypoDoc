@@ -74,6 +74,14 @@ def test_missing_tex_tool_blocks_build(monkeypatch):
     assert not diagnostics.collect_doctor_report("build").ok
 
 
+@pytest.mark.parametrize("package", ["tabularray", "unicode-math", "truncate", "tikz", "listings"])
+def test_missing_slides_dependency_is_not_reported_as_ready(monkeypatch, package):
+    fake_checks(monkeypatch, {package})
+    report = diagnostics.collect_doctor_report("build")
+    assert not report.ok
+    assert any(r.name == package and not r.ok for r in report.required)
+
+
 def test_evidence_only_needs_poppler(monkeypatch):
     fake_checks(monkeypatch, {"pandoc", "latexmk", "xelatex"})
     assert diagnostics.collect_doctor_report("evidence").ok

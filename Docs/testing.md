@@ -38,7 +38,9 @@ uv run --group dev --project Renderers/LaTeX python -m pytest -q Renderers/LaTeX
 python3 tools/test-install.py
 ```
 
-在临时目录中复制当前源码，不带 `.venv`、Spec、Node.js；执行 README 中实际列出的 uv 命令。随后构建 wheel，在另一个新虚拟环境中安装并从仓库外构建 PDF，验证随包资源，而不是只检查打包配置。
+在带空格路径的临时目录中复制当前源码，不带 `.venv`、Spec、Node.js；执行 README 中实际列出的命令，再用普通 pip 重装并实际构建两种 School 封面。随后构建 wheel，在另一个新虚拟环境中安装并从仓库外构建 PDF，验证随包资源，而不是只检查打包配置。
+
+发布验证使用 `--source-zip PATH --wheel PATH` 指定实际附件，先解压无 Git 的源码 ZIP，再检验同一 wheel，不以“当前工作目录安装成功”代替发行包可用性。Release LaTeX workflow 在 GitHub 的新 Ubuntu runner 上安装系统依赖并运行该链路，不包含 HTML/宿主打包。
 
 此测试需要联网或已有包缓存，复用系统 Pandoc/TeX，不替代干净操作系统上的依赖安装验证。不会运行 sudo 或安装系统软件。全部产物在临时目录，退出后清除。
 

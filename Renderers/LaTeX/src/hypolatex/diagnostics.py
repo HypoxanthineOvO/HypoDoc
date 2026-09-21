@@ -30,6 +30,19 @@ REQUIRED_TEX_PACKAGES = (
     "geometry",
     "titlesec",
     "eso-pic",
+    # Shipped Slides templates load these even if a simple article succeeds.
+    "tabularray",
+    "unicode-math",
+    "truncate",
+    "tikz",
+    "listings",
+    "booktabs",
+    "longtable",
+    "array",
+    "calc",
+    "xparse",
+    "etoolbox",
+    "hyperref",
 )
 
 OPTIONAL_TEX_PACKAGES = (

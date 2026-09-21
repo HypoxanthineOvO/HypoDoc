@@ -35,6 +35,19 @@ def test_setup_keeps_existing_unknown_environment(repo_root, tmp_path, monkeypat
     assert owned.read_text() == "keep"
 
 
+def test_missing_ensurepip_has_actionable_error(repo_root, tmp_path, monkeypatch, capsys):
+    setup = module(repo_root, "scripts/setup.py")
+    monkeypatch.setattr(setup, "ROOT", tmp_path)
+    monkeypatch.setattr(sys, "argv", ["setup", "--installer", "pip", "--no-launcher"])
+    def fail(*args, **kwargs):
+        raise SystemExit("ensurepip is not available")
+    monkeypatch.setattr(setup.venv.EnvBuilder, "create", fail)
+    with pytest.raises(SystemExit) as exc:
+        setup.main()
+    assert exc.value.code == 2
+    assert "python3-venv" in capsys.readouterr().err
+
+
 def test_launcher_does_not_replace_other_installation(repo_root, tmp_path, monkeypatch):
     setup = module(repo_root, "scripts/setup.py")
     monkeypatch.setattr(Path, "home", classmethod(lambda _: tmp_path))
@@ -56,6 +69,34 @@ def test_launcher_updates_previous_hypodoc_installation(repo_root, tmp_path, mon
     assert setup.install_launcher(cli, True) == target
     assert str(cli) in target.read_text()
     assert "/old/repo" not in target.read_text()
+    assert target.stat().st_mode & 0o111
+
+
+def test_smoke_uses_installed_cli_and_checks_both_school_covers(repo_root, monkeypatch, tmp_path):
+    setup = module(repo_root, "scripts/setup.py")
+    cli = tmp_path / "installation with spaces/bin/hypolatex"
+    calls = []
+
+    def run(command):
+        calls.append(command)
+        assert command[0] == cli
+        if command[1] == "build":
+            Path(command[2]).with_suffix(".pdf").write_bytes(b"%PDF-test")
+
+    monkeypatch.setattr(setup, "run", run)
+    setup.smoke_test(cli)
+    assert [c[-1] for c in calls if c[1] == "init"] == ["standard", "diagonal"]
+    assert all("--strict" in c for c in calls if c[1] == "build")
+
+
+def test_smoke_failure_is_not_hidden(repo_root, monkeypatch, tmp_path):
+    import subprocess
+    setup = module(repo_root, "scripts/setup.py")
+    def fail(command):
+        raise subprocess.CalledProcessError(1, command)
+    monkeypatch.setattr(setup, "run", fail)
+    with pytest.raises(subprocess.CalledProcessError):
+        setup.smoke_test(tmp_path / "cli")
 
 
 def test_rc_versions_are_mapped_and_checked(repo_root, tmp_path, monkeypatch):

@@ -5,6 +5,7 @@ Requires uv and the PDF toolchain; downloads Python packages into temporary
 environments. Does not install system tools or touch the working environment.
 """
 
+import argparse
 import os
 from pathlib import Path
 import re
@@ -13,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tomllib
 import zipfile
 
 
@@ -30,26 +32,52 @@ def run(command, cwd, environment=None):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source-zip", type=Path, help="Test an actual release source ZIP instead of a working copy")
+    parser.add_argument("--wheel", type=Path, help="Test the exact release wheel instead of rebuilding it")
+    args = parser.parse_args()
     if not shutil.which("uv"):
         raise SystemExit("Install uv before running the installation test.")
     with tempfile.TemporaryDirectory(prefix="hypodoc-install-") as temporary:
         base = Path(temporary)
-        checkout = base / "HypoDoc"
-        checkout.mkdir()
+        checkout = base / "HypoDoc source with spaces"
+        if args.source_zip:
+            with zipfile.ZipFile(args.source_zip.resolve()) as archive:
+                download = base / "download"
+                for name in archive.namelist():
+                    if not (download / name).resolve().is_relative_to(download.resolve()):
+                        raise ValueError("Unsafe source ZIP member")
+                archive.extractall(download)
+            roots = list(download.iterdir())
+            assert len(roots) == 1 and roots[0].is_dir()
+            roots[0].rename(checkout)
+            assert not (checkout / ".git").exists()
+        else:
+            checkout.mkdir()
         home = base / "home"
         home.mkdir()
         isolated = {"HOME": str(home), "PATH": str(home / ".local/bin") + os.pathsep + os.environ["PATH"]}
         ignore = shutil.ignore_patterns(".venv", ".git", "__pycache__", ".pytest_cache", "build", "dist", "private", "private_corpus.toml")
-        for path in ("Renderers/LaTeX", "Skills/LaTeX", "scripts"):
-            shutil.copytree(ROOT / path, checkout / path, ignore=ignore)
-        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        if not args.source_zip:
+            for path in ("Renderers/LaTeX", "Skills/LaTeX", "scripts"):
+                shutil.copytree(ROOT / path, checkout / path, ignore=ignore)
+            shutil.copyfile(ROOT / "README.md", checkout / "README.md")
+        readme = (checkout / "README.md").read_text(encoding="utf-8")
         # Execute the commands users see, not a separately maintained imitation.
         commands = [shlex.split(line) for block in re.findall(r"```sh\n(.*?)```", readme, re.S)
                     for line in block.splitlines() if line.startswith(("python3 scripts/setup.py", "hypolatex "))]
         if not commands:
             raise AssertionError("README has no executable quickstart commands")
         for command in commands:
+            if command[0] == "python3":
+                command[0] = sys.executable
             run(command, checkout, isolated)
+        # The beginner path must also work with standard-library venv + pip,
+        # including reinstalling and smoke-testing both covers.
+        run([sys.executable, "scripts/setup.py", "--installer", "pip", "--smoke-test"], checkout, isolated)
+        expected_version = tomllib.loads((checkout / "Renderers/LaTeX/pyproject.toml").read_text())["project"]["version"]
+        run([checkout / ".venv/bin/python", "-c",
+             f"from importlib.metadata import version; assert version('hypolatex') == {expected_version!r}"], checkout, isolated)
         run([checkout / ".venv/bin/python", "-c",
              "import importlib.util; assert importlib.util.find_spec('pytest') is None"], checkout, isolated)
         for name in ("document", "slides"):
@@ -60,12 +88,18 @@ def main():
             marker = "我的技术文档" if name == "document" else "核心观点"
             assert marker in re.sub(r"\s+", "", text)
 
-        run(["uv", "build", "--project", checkout / "Renderers/LaTeX", "--out-dir", base / "dist"], base)
-        wheel, = (base / "dist").glob("*.whl")
+        if args.wheel:
+            wheel = args.wheel.resolve()
+        else:
+            run(["uv", "build", "--project", checkout / "Renderers/LaTeX", "--out-dir", base / "dist"], base)
+            wheel, = (base / "dist").glob("*.whl")
         with zipfile.ZipFile(wheel) as archive:
             names = archive.namelist()
             assert any(n.endswith("hypolatex.lua") for n in names)
             assert any(n.endswith("hypolatex.sty") for n in names)
+            for resource in ("school.tex", "simple.tex", "nature.tex", "FZU_Beamer.sty",
+                             "assets/logo-red.pdf", "assets/logo-white.pdf"):
+                assert "hypolatex/resources/slides/" + resource in names
             assert not any("/private/" in n or "/tests/" in n for n in names)
 
         environment = base / "installed"
@@ -92,7 +126,7 @@ def main():
             run([cli, "build", source, "--strict", "--json"], base)
             run([cli, "convert", source], base)
             assert source.with_suffix(".pdf").read_bytes().startswith(b"%PDF-")
-        print("README quickstart and installed wheel passed (no Spec, Node.js or existing venv).")
+        print("README/ZIP quickstart (uv + pip, path with spaces) and installed wheel passed; no Spec or Node.js.")
 
 
 if __name__ == "__main__":

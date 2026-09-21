@@ -1,0 +1,53 @@
+name: Release LaTeX
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  latex:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install PDF toolchain (no Node.js or Spec)
+        run: sudo apt-get update && sudo apt-get install -y python3-venv pandoc texlive-xetex texlive-latex-extra texlive-lang-chinese latexmk fonts-noto-cjk poppler-utils
+      - run: uv sync --project Renderers/LaTeX --group dev --frozen
+      - run: python3 tools/release.py check
+      - run: uv run --group dev --project Renderers/LaTeX python -m pytest -q Renderers/LaTeX/tests/unit Renderers/LaTeX/tests/integration
+      - run: python3 tools/release.py build --latex-only --output release/latex
+      - name: Test the exact source ZIP and wheel
+        shell: bash
+        run: |
+          set -euo pipefail
+          sources=(release/latex/hypodoc-source-*.zip)
+          wheels=(release/latex/hypolatex-*.whl)
+          python3 tools/test-install.py --source-zip "${sources[0]}" --wheel "${wheels[0]}"
+          (cd release/latex && sha256sum -c CHECKSUMS.txt)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: latex-release
+          path: release/latex/*
+          if-no-files-found: error
+      - name: Create draft for human-approved publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(python3 tools/release.py version)"
+          TAG="v$VERSION"
+          if gh release view "$TAG" >/dev/null 2>&1 || gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" >/dev/null 2>&1; then
+            echo "Refusing to overwrite existing release/tag: $TAG" >&2
+            exit 1
+          fi
+          flags=(--draft)
+          if [[ "$VERSION" == *-rc.* ]]; then flags+=(--prerelease); fi
+          gh release create "$TAG" release/latex/* --target "$GITHUB_SHA" \
+            --title "HypoDoc $TAG · LaTeX & ShanghaiTech themes" \
+            --notes-file release/latex/RELEASE_NOTES.md "${flags[@]}"

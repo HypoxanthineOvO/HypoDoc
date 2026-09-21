@@ -91,8 +91,10 @@ def finalize(output, allow_dirty=False):
     return manifest
 
 
-def build(output=None, allow_dirty=False):
+def build(output=None, allow_dirty=False, latex_only=False):
     version, python_version = check()
+    if latex_only and allow_dirty:
+        raise ValueError("LaTeX source ZIP must come from a clean commit; no --allow-dirty")
     source_state(allow_dirty)
     output = Path(output).resolve() if output else ROOT / "release" / ("v" + version)
     if output.exists() and any(output.iterdir()):
@@ -106,11 +108,28 @@ def build(output=None, allow_dirty=False):
     with zipfile.ZipFile(kit, "w", zipfile.ZIP_DEFLATED) as archive:
         paths = [ROOT / "README.md", ROOT / "LICENSE", ROOT / "CHANGELOG.md"]
         paths += [p for p in (ROOT / "Docs").glob("*.md") if p.name not in {"architecture.md", "security.md"}]
+        paths += [p for p in (ROOT / "Docs/assets").rglob("*") if p.is_file()]
         paths += [p for folder in ("Skills/Authoring", "Skills/LaTeX") for p in (ROOT / folder).rglob("*") if p.is_file()]
         for path in sorted(paths):
             archive.write(path, path.relative_to(ROOT))
     (output / "RELEASE_NOTES.md").write_text(notes(version))
+    if latex_only:
+        run(["git", "archive", "--format=zip", f"--prefix=HypoDoc-{version}/",
+             f"--output={output / f'hypodoc-source-{version}.zip'}", "HEAD"])
+        # Create immediately viewable examples with the same packaged CLI.
+        for cover in ("standard", "diagonal"):
+            source = output / f"School-{cover}.md"
+            run(["uv", "run", "--project", "Renderers/LaTeX", "hypolatex",
+                 "init", source, "--template", "slides", "--theme", "school",
+                 "--school-cover", cover])
+            run(["uv", "run", "--project", "Renderers/LaTeX", "hypolatex",
+                 "build", source, "--strict", "--json"])
     manifest = finalize(output, allow_dirty)
+    if latex_only:
+        manifest["scope"] = "latex-only"
+        (output / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+        paths = [output / f["name"] for f in manifest["files"]] + [output / "manifest.json"]
+        (output / "CHECKSUMS.txt").write_text("".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n" for p in paths))
     print(json.dumps({"output": str(output), "version": version, "dirty": manifest["dirty"]}))
 
 
@@ -166,6 +185,8 @@ if __name__ == "__main__":
     build_parser = commands.add_parser("build")
     build_parser.add_argument("--output")
     build_parser.add_argument("--allow-dirty", action="store_true")
+    build_parser.add_argument("--latex-only", action="store_true",
+                              help="Include a clean source ZIP and both School PDF examples; no hosts")
     assemble_parser = commands.add_parser("assemble")
     assemble_parser.add_argument("--input", required=True)
     assemble_parser.add_argument("--output", required=True)
@@ -176,7 +197,7 @@ if __name__ == "__main__":
         elif args.command == "check":
             print(check())
         elif args.command == "build":
-            build(args.output, args.allow_dirty)
+            build(args.output, args.allow_dirty, args.latex_only)
         else:
             assemble(args.input, args.output)
     except (ValueError, subprocess.CalledProcessError) as exc:
