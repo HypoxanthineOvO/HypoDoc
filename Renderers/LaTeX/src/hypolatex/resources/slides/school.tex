@@ -1,0 +1,199 @@
+% FZU_Beamer.sty is loaded unchanged from the upstream project.
+\usepackage{FZU_Beamer}
+\usepackage[fit]{truncate}
+\usepackage{tcolorbox}
+\definecolor{ThemeAccent}{HTML}{982B40}
+\definecolor{ThemeInk}{HTML}{303641}
+\definecolor{SchoolNav}{HTML}{F4EDF0}
+\definecolor{SchoolNavMuted}{HTML}{69585E}
+\definecolor{SchoolPanel}{HTML}{F1E2E7}
+\definecolor{SchoolBlockInk}{HTML}{763548}
+\definecolor{SchoolBrand}{HTML}{9D0A12}
+% First-party layout overrides; keep the vendored upstream file unchanged.
+
+
+\setbeamercolor{normal text}{fg=ThemeInk}
+\setbeamercolor{structure}{fg=ThemeAccent}
+\setbeamercolor{title}{fg=white,bg=ThemeAccent}
+\setbeamercolor{frametitle}{fg=white,bg=ThemeAccent}
+\setbeamercolor{section in head/foot}{fg=ThemeAccent,bg=SchoolNav}
+\setbeamercolor{subsection in head/foot}{fg=ThemeInk,bg=SchoolNav}
+\setbeamercolor{mini frame}{fg=ThemeAccent,bg=SchoolNav}
+\setbeamertemplate{section in head/foot}{\strut\bfseries\insertsectionhead}
+\setbeamertemplate{section in head/foot shaded}{\strut\mdseries\color{SchoolNavMuted}\insertsectionhead}
+\setbeamercolor{author in head/foot}{fg=SchoolBlockInk,bg=SchoolPanel}
+\setbeamercolor{institute in head/foot}{fg=SchoolBlockInk,bg=SchoolPanel}
+\setbeamercolor{title in head/foot}{fg=white,bg=ThemeAccent}
+\setbeamercolor{frame number}{fg=white,bg=ThemeAccent}
+\setbeamercolor{upper separation line foot}{bg=SchoolPanel}
+\setbeamercolor{lower separation line foot}{bg=ThemeAccent}
+\setbeamercolor{block title}{fg=SchoolBlockInk,bg=SchoolPanel}
+\setbeamercolor{block body}{fg=ThemeInk,bg=SchoolPanel!23!white}
+\setbeamertemplate{background}{}
+\setbeamertemplate{navigation symbols}{}
+% Bounded, vertically centred navigation. Four or fewer chapters get equal
+% cells and linked page dots; larger decks get a current-chapter breadcrumb.
+% Read the previous pass's .nav, so this also works for raw exported TeX.
+\makeatletter
+\newcount\SchoolSections
+\newcount\SchoolSlides
+\newdimen\SchoolCellWidth
+\newcommand{\SchoolCountSections}{%
+  \SchoolSections=0
+  \begingroup
+    \def\sectionentry##1##2##3##4##5{%
+      \ifnum##5=\c@part\global\advance\SchoolSections by1\fi}%
+    \def\slideentry##1##2##3##4##5##6{}%
+    \dohead
+  \endgroup}
+\newcommand{\SchoolSectionDots}[1]{%
+  \begingroup
+    \SchoolSlides=0
+    \def\sectionentry##1##2##3##4##5{}%
+    \def\slideentry##1##2##3##4##5##6{%
+      \ifnum##6=\c@part\ifnum##1=#1\advance\SchoolSlides by1\fi\fi}%
+    \dohead
+    \ifnum\SchoolSlides>12
+      {\color{SchoolNavMuted}\the\SchoolSlides\ 页}%
+    \else
+      \def\slideentry##1##2##3##4##5##6{%
+        \ifnum##6=\c@part\ifnum##1=#1
+          \beamer@link(##4){%
+            \ifnum\c@section=##1\ifnum\c@subsection=##2\ifnum\c@subsectionslide=##3
+              \color{ThemeAccent}\else\color{ThemeAccent!45!white}\fi
+            \else\color{ThemeAccent!45!white}\fi
+            \else\color{ThemeAccent!45!white}\fi
+            \ensuremath{\circ}}\kern1pt
+        \fi\fi}%
+      \dohead
+    \fi
+  \endgroup}
+\newcommand{\SchoolNavigation}{%
+  \SchoolCountSections
+  \usebeamerfont{section in head/foot}%
+  \ifnum\SchoolSections>4
+    \hbox to\dimexpr\paperwidth-12mm\relax{%
+      \ifnum\c@section>0
+        \truncate{0.72\paperwidth}{\textbf{\insertsectionhead}}%
+      \else\textbf{报告概览}\fi
+      \hfill\the\c@section\,/\,\the\SchoolSections\ 章节}%
+  \else
+    \ifnum\SchoolSections>0
+      \SchoolCellWidth=\dimexpr\paperwidth-12mm\relax
+      \divide\SchoolCellWidth by\SchoolSections
+      \begingroup
+        \def\slideentry##1##2##3##4##5##6{}%
+        \def\sectionentry##1##2##3##4##5{%
+          \ifnum##5=\c@part
+            \parbox[c]{\SchoolCellWidth}{\centering\parskip=0pt
+              \ifnum\c@section=##1\color{ThemeAccent}\bfseries
+              \else\color{SchoolNavMuted}\mdseries\fi
+              \hyperlink{Navigation##3}{\truncate{\dimexpr\SchoolCellWidth-4mm\relax}{\strut##2}}\par
+              \vspace{0.3mm}\mdseries\SchoolSectionDots{##1}\par}%
+          \fi}%
+        \hbox{\dohead}%
+      \endgroup
+    \else
+      \hbox to\dimexpr\paperwidth-12mm\relax{\truncate{0.8\paperwidth}{\insertshorttitle}\hfil}%
+    \fi
+  \fi}
+\setbeamertemplate{headline}{%
+  \begin{beamercolorbox}[wd=\paperwidth]{section in head/foot}%
+    \vbox to7mm{\vfil\hbox{\hspace*{6mm}\SchoolNavigation}\vfil}%
+  \end{beamercolorbox}}
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=9mm,rightskip=9mm]{frametitle}%
+    \vskip1.8mm\usebeamerfont{frametitle}\strut\insertframetitle\strut\par
+    \ifx\insertframesubtitle\@empty\else
+      {\usebeamerfont{framesubtitle}\insertframesubtitle\par}%
+    \fi
+    \vskip1.8mm
+  \end{beamercolorbox}}
+% Use explicit point sizes and physical row heights, not ex units inherited
+% from a different font. Each field owns its width; long metadata is ellipsised.
+\newcommand{\SchoolFooterRow}[2]{%
+  \begin{beamercolorbox}[wd=\paperwidth]{#1}%
+    \vbox to4mm{\vfil\hbox{\hspace*{6mm}%
+      \fontsize{6.5}{8}\selectfont\strut#2\hspace*{6mm}}\vfil}%
+  \end{beamercolorbox}}
+\setbeamertemplate{footline}{%
+  \SchoolFooterRow{author in head/foot}{%
+    \hbox to\dimexpr\paperwidth-12mm\relax{%
+      \truncate{0.34\paperwidth}{\insertshortauthor}\hfill
+      \truncate{0.54\paperwidth}{\insertshortinstitute}}}%
+  \SchoolFooterRow{title in head/foot}{%
+    \hbox to\dimexpr\paperwidth-12mm\relax{%
+      \truncate{0.53\paperwidth}{\insertshorttitle}\hfill
+      \truncate{0.23\paperwidth}{\insertshortdate}\hspace{4mm}%
+      \insertframenumber\,/\,\inserttotalframenumber}}}
+\makeatother
+% Official ShanghaiTech SVG artwork, converted to vector PDF without changes.
+\newcommand{\SchoolLogo}{\includegraphics[width=0.23\paperwidth,keepaspectratio]{\HypoResourceDir/assets/logo-red.pdf}}
+\NewDocumentEnvironment{ThemeBlock}{m m +b}{%
+  \begin{tcolorbox}[colback=SchoolPanel!23!white,colframe=SchoolPanel,
+    colbacktitle=SchoolPanel,coltitle=SchoolBlockInk,
+    fonttitle=\usebeamerfont{block title},title={#2},
+    boxrule=0pt,arc=1.5mm,left=2.5mm,right=2.5mm,top=1.2mm,bottom=1.2mm,
+    toptitle=1mm,bottomtitle=1mm,boxsep=0pt,before skip=2mm,after skip=2mm]
+    #3\end{tcolorbox}}{}
+\newcommand{\SchoolStandardTitle}{%
+  \begin{frame}
+    \centering
+    \vspace{1mm}
+    \hfill\SchoolLogo\par
+    \vspace{3mm}
+    \begin{beamercolorbox}[wd=\linewidth,center,sep=4mm]{title}
+      {\usebeamerfont{title}\inserttitle\par}%
+      \ifdefempty{\insertsubtitle}{}{\vspace{2mm}%
+        {\usebeamerfont{subtitle}\insertsubtitle\par}}%
+    \end{beamercolorbox}
+    \vspace{4mm}
+    \begin{minipage}{0.88\linewidth}
+      \centering\setlength{\parskip}{0pt}
+      {\normalsize\insertauthor\par}\vspace{2mm}
+      {\small\insertinstitute\par}\vspace{1.5mm}
+      {\small\insertdate\par}
+    \end{minipage}
+  \end{frame}}
+
+\newcommand{\SchoolDiagonalTitle}{%
+  \begin{frame}
+    \begin{tikzpicture}[remember picture,overlay]
+      % Keep the theme's navigation/footer visible outside the cover canvas.
+      \begin{scope}
+        \clip ([yshift=-7mm]current page.north west) rectangle
+              ([yshift=9mm]current page.south east);
+        \fill[SchoolBrand]
+          ([xshift=0.68\paperwidth,yshift=-7mm]current page.north west) --
+          ([yshift=-7mm]current page.north east) --
+          ([yshift=9mm]current page.south east) --
+          ([xshift=0.46\paperwidth,yshift=9mm]current page.south west) -- cycle;
+      \end{scope}
+      \node[anchor=north west,inner sep=0pt]
+        at ([xshift=9mm,yshift=-13mm]current page.north west)
+        {\includegraphics[width=0.26\paperwidth,keepaspectratio]{\HypoResourceDir/assets/logo-red.pdf}};
+      \node[anchor=north west,align=left,text width=0.45\paperwidth,
+            inner sep=0pt,text=ThemeInk]
+        at ([xshift=9mm,yshift=-36mm]current page.north west)
+        {{\usebeamerfont{title}\fontsize{18}{24}\selectfont\color{ThemeAccent}\inserttitle\par}
+         \vspace{0.25em}{\usebeamerfont{subtitle}\insertsubtitle\par}};
+      \node[anchor=south west,align=left,text width=0.38\paperwidth,
+            inner sep=0pt,text=ThemeInk]
+        at ([xshift=9mm,yshift=16mm]current page.south west)
+        {{\small\insertauthor\par}\vspace{0.3em}
+         {\small\insertinstitute\par}\vspace{0.3em}
+         {\small\insertdate}};
+      \node[anchor=south east,inner sep=0pt]
+        at ([xshift=-8mm,yshift=14mm]current page.south east)
+        {\includegraphics[width=0.32\paperwidth,keepaspectratio]{\HypoResourceDir/assets/logo-white.pdf}};
+    \end{tikzpicture}
+  \end{frame}}
+
+\newcommand{\ExperimentTitle}{%
+  \ifdefstring{\SchoolCoverLayout}{standard}{\SchoolStandardTitle}{%
+    \ifdefstring{\SchoolCoverLayout}{diagonal}{\SchoolDiagonalTitle}{%
+      \PackageError{HypoDoc}{school_cover must be standard or diagonal}{Choose one of the two documented layouts.}%
+    }%
+  }%
+}

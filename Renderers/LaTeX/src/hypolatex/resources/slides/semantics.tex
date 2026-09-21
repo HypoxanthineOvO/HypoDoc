@@ -1,0 +1,32 @@
+\newif\ifHypoShowAnswers
+\ifdefstring{\HypoAnswerMode}{student}{\HypoShowAnswersfalse}{\HypoShowAnswerstrue}
+\NewDocumentCommand{\HypoTableConfig}{m}{}
+\NewDocumentCommand{\HypoTableColumn}{m}{}
+\NewDocumentCommand{\HypoTableColumnSpec}{m}{}
+\AtBeginEnvironment{tblr}{\small}
+\NewDocumentEnvironment{HypoNote}{O{} +b}{\begin{ThemeBlock}{note}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoInfo}{O{} +b}{\begin{ThemeBlock}{info}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoObjective}{O{} +b}{\begin{ThemeBlock}{objective}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoTip}{O{} +b}{\begin{ThemeBlock}{tip}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoWarning}{O{} +b}{\begin{ThemeBlock}{warning}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoTask}{O{} +b}{\begin{ThemeBlock}{task}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoSummary}{O{} +b}{\begin{ThemeBlock}{summary}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoRequirement}{O{} +b}{\begin{ThemeBlock}{warning}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoDeliverable}{O{} +b}{\begin{ThemeBlock}{objective}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoChecklist}{O{} +b}{\begin{ThemeBlock}{note}{#1}#2\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoRubric}{O{} +b}{\begin{ThemeBlock}{note}{#1}#2\end{ThemeBlock}}{}
+\newcounter{hypoquestion}
+\NewDocumentEnvironment{HypoQuestion}{O{} O{} O{true} O{outline} +b}{%
+  \ifstrequal{#3}{false}{}{\refstepcounter{hypoquestion}}%
+  \ifstrempty{#1}{}{\label{#1}}%
+  \begin{ThemeBlock}{task}{#2}#5\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoHint}{O{} O{} +b}{\begin{ThemeBlock}{tip}{#1}#3\end{ThemeBlock}}{}
+\NewDocumentEnvironment{HypoAnswer}{O{} O{} +b}{\ifHypoShowAnswers\begin{ThemeBlock}{info}{#1}#3\end{ThemeBlock}\fi}{}
+\NewDocumentEnvironment{HypoSolution}{O{} O{} +b}{\ifHypoShowAnswers\begin{ThemeBlock}{info}{#1}#3\end{ThemeBlock}\fi}{}
+\NewDocumentEnvironment{HypoQA}{O{} O{} +b}{#3}{}
+\NewDocumentCommand{\HypoFigureEx}{m m m m m}{%
+  \begin{figure}\centering
+  \includegraphics[width=#4,height=0.50\textheight,keepaspectratio]{#2}%
+  \ifstrempty{#3}{}{\caption{#3}}\ifstrempty{#1}{}{\label{#1}}%
+  \end{figure}}
+\NewDocumentCommand{\HypoRef}{m}{\ref{#1}}

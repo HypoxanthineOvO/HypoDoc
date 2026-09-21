@@ -16,11 +16,11 @@ Use this canonical frontmatter:
 ---
 title: Function Matrix
 profile: beamer
-theme: minimal
-palette: red
+theme: school
+school_cover: standard
 aspectratio: "169"
 footline: full
-section_dividers: true
+section_dividers: false
 subsection_dividers: false
 frame_title_inheritance_limit: 3
 continued_title_style: subtle
@@ -36,7 +36,7 @@ Keep `frame_title_inheritance_limit` small. Continuations work for one short ove
 
 Supported semantic blocks include `objective`, `info`, `task`, `requirement`, `deliverable`, `checklist`, `rubric`, `question`, `hint`, `answer`, and `solution`. Controlled `.table` blocks work on slides. Prefer one claim or comparison per frame, short lists, and assets that remain legible at presentation distance.
 
-Local asset paths must stay workspace-relative. Images preserve aspect ratio even when width and height are supplied. Add `stretch=true` only when deliberate distortion/fill is required. Standalone captionless images are centered and height-capped; side-by-side figures need explicit widths whose sum remains below 100%.
+Local asset paths must stay workspace-relative. Images preserve aspect ratio even when width and height are supplied. Add `stretch=true` only when deliberate distortion/fill is required. Standalone captionless images are centered and height-capped; captioned images keep their caption and receive a default 100% width / 65% text-height bounding box (explicit dimensions take precedence). Side-by-side figures need explicit widths whose sum remains below 100%.
 
 ## Preview And Export
 

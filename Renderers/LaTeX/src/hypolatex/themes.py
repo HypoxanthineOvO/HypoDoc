@@ -46,7 +46,12 @@ THEME_REGISTRY = {
         "latex_theme": "glass",
         "profiles": ("beamer",),
     },
+    "school": {"latex_theme": "school", "profiles": ("beamer",)},
+    "simple": {"latex_theme": "simple", "profiles": ("beamer",)},
+    "nature": {"latex_theme": "nature", "profiles": ("beamer",)},
 }
+
+PACKAGED_SLIDE_THEMES = frozenset({"school", "simple", "nature"})
 
 def valid_theme_ids(document_type: str | None = None) -> tuple[str, ...]:
     """Return all supported public theme IDs."""

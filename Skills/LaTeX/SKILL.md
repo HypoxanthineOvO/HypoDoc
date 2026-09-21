@@ -1,102 +1,43 @@
 ---
 name: hypolatex
-description: Use this skill whenever a user wants to author, edit, repair, preview, convert, compile, or validate a HypoDoc/Hypo-LaTeX Markdown document. This includes longform books and articles, project or review packets, cheatsheets, Beamer slides/presentations, Desktop or VS Code preview, TeX conversion, PDF export, renderer diagnostics, and PDF evidence. Do not use it for arbitrary hand-written LaTeX projects that do not use the HypoDoc Markdown contract.
+description: Author or edit HypoDoc Markdown documents and Beamer slides, then convert to TeX or build and inspect PDF. Use for HypoDoc/Hypo-LaTeX materials, not arbitrary hand-written LaTeX or PowerPoint files.
 ---
 
-# HypoDoc Authoring And Export
+# HypoDoc 写作与导出
 
-Treat the Markdown source as canonical. Preview, presentation, TeX, and PDF are projections of that source, so fix source/configuration problems instead of patching generated output.
+交付用户需要的源文件与成品，不把开发日志当成文档。Markdown 是长期维护的来源，不手改生成的 TeX 解决问题。
 
-## Route The Task
+## 准备一次
 
-Read only the reference needed for the current task:
+先检查 `hypolatex --version`。未安装时，读取 HypoDoc 仓库 README，从仓库根执行 `python3 scripts/setup.py`（Windows 用 `python`）。若命令未进入 PATH，使用脚本打印的完整 CLI 路径。
 
-| Task | Start from | Read |
-| --- | --- | --- |
-| Book, article, project, review packet, controlled table, or cheatsheet | `templates/longform.md`, `project.md`, `review.md`, or `cheatsheet.md` | `references/authoring.md` |
-| Slides, deck, presentation, waterfall preview, or Beamer | `templates/beamer.md` | `references/slides.md` |
-| Convert/build failures, assets, PDF export, or evidence | Existing source | `references/export-and-evidence.md` |
+setup 自动准备本地 Python 环境；系统安装必须先说明并确认，不能自行加 `--install-system`。普通使用不需要 Node.js、Spec 或实验仓库。不要因为 Pandoc 版本不同强制重装。
 
-For mixed tasks, read the authoring/slides reference first and the export reference only when producing or diagnosing TeX/PDF.
+用 `hypolatex doctor --json` 检查 PDF 构建依赖；只转 TeX 时加 `--target convert`。推荐字体与 Poppler 为可选项，不把它们当所有任务的硬门槛。
 
-Copy or edit the selected Markdown template into the user's requested output path; do not modify the bundled template in place.
+## 创建源文件
 
-## Core Workflow
-
-1. Inspect the source and workspace before editing. Preserve user content and existing project conventions.
-2. Choose one canonical `profile`: `book`, `article`, or `beamer`. Legacy `document_type`/`documentclass` values are read compatibility only; migrate AI-authored files to `profile` and never emit both forms.
-3. Choose a compatible theme. Ordinary AI authoring is theme-first: use `theme` as the only normal style field. Fonts, paper, accent, resource roots, and cover fields are optional advanced overrides used only for explicit constraints.
-4. Author semantic Markdown and keep generated `.tex`/`.pdf` out of the source editing loop.
-5. For slides, inspect waterfall or presentation preview before export. Frame order and content membership should match the PDF even though browser and TeX typography remain native.
-6. Before conversion/build, run the dependency and exact-toolchain check:
-
-```bash
-hypolatex doctor
+```sh
+hypolatex init slides.md --template slides --theme school
 ```
 
-Pandoc `3.10`, XeLaTeX, latexmk, required TeX packages, fonts, and Poppler evidence tools must be available. If diagnostics report a missing or wrong dependency, explain the error and ask the user to install or select the required toolchain. Do not fake or pretend that dependencies are installed.
+`--template` 可选 document、article、slides、review、cheatsheet。初始化不会覆盖现有文件。用 `hypolatex themes` 查看完整主题表。
 
-7. Generate reviewable TeX when source-to-TeX inspection is useful:
+Slides 新主题：school（完整高校样式）、simple（简约细线）、nature（摄影封面／淡几何正文）。School 可在 frontmatter 中指定 `school_cover: standard` 或 `diagonal`。新源文件用 `profile`，不混入旧 document_type/documentclass。
 
-```bash
-hypolatex convert INPUT.md --output OUTPUT.tex
+字体默认优先使用本机首选字体并明确后备；需要开放字体环境时设 `font_preset: portable`。不要要求安装商业字体才能完成任务。
+
+## 构建与检查
+
+```sh
+hypolatex build slides.md --json
+hypolatex convert slides.md
 ```
 
-8. Build with the XeLaTeX-first PDF path:
+默认生成同名 PDF / TeX，也可用 `--output` 指定路径。`--strict` 在溢出/缺字时失败，保留已有 PDF；带答案版加 `--answer-mode review`。
 
-```bash
-hypolatex build INPUT.md --output OUTPUT.pdf
-```
+读 JSON diagnostics 中的具体问题。TeX 行号不是 Markdown 行号；frame_title 可帮助定位页面。修改源文件、配置或环境，不隐藏错误。主题资源随包提供，不另行克隆主题。
 
-Use `--theme THEME_ID` or `--answer-mode review` only as intentional CLI overrides. Read convert, Pandoc, latexmk, and build stderr/diagnostics; do not hide failures behind a different command.
+素材相对 Markdown 放置；缺图是错误，不默认用占位图替代。只有用户同意草稿占位时才加 `--allow-placeholders`。未知来源的任意原始 TeX 不是安全沙箱输入。
 
-9. Validate the output rather than stopping at exit code 0. Use `pdfinfo` for page geometry/count, `pdftotext` for content markers, and `pdftoppm` plus visual inspection when layout matters.
-
-## Canonical Configuration
-
-Longform default:
-
-```yaml
----
-title: Example Document
-profile: book
-theme: classic-readable
----
-```
-
-Beamer default:
-
-```yaml
----
-title: Example Deck
-profile: beamer
-theme: minimal
-palette: red
-aspectratio: "169"
----
-```
-
-Theme capabilities are explicit:
-
-- `book`/`article`: `plain`, `classic-readable`, `tech-minimal`, `warm-handbook`, `academic-clean`.
-- `beamer`: `plain`, `shanghaitech`, `minimal`, `glass`.
-
-Reject an incompatible theme/profile pair before conversion. Do not rely on a silent fallback.
-
-Optional advanced overrides include `font`, `fonts`, `mainfont`, `sansfont`, `monofont`, `cjkfont`, `paper`, `paper_size`, `accent`, `accent_color`, `resource-root`, `resource_root`, `cover_layout`, and `cover_image`. They tune a valid theme; they do not replace profile/theme selection.
-
-## Safety And Failure Policy
-
-- Use local workspace-relative assets. Reject remote/data URLs, absolute paths, `..` traversal, and symlink escapes.
-- A corrupt image is a build error. A missing image is also an error by default because a successful PDF must not silently conceal missing evidence.
-- Use `--allow-placeholders` only when the user explicitly accepts placeholder output for a draft. Record missing asset names in the handoff.
-- Keep public fixtures synthetic. Private corpus sources, excerpts, PDFs, TeX, logs, screenshots, and result files remain local and must not be committed.
-- Do not edit generated TeX to work around unsupported Markdown. Diagnose the source, renderer configuration, or toolchain boundary.
-
-## Current Product Boundary
-
-HypoDoc supports browser/Desktop/VS Code preview and Hypo-LaTeX PDF export. A Textual/TUI authoring application is not supported and is outside the current product surface. The public `hypolatex` CLI exposes `doctor`, `convert`, and `build`; use `hypolatex --help` when command help is required.
-
-## Handoff
-
-Report the source and outputs changed, effective profile/theme/answer mode, commands run, page/frame count, content evidence, visual checks, placeholders (if any), and unresolved diagnostics. When export could not run, state the exact dependency or source failure instead of claiming success.
+输出后按 `references/export-and-evidence.md` 检查正文、中文、公式、表格、图片和排版，再交付 Markdown、素材与 PDF，并说明未完成的检查。不要求启动 Desktop；浏览器打印不是 LaTeX 导出；不输出可编辑 pptx/docx。

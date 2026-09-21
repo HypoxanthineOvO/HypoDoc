@@ -52,7 +52,19 @@ jobs:
       - run: python3 Spec/scripts/provision-pandoc.py --version 3.10 --dest Spec/.tools/pandoc
       - run: pnpm conformance:portable
 
+  latex-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --project Renderers/LaTeX --group dev --frozen
+      - run: uv run --group dev --project Renderers/LaTeX python -m pytest -q Renderers/LaTeX/tests/unit
+
   latex-renderer:
+    strategy:
+      fail-fast: false
+      matrix:
+        pandoc: [system, reference]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -61,24 +73,22 @@ jobs:
           git config --global url."https://github.com/".insteadOf git@github.com:
           git submodule update --init --depth 1 Spec
       - uses: astral-sh/setup-uv@v6
-      - run: sudo apt-get update && sudo apt-get install -y texlive-xetex texlive-lang-chinese latexmk poppler-utils fonts-noto-cjk
+      - run: sudo apt-get update && sudo apt-get install -y python3-venv pandoc texlive-xetex texlive-latex-extra texlive-lang-chinese latexmk poppler-utils fonts-noto-cjk
       - name: Provision pinned Pandoc
+        if: matrix.pandoc == 'reference'
         run: |
           python3 Spec/scripts/provision-pandoc.py --version 3.10 --dest "$RUNNER_TEMP/pandoc"
           echo "$RUNNER_TEMP/pandoc/3.10/bin" >> "$GITHUB_PATH"
-      - run: uv sync --project Renderers/LaTeX --frozen
+      - run: uv sync --project Renderers/LaTeX --group dev --frozen
       - name: LaTeX doctor
         working-directory: Renderers/LaTeX
         run: uv run hypolatex doctor
       - name: LaTeX tests
         working-directory: Renderers/LaTeX
-        run: uv run python -m pytest -q tests
-      - name: Representative PDF build
-        working-directory: Renderers/LaTeX
-        run: uv run hypolatex build examples/showcase/hypolatex-showcase.md --output build/ci-showcase.pdf
-      - name: Verify non-empty PDF
-        working-directory: Renderers/LaTeX
-        run: test -s build/ci-showcase.pdf
+        run: uv run --group dev python -m pytest -q tests/integration
+      - name: README quickstart and clean wheel install
+        if: matrix.pandoc == 'system'
+        run: python3 tools/test-install.py
 
   browser:
     runs-on: ubuntu-latest

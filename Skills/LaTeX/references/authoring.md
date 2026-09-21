@@ -1,58 +1,21 @@
-# Longform And Semantic Authoring
+# 文档与专用 PDF 排版
 
-Use `profile: book` for books/tutorials and `profile: article` for articles, project or assignment briefs, reviews, and cheatsheets. Let LaTeX number ordinary headings. Use `.manual-number` only for intentionally preserved written numbers and `.unnumbered` for unnumbered headings.
+普通长文、项目说明和复习题使用根 `Docs/authoring.md` 中的共享语法。优先选择主题，不默认堆叠高级覆盖项。
 
-## Semantic Vocabulary
+## 答案
 
-Use blocks for intent rather than visual decoration:
+`answer_mode` 默认 student；review / teacher 显示答案，CLI 优先。question、hint、answer、solution 放在带标识和 `kind` 的 qa 容器中。精确题目卡片样式属于 LaTeX 扩展，不加入默认共享模板。
 
-- `objective`: outcome.
-- `info`: context or assumptions.
-- `task`: action.
-- `requirement`: non-negotiable constraint.
-- `deliverable`: artifact or handoff.
-- `checklist`: completion checks.
-- `rubric`: grading or acceptance criteria.
+## 表格
 
-Review content uses `question`, `hint`, `answer`, and `solution`, or nests them in `qa`. Question styles are `outline`, `card`, and canonical non-card `plain`; `text` and `inline` are legacy aliases for `plain`.
+简单资料用普通 Markdown 表格。需要语义分类时使用带 `#identifier` 和 `kind` 的 `.table`。精确列宽、长表、密度、复杂类型可查仓库内 `Renderers/LaTeX/docs/c3-authoring.md`，这些是 PDF 后端能力，不保证全部预览兼容。
 
-`answer_mode` is `student`, `review`, or `teacher`. CLI `--answer-mode` overrides frontmatter; frontmatter overrides the default `student`. Student hides answer/solution content, while review and teacher include it.
+## 速查表
 
-## Controlled Tables
+用 `hypolatex init notes.md --template cheatsheet` 开始，按主题压缩信息，优先保留常用概念、公式和易错点，不改写原始材料。`layout: cheatsheet` 控制紧凑 PDF；正文使用普通标题、列表、表格。不要为了页数要求无限缩小字号。
 
-Reserve `.table` for layout-sensitive tables. Ordinary Markdown tables outside `.table` remain ordinary Pandoc tables; do not wrap every table.
+确需多栏时再查 `Renderers/LaTeX/docs/c5-cheatsheet.md`。`cheatsheet-grid` / `cheatsheet-cell` 是 LaTeX 专用扩展，应说明查看端兼容限制。目标页数、内容完整性或可读性无法同时满足时，说明取舍，不静默删掉重要内容。
 
-````markdown
-::: {.table}
-```yaml
-type: comparison
-density: compact
-caption: Option comparison
-label: tab:options
-columns:
-  - align: left
-    width: 0.25
-  - align: left
-    weight: 2
-```
+## 高级覆盖
 
-| Option | Evidence |
-| --- | --- |
-| A | Fast setup |
-| B | Strong controls |
-:::
-````
-
-The block contains optional YAML followed by exactly one Markdown table. Types are `default`, `comparison`, `checklist`, `rubric`, `cheatsheet`, `compact`, and `long`; densities are `compact`, `normal`, and `comfortable`. `type: long` or `long: true` uses the multi-page `longtable` fallback. Row spans and column spans are unsupported.
-
-## Cheatsheets
-
-`hd:make-cheatsheet` is an AI-facing Skill workflow, not a CLI subcommand of `hypolatex`. It does not add `distill` or a deterministic extraction CLI surface. Read source material but do not modify it; write a new cheatsheet Markdown file and treat target pages as a hard constraint.
-
-Output choices are `formulas`, `keypoints`, and `examples`. Compression priority is formulas > keypoints > examples. If the result cannot fit, stop with a conflict report rather than silently exceeding the target. The conflict report names target pages, actual pages, omitted candidates, blocking `keep`/high-priority cells, and a suggested user action.
-
-A document with `profile: article` and no cheatsheet layout falls back to the standard article layout.
-
-## Public And Private Material
-
-Public validation uses synthetic templates and committed fixtures. Private corpus work uses ignored paths such as `tests/private/corpus` or `HYPOLATEX_TEST_CORPUS`, a local manifest/preparation workflow, and a small smoke pytest run. Keep private source material and real generated artifacts local and uncommitted; do not commit private corpus artifacts or results.
+字体、纸张、强调色、封面和图片位置只在用户明确约束时调整。主题注册与 profile 不匹配时换用适配主题，不依赖静默回退。素材应随源文件一起交付。

@@ -3,20 +3,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
+from importlib import resources
 import shutil
 import subprocess
-import sys
 
 
 REQUIRED_EXECUTABLES = (
     "pandoc",
-    "python3",
-    "uv",
     "xelatex",
     "latexmk",
     "kpsewhich",
-    "fc-match",
 )
 
 PDF_EVIDENCE_TOOLS = (
@@ -40,23 +36,14 @@ OPTIONAL_TEX_PACKAGES = (
     "fontawesome5",
 )
 
-REQUIRED_NOTO_CJK_FONTS = (
+RECOMMENDED_CJK_FONTS = (
     "Noto Serif CJK SC",
     "Noto Sans CJK SC",
     "Noto Sans Mono CJK SC",
 )
 
-RECOMMENDED_CHINESE_FONTS = (
-    "MiSans",
-    "Sarasa Gothic SC",
-    "LXGW WenKai",
-    "LXGW WenKai Mono",
-    "Smiley Sans",
-    "Alibaba PuHuiTi 3.0",
-    "DingTalk JinBuTi",
-)
-
-REQUIRED_PANDOC_VERSION = "3.10"
+# Observed compatibility, not an allowlist. Spec's reference pin is separate.
+TESTED_PANDOC_VERSIONS = frozenset({"3.1.3", "3.10"})
 
 
 @dataclass(frozen=True)
@@ -67,73 +54,47 @@ class CheckResult:
     ok: bool
     detail: str
     remediation: str = ""
+    warning: str = ""
 
 
 @dataclass(frozen=True)
 class DoctorReport:
     """Collected doctor results."""
 
-    executables: tuple[CheckResult, ...]
-    tex_packages: tuple[CheckResult, ...]
-    optional_tex_packages: tuple[CheckResult, ...]
-    noto_cjk_fonts: tuple[CheckResult, ...]
-    recommended_chinese_fonts: tuple[CheckResult, ...]
-    pdf_evidence_tools: tuple[CheckResult, ...]
+    target: str
+    required: tuple[CheckResult, ...]
+    optional: tuple[CheckResult, ...]
 
     @property
     def ok(self) -> bool:
-        return all(
-            result.ok
-            for result in (
-                *self.executables,
-                *self.tex_packages,
-                *self.noto_cjk_fonts,
-                *self.pdf_evidence_tools,
-            )
-        )
+        return all(result.ok for result in self.required)
 
 
-def collect_doctor_report() -> DoctorReport:
-    """Check every dependency needed by the Hypo-LaTeX toolchain."""
-
-    return DoctorReport(
-        executables=tuple(check_executable(name) for name in REQUIRED_EXECUTABLES),
-        tex_packages=tuple(check_tex_package(name) for name in REQUIRED_TEX_PACKAGES),
-        optional_tex_packages=tuple(check_tex_package(name) for name in OPTIONAL_TEX_PACKAGES),
-        noto_cjk_fonts=tuple(
-            check_font_family(name) for name in REQUIRED_NOTO_CJK_FONTS
-        ),
-        recommended_chinese_fonts=tuple(
-            check_font_family(name) for name in RECOMMENDED_CHINESE_FONTS
-        ),
-        pdf_evidence_tools=tuple(
-            check_pdf_evidence_tool(name) for name in PDF_EVIDENCE_TOOLS
-        ),
-    )
+def collect_doctor_report(target: str = "build") -> DoctorReport:
+    """Check only the tools needed for the selected operation."""
+    if target not in {"convert", "build", "evidence"}:
+        raise ValueError("Choose a doctor target: convert, build, evidence.")
+    if target == "evidence":
+        return DoctorReport(target, tuple(check_pdf_evidence_tool(n) for n in PDF_EVIDENCE_TOOLS), ())
+    executables = ("pandoc",) if target == "convert" else REQUIRED_EXECUTABLES
+    required = [check_executable(name) for name in executables]
+    optional: list[CheckResult] = []
+    if target == "build":
+        required.extend(check_tex_package(name) for name in REQUIRED_TEX_PACKAGES)
+        optional.extend(check_tex_package(name) for name in OPTIONAL_TEX_PACKAGES)
+        optional.extend(check_font_family(name) for name in RECOMMENDED_CJK_FONTS)
+        optional.extend(check_pdf_evidence_tool(name) for name in PDF_EVIDENCE_TOOLS)
+    return DoctorReport(target, tuple(required), tuple(optional))
 
 
 def check_executable(name: str) -> CheckResult:
-    """Return whether an executable can be found on PATH.
-
-    The Python runtime may satisfy the python3 requirement even when the exact
-    command is not available, which keeps embedded or virtualenv executions
-    truthful.
-    """
+    """Return whether an executable can be found on PATH."""
 
     found = shutil.which(name)
     if found:
         if name == "pandoc":
-            return check_pandoc_version(found)
+            return check_pandoc(found)
         return CheckResult(name=name, ok=True, detail=found)
-
-    if name == "python3":
-        current_python = Path(sys.executable)
-        if current_python.is_file():
-            return CheckResult(
-                name=name,
-                ok=True,
-                detail=f"current Python runtime: {current_python}",
-            )
 
     return CheckResult(
         name=name,
@@ -143,29 +104,39 @@ def check_executable(name: str) -> CheckResult:
     )
 
 
-def check_pandoc_version(executable: str) -> CheckResult:
-    """Require the exact Pandoc release pinned by the renderer contract."""
-
-    result = subprocess.run(
-        [executable, "--version"],
-        capture_output=True,
-        check=False,
-        text=True,
-    )
-    first_line = (result.stdout or result.stderr).splitlines()
-    actual = first_line[0].strip() if first_line else "<no version output>"
-    expected = f"pandoc {REQUIRED_PANDOC_VERSION}"
-    if result.returncode == 0 and actual == expected:
-        return CheckResult(name="pandoc", ok=True, detail=f"{executable} ({actual})")
-    return CheckResult(
-        name="pandoc",
-        ok=False,
-        detail=f"Expected {expected}, found {actual} at {executable}.",
-        remediation=(
-            f"Use the pinned Pandoc {REQUIRED_PANDOC_VERSION} binary before running "
-            "doctor, convert, or build."
-        ),
-    )
+def check_pandoc(executable: str) -> CheckResult:
+    """Exercise the shipped Lua filter instead of rejecting a version number."""
+    try:
+        version = subprocess.run([executable, "--version"], capture_output=True,
+                                 text=True, check=False, timeout=15)
+        lines = (version.stdout or version.stderr).splitlines()
+        actual = lines[0].strip() if lines else "<no version output>"
+        if version.returncode != 0 or not actual.startswith("pandoc "):
+            return CheckResult("pandoc", False, f"{executable}: {actual}",
+                               "Install Pandoc and check `pandoc --version`.")
+        with resources.as_file(resources.files("hypolatex").joinpath(
+            "resources", "filters", "hypolatex.lua"
+        )) as lua_filter:
+            probe = subprocess.run(
+                [executable, "--from=markdown+fenced_divs", "--to=latex",
+                 f"--lua-filter={lua_filter}"],
+                input='::: {.note}\nHypoDocProbe $x^2$\n:::\n',
+                capture_output=True, text=True, check=False, timeout=15,
+            )
+        if probe.returncode != 0 or "HypoDocProbe" not in probe.stdout:
+            return CheckResult("pandoc", False,
+                               f"{actual}: Lua filter probe failed. {probe.stderr.strip()}",
+                               "Install a Pandoc build with Lua support; see Docs/installation.md.")
+        number = actual.split()[1] if len(actual.split()) > 1 else "unknown"
+        warning = "" if number in TESTED_PANDOC_VERSIONS else (
+            "This version is not in our tested matrix. The filter probe passed; "
+            "build and inspect a sample before relying on it."
+        )
+        return CheckResult("pandoc", True, f"{executable} ({actual}); Lua filter probe passed",
+                           warning=warning)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return CheckResult("pandoc", False, str(exc),
+                           "Check the Pandoc executable and retry; see Docs/installation.md.")
 
 
 def check_pdf_evidence_tool(name: str) -> CheckResult:

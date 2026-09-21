@@ -1,0 +1,24 @@
+\documentclass[tikz,border=8pt]{standalone}
+\usepackage{fontspec,xeCJK}
+\setmainfont{Times New Roman}
+\setCJKmainfont{Noto Serif CJK SC}
+\usetikzlibrary{arrows.meta,positioning}
+\definecolor{Accent}{HTML}{A72038}
+\definecolor{Ink}{HTML}{263241}
+\definecolor{Muted}{HTML}{647082}
+\begin{document}
+\begin{tikzpicture}[
+  box/.style={draw=Accent!22,fill=Accent!4,rounded corners=2pt,
+    minimum width=2.5cm,minimum height=1.55cm,align=center,text=Ink,font=\large},
+  flow/.style={-{Stealth[length=2.4mm]},line width=0.9pt,draw=Accent}]
+  \node[box] (q) {用户问题\\[3pt]{\small Query}};
+  \node[box,right=0.55cm of q] (r) {检索证据\\[3pt]{\small Retrieve}};
+  \node[box,right=0.55cm of r] (k) {重排筛选\\[3pt]{\small Rerank}};
+  \node[box,right=0.55cm of k] (a) {生成回答\\[3pt]{\small Generate}};
+  \draw[flow] (q) -- (r);
+  \draw[flow] (r) -- (k);
+  \draw[flow] (k) -- (a);
+  \node[below=0.38cm of r,anchor=north,text=Muted,font=\small] {候选文档集合};
+  \node[below=0.38cm of a,anchor=north,text=Muted,font=\small] {附带可追溯引用};
+\end{tikzpicture}
+\end{document}

@@ -1,102 +1,35 @@
-# Hypo-LaTeX CLI Reference
+# CLI
 
-The CLI entry point is `hypolatex`.
+以下命令从 HypoDoc 仓库根目录执行。已通过 `uv tool install` 安装时，可省略 `uv run --project Renderers/LaTeX` 前缀。
 
-## Commands
+## doctor
 
-```text
-hypolatex doctor
-hypolatex convert INPUT_PATH --output OUTPUT.tex
-hypolatex build INPUT_PATH --output OUTPUT.pdf
+```sh
+uv run --project Renderers/LaTeX hypolatex doctor
+uv run --project Renderers/LaTeX hypolatex doctor --target convert --json
+uv run --project Renderers/LaTeX hypolatex doctor --target evidence
 ```
 
-`hypolatex convert` and `hypolatex build` use canonical `profile: beamer`
-sources. Legacy `document_type: beamer`, `slides`, and `presentation` remain read aliases.
+`--target` 是 convert、build（默认）或 evidence。只检查选定任务的必需项；推荐字体、图标和输出检查工具不会阻止普通 PDF 构建。JSON 输出包含 `ok`、`target`、`required`、`optional`。成功返回 0，缺必需项返回 1，参数错误返回 2。
 
-## `hypolatex doctor`
+Pandoc 通过真实 Lua filter 探测，不要求版本完全等于参考版本。未验证版本会提示继续检查实际输出。
 
-Checks required local executables and TeX packages.
+## convert
 
-```bash
-uv run hypolatex doctor
+```sh
+uv run --project Renderers/LaTeX hypolatex convert Renderers/LaTeX/src/hypolatex/resources/starters/project.md --output build/project.tex
 ```
 
-Use this before conversion or PDF builds. Dependency diagnostics from `doctor`
-are authoritative for missing tools and packages.
+输出可审阅 TeX；只需 Pandoc，不需要 TeX 编译工具。支持 `--theme`、`--answer-mode` 覆盖。
 
-## `hypolatex convert`
+## build
 
-Converts HypoDoc Markdown to a standalone LaTeX document.
-
-```bash
-uv run hypolatex convert INPUT.md --output OUTPUT.tex
+```sh
+uv run --project Renderers/LaTeX hypolatex build Renderers/LaTeX/src/hypolatex/resources/starters/longform.md --output build/document.pdf
+uv run --project Renderers/LaTeX hypolatex build Renderers/LaTeX/src/hypolatex/resources/starters/review.md --answer-mode review --output build/review.pdf
+uv run --project Renderers/LaTeX hypolatex build Renderers/LaTeX/src/hypolatex/resources/starters/beamer.md --output build/slides.pdf
 ```
 
-Options:
+输出 PDF。支持 `--theme`、`--answer-mode student|review|teacher`、`--paper a4paper|letterpaper`。只有明确接受缺图草稿时才使用 `--allow-placeholders`；损坏图片仍是错误。
 
-| Option | Meaning |
-|---|---|
-| `--output`, `-o` | required LaTeX output file |
-| `--theme` | theme preset ID; overrides Markdown frontmatter `theme` |
-| `--answer-mode` | `student`, `review`, or `teacher`; overrides frontmatter `answer_mode` |
-
-## `hypolatex build`
-
-Converts HypoDoc Markdown and compiles a PDF with XeLaTeX.
-
-```bash
-uv run hypolatex build INPUT.md --output OUTPUT.pdf
-```
-
-Options:
-
-| Option | Meaning |
-|---|---|
-| `--output`, `-o` | required PDF output file |
-| `--paper` | paper size, currently `a4paper` or `letterpaper`; default `a4paper` |
-| `--theme` | theme preset ID; overrides Markdown frontmatter `theme` |
-| `--answer-mode` | `student`, `review`, or `teacher`; overrides frontmatter `answer_mode` |
-
-## Common Examples
-
-Build a classic-readable longform PDF:
-
-```bash
-uv run hypolatex build skill/templates/longform.md \
-  --theme classic-readable \
-  --output build/longform.pdf
-```
-
-Build a review copy with answers visible:
-
-```bash
-uv run hypolatex build skill/templates/review.md \
-  --answer-mode review \
-  --output build/review.pdf
-```
-
-Generate TeX for review:
-
-```bash
-uv run hypolatex convert skill/templates/project.md \
-  --output build/project.tex
-```
-
-Build a Beamer Slides DSL deck:
-
-```bash
-uv run hypolatex build skill/templates/beamer.md \
-  --output build/skill-beamer.pdf
-```
-
-Beamer contract summary: canonical `profile: beamer`; legacy aliases
-`document_type: beamer`, `slides`, and `presentation`; H1 is section, H2 is subsection, H3 is frame title; `---` is a
-frame separator/new frame. `frame_title_inheritance_limit` default is `3`;
-`continued_title_style` values are `subtle`, `suffix`, and `none`.
-`section_dividers`, `subsection_dividers`, and `strict_structure` tune the deck
-structure, and H2 without H1 is invalid when strict structure is on. Density and
-overfull lint are heuristic and limited, not a layout guarantee. Slide local
-asset references must use relative local files or local `resource-root` /
-`resource_root`; remote files are not fetched. Supported semantic blocks on
-slides are `objective`, `info`, `task`, `requirement`, `deliverable`,
-`checklist`, `rubric`, `question`, `hint`, `answer`, and `solution`.
+CLI 参数的完整定义以 `hypolatex --help` 和子命令 `--help` 为准。安装问题见[安装指南](../../../../Docs/installation.md)。

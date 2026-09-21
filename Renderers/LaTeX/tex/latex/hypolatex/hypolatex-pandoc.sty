@@ -1,0 +1,25 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hypolatex-pandoc}[2026/09/21 Pandoc writer compatibility]
+\RequirePackage{graphicx}
+
+% Newer Pandoc writers bound ordinary Markdown images with this macro.
+% Keep the implementation in the shared package, not in generated documents.
+\newsavebox{\HypoPandocImageBox}
+\providecommand{\pandocbounded}[1]{%
+  \sbox{\HypoPandocImageBox}{#1}%
+  \ifdim\wd\HypoPandocImageBox>\linewidth
+    \sbox{\HypoPandocImageBox}{%
+      \resizebox{\linewidth}{!}{\usebox{\HypoPandocImageBox}}}%
+  \fi
+  \ifdim\dimexpr\ht\HypoPandocImageBox+\dp\HypoPandocImageBox\relax>\textheight
+    \resizebox*{!}{\textheight}{\usebox{\HypoPandocImageBox}}%
+  \else
+    \usebox{\HypoPandocImageBox}%
+  \fi
+}
+
+% Older TeX distributions lack the accessibility key emitted by new writers.
+% Preserve newer distributions' implementation when present.
+\makeatletter
+\@ifundefined{KV@Gin@alt}{\define@key{Gin}{alt}{}}{}
+\makeatother

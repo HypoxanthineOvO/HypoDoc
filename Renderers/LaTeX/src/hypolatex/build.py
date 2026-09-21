@@ -13,6 +13,7 @@ from hypolatex import convert as convert_module
 from hypolatex import document_options
 from hypolatex import resource_files
 from hypolatex import themes as themes_module
+from hypolatex.build_diagnostics import BuildDiagnostic, collect
 
 
 class BuildError(RuntimeError):
@@ -30,6 +31,7 @@ class BuildResult:
 
     input_path: Path
     output_path: Path
+    diagnostics: tuple[BuildDiagnostic, ...] = ()
 
 
 def build_pdf(
@@ -39,11 +41,15 @@ def build_pdf(
     theme: str | None = None,
     answer_mode: str | None = None,
     allow_placeholders: bool = False,
+    school_cover: str | None = None,
+    strict: bool = False,
 ) -> BuildResult:
     """Convert a HypoDoc Markdown file and compile it with latexmk/XeLaTeX."""
 
     source = Path(input_path).expanduser().resolve()
     target = Path(output_path).expanduser().resolve()
+    if source == target:
+        raise BuildError("Output must not replace the Markdown source.")
     paper = _normalize_paper(paper)
 
     if not source.is_file():
@@ -88,7 +94,8 @@ def build_pdf(
         pdf_path = work_dir / "document.pdf"
 
         convert_module.convert_markdown(
-            source, tex_path, theme=theme, answer_mode=options.answer_mode
+            source, tex_path, theme=theme, answer_mode=options.answer_mode,
+            school_cover=school_cover,
         )
         _apply_paper_override(tex_path, paper)
         try:
@@ -124,9 +131,15 @@ def build_pdf(
                 "same input and inspect latexmk output for missing TeX diagnostics."
             )
 
+        log_path = work_dir / "document.log"
+        report = collect(log_path.read_text(errors="replace") if log_path.exists() else "", tex_path.read_text())
+        failures = [r for r in report if r.code in {"LAYOUT_OVERFLOW", "MISSING_GLYPH"}]
+        if strict and failures:
+            raise BuildError("Strict output check failed; existing output was not replaced.\n" +
+                             "\n".join(r.message for r in failures))
         _replace_pdf(pdf_path, target)
 
-    return BuildResult(input_path=source, output_path=target)
+    return BuildResult(input_path=source, output_path=target, diagnostics=report)
 
 
 def _normalize_paper(paper: str) -> str:
@@ -202,7 +215,7 @@ def _latexmk_failure_detail(
 ) -> str:
     parts = [
         "LaTeX build failed while running `latexmk -xelatex`.",
-        "Action: inspect the diagnostics below, fix the generated LaTeX or "
+        "Action: inspect the diagnostics below, fix the Markdown/configuration or "
         "install the missing TeX package, then retry `hypolatex build`.",
     ]
 

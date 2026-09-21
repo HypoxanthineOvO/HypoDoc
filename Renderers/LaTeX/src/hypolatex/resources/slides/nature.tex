@@ -1,0 +1,84 @@
+% Reuse Slate Blocks by Hao ZHANG / RaphaelZH (CC BY 4.0).
+% Only fonts, Chinese titles, aspect ratio and the reference-style title panel
+% are adapted locally; the upstream file and photograph remain unmodified.
+\usetheme{Madrid}
+\useoutertheme{miniframes}
+\useinnertheme{circles}
+\setbeamertemplate{navigation symbols}{}
+\usepackage[most]{tcolorbox}
+\usetikzlibrary{positioning}
+% Cover-fitting helper adapted from Slate Blocks (CC BY 4.0).
+\newsavebox{\HypoCoverBox}
+\newcommand{\slatecover}[1]{%
+  \sbox{\HypoCoverBox}{\includegraphics[width=\paperwidth]{#1}}%
+  \ifdim\ht\HypoCoverBox<\paperheight
+    \includegraphics[height=\paperheight]{#1}%
+  \else\usebox{\HypoCoverBox}\fi
+}
+\definecolor{ThemeAccent}{HTML}{8D6444}
+\definecolor{ThemeInk}{HTML}{384C55}
+\definecolor{NatureSky}{HTML}{DFEAF1}
+\definecolor{NatureSand}{HTML}{F2E7D4}
+\definecolor{NatureSage}{HTML}{E1EBDC}
+\definecolor{NatureEarth}{HTML}{EEDBD2}
+\definecolor{NatureRose}{HTML}{ECDBDA}
+\definecolor{NatureTeal}{HTML}{D8E9E4}
+\definecolor{NatureLilac}{HTML}{E4E0EB}
+% Photography stays on the cover. Interiors use two original, very pale,
+% vector corner compositions derived from the sky / foliage / earth palette.
+\setbeamertemplate{background}{%
+  \includegraphics[page=\ifodd\value{framenumber}1\else2\fi,width=\paperwidth,height=\paperheight]{\HypoResourceDir/assets/nature-geometric.pdf}}
+\setbeamercolor{normal text}{fg=ThemeInk}
+\setbeamercolor{structure}{fg=ThemeAccent}
+\setbeamercolor{frametitle}{fg=ThemeInk,bg=NatureSand}
+\setbeamercolor{section in head/foot}{fg=ThemeInk,bg=NatureSky}
+\setbeamercolor{subsection in head/foot}{fg=ThemeInk,bg=NatureSky}
+\setbeamercolor{mini frame}{fg=ThemeInk,bg=NatureSky}
+\setbeamercolor{author in head/foot}{fg=ThemeInk,bg=NatureSage}
+\setbeamercolor{title in head/foot}{fg=ThemeInk,bg=NatureSky}
+\setbeamercolor{date in head/foot}{fg=ThemeInk,bg=NatureSand}
+\setbeamercolor{caption}{fg=ThemeInk}
+\setbeamercolor{caption name}{fg=ThemeInk}
+
+
+
+\NewDocumentEnvironment{ThemeBlock}{m m +b}{%
+  \begingroup
+  \def\ThisBlockColor{NatureSand}%
+  \ifstrequal{#1}{note}{\def\ThisBlockColor{NatureLilac}}{}%
+  \ifstrequal{#1}{objective}{\def\ThisBlockColor{NatureSky}}{}%
+  \ifstrequal{#1}{tip}{\def\ThisBlockColor{NatureSand}}{}%
+  \ifstrequal{#1}{warning}{\def\ThisBlockColor{NatureEarth}}{}%
+  \ifstrequal{#1}{task}{\def\ThisBlockColor{NatureTeal}}{}%
+  \ifstrequal{#1}{info}{\def\ThisBlockColor{NatureSage}}{}%
+  \begin{tcolorbox}[
+    enhanced,arc=1.5mm,boxrule=0pt,
+    colback=\ThisBlockColor!18!white,colbacktitle=\ThisBlockColor,
+    coltext=ThemeInk,coltitle=ThemeInk,
+    fonttitle=\usebeamerfont{block title},fontupper=\usebeamerfont{block body},
+    title={#2},left=1.5mm,right=1.5mm,top=0.8mm,bottom=0.8mm,
+    toptitle=0.6mm,bottomtitle=0.6mm,before skip=1.2mm,after skip=1.4mm,
+    shadow={0.5mm}{-0.5mm}{0mm}{ThemeInk!12!white,opacity=0.4}]
+    #3
+  \end{tcolorbox}
+  \endgroup
+}{}
+
+\newcommand{\ExperimentTitle}{%
+  \begingroup\usebackgroundtemplate{}%
+  \begin{frame}[plain]
+    \begin{tikzpicture}[remember picture,overlay]
+      \node[inner sep=0pt,opacity=0.55] at (current page.center)
+        {\slatecover{\HypoResourceDir/assets/nature-cover.png}};
+      \node[align=center,text width=0.76\paperwidth,inner sep=4mm,
+        draw=ThemeAccent!80,fill=white,fill opacity=0.86,text opacity=1,
+        text=ThemeInk,line width=0.45pt]
+        at ([yshift=-0.27\paperheight]current page.north)
+        {{\usebeamerfont{title}\inserttitle}\\[6pt]
+         {\usebeamerfont{subtitle}\insertsubtitle}};
+      \node[text=ThemeInk] at ([yshift=-0.46\paperheight]current page.north) {\insertauthor};
+      \node[text=ThemeInk] at ([yshift=-0.54\paperheight]current page.north) {\insertinstitute};
+      \node[text=ThemeInk] at ([yshift=-0.87\paperheight]current page.north) {\insertdate};
+      \node[text=ThemeInk,font=\bfseries\large] at ([yshift=-0.96\paperheight]current page.north) {HypoDoc};
+    \end{tikzpicture}
+  \end{frame}\endgroup}

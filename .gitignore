@@ -21,11 +21,8 @@ build/
 *.out
 *.synctex.gz
 
-# Skill evaluation binaries are embedded in the committed review artifact.
-Skills/LaTeX-workspace/**/outputs/*.pdf
-Skills/LaTeX-workspace/**/outputs/*.png
-Skills/LaTeX-workspace/**/outputs/.*.pdf
-Skills/LaTeX-workspace/**/outputs/.*.png
+# Local AI evaluation runs are not product documentation.
+Skills/LaTeX-workspace/
 
 # Distribution output
 /release/
@@ -37,5 +34,5 @@ Apps/Desktop/release/
 .env.*
 !.env.example
 
-# Hypo-Workflow runtime is local execution state.
-.pipeline/runtime/
+# Local agent workflow state does not belong in the product repository.
+.pipeline/

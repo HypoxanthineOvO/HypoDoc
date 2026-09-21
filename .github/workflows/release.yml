@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.5.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: astral-sh/setup-uv@v6
+      - run: sudo apt-get update && sudo apt-get install -y python3-venv pandoc texlive-xetex texlive-latex-extra texlive-lang-chinese latexmk fonts-noto-cjk poppler-utils
+      - run: pnpm install --frozen-lockfile
+      - run: uv sync --project Renderers/LaTeX --group dev --frozen
+      - run: python3 tools/release.py check
+      - run: ./scripts/validate-all.sh
+      - run: python3 tools/release.py build --output release/core
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-core
+          path: release/core/*
+          if-no-files-found: error
+
+  hosts:
+    uses: ./.github/workflows/build-hosts.yml
+
+  draft:
+    needs: [core, hosts]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release/input
+      - name: Assemble artifacts from this run only
+        run: python3 tools/release.py assemble --input release/input --output release/assets
+      - name: Create draft (never auto-publish)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(python3 tools/release.py version)"
+          TAG="v$VERSION"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release already exists; refusing to overwrite: $TAG" >&2
+            exit 1
+          fi
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag already exists; refusing to reuse an unverified tag: $TAG" >&2
+            exit 1
+          fi
+          flags=(--draft)
+          if [[ "$VERSION" == *-rc.* ]]; then flags+=(--prerelease); fi
+          gh release create "$TAG" release/assets/* \
+            --target "$GITHUB_SHA" --title "HypoDoc $TAG" \
+            --notes-file release/assets/RELEASE_NOTES.md "${flags[@]}"

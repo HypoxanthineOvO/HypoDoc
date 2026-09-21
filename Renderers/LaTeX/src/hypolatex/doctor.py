@@ -2,44 +2,40 @@
 
 from __future__ import annotations
 
+from dataclasses import asdict
+import json
+
 import typer
 
 from hypolatex.diagnostics import CheckResult, collect_doctor_report
 
 
-def run() -> None:
+def run(target: str = "build", json_output: bool = False) -> None:
     """Run local toolchain checks and exit non-zero on missing requirements."""
 
-    report = collect_doctor_report()
-
-    typer.echo("Hypo-LaTeX doctor")
-    typer.echo("")
-    _print_section("Executables", report.executables)
-    typer.echo("")
-    _print_section("TeX packages", report.tex_packages)
-    typer.echo("")
-    _print_section("Optional TeX packages", report.optional_tex_packages)
-    typer.echo("")
-    _print_section("Noto CJK fonts", report.noto_cjk_fonts)
-    typer.echo("")
-    _print_section("Recommended Chinese fonts", report.recommended_chinese_fonts)
-    typer.echo("")
-    _print_section("Poppler PDF evidence tools", report.pdf_evidence_tools)
-
-    if report.ok:
-        typer.echo("")
-        typer.echo("All required Hypo-LaTeX checks passed.")
-        return
-
-    typer.echo("")
-    typer.echo("Missing requirements detected. Install the items above and retry.")
-    raise typer.Exit(code=1)
+    try:
+        report = collect_doctor_report(target)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc), param_hint="--target") from exc
+    if json_output:
+        typer.echo(json.dumps({"ok": report.ok, **asdict(report)}, ensure_ascii=False))
+    else:
+        typer.echo(f"Hypo-LaTeX doctor ({target})")
+        _print_section("Required", report.required)
+        if report.optional:
+            _print_section("Optional (not required for this operation)", report.optional, optional=True)
+        typer.echo("Ready. Build a sample to check its fonts and layout." if report.ok else
+                   "Missing requirements. See Docs/installation.md for installation and troubleshooting.")
+    if not report.ok:
+        raise typer.Exit(code=1)
 
 
-def _print_section(title: str, results: tuple[CheckResult, ...]) -> None:
+def _print_section(title: str, results: tuple[CheckResult, ...], optional: bool = False) -> None:
     typer.echo(f"{title}:")
     for result in results:
-        status = "OK" if result.ok else "MISSING"
+        status = "OK" if result.ok else ("OPTIONAL" if optional else "MISSING")
         typer.echo(f"  [{status}] {result.name}: {result.detail}")
         if result.remediation:
             typer.echo(f"        Action: {result.remediation}")
+        if result.warning:
+            typer.echo(f"        Note: {result.warning}")

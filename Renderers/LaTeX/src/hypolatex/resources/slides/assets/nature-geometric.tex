@@ -1,0 +1,41 @@
+% Original vector backgrounds using the cover's sky / foliage / earth palette.
+\documentclass{article}
+\usepackage[paperwidth=16cm,paperheight=9cm,margin=0pt]{geometry}
+\usepackage{tikz}
+\pagestyle{empty}
+\definecolor{Paper}{HTML}{FDFCF9}
+\definecolor{Sky}{HTML}{DDEBF2}
+\definecolor{Gold}{HTML}{F3E4C8}
+\definecolor{Earth}{HTML}{EBD9CF}
+\definecolor{Sage}{HTML}{E1E9D9}
+\begin{document}
+\null
+\begin{tikzpicture}[remember picture,overlay]
+  \begin{scope}[shift={(current page.south west)},x=1cm,y=1cm]
+    \clip (0,0) rectangle (16,9);
+    \fill[Paper] (0,0) rectangle (16,9);
+    \fill[Sky!42!Paper] (-0.4,9.4) -- (3.7,9.4) -- (0,6.3) -- cycle;
+    \fill[Sage!35!Paper] (-0.7,9.4) -- (2.3,9.4) -- (0,7.0) -- cycle;
+    \fill[Gold!50!Paper] (16.4,-0.4) circle[radius=3.15];
+    \fill[Earth!28!Paper] (16.9,-0.8) circle[radius=2.5];
+    \draw[Gold!75!Paper,line width=0.35pt] (16.5,-0.2) circle[radius=3.8];
+    \draw[Sky!65!Paper,line width=0.28pt] (16.8,0.2) circle[radius=4.2];
+    \fill[Sage!25!Paper] (0,0) -- (5.2,0) -- (0,0.55) -- cycle;
+  \end{scope}
+\end{tikzpicture}
+\newpage
+\null
+\begin{tikzpicture}[remember picture,overlay]
+  \begin{scope}[shift={(current page.south west)},x=1cm,y=1cm]
+    \clip (0,0) rectangle (16,9);
+    \fill[Paper] (0,0) rectangle (16,9);
+    \fill[Sky!38!Paper] (16,9) -- (13.5,9) -- (16,6.4) -- cycle;
+    \fill[Sage!32!Paper] (16,8.5) -- (14.2,9) -- (16,9) -- cycle;
+    \fill[Gold!42!Paper] (-0.8,-0.6) circle[radius=2.5];
+    \fill[Earth!25!Paper] (-0.5,-1.0) circle[radius=2.0];
+    \draw[Gold!75!Paper,line width=0.35pt] (-1.0,-0.5) circle[radius=3.25];
+    \draw[Sage!65!Paper,line width=0.28pt] (0.2,-0.9) circle[radius=3.65];
+    \fill[Sky!22!Paper] (16,0) -- (10.2,0) -- (16,0.65) -- cycle;
+  \end{scope}
+\end{tikzpicture}
+\end{document}

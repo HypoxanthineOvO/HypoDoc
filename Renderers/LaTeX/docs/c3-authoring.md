@@ -1,6 +1,6 @@
-# C3 Authoring Guide
+# LaTeX 语义模块与表格参考
 
-C3 is the Hypo-LaTeX authoring layer for structured project, assignment, review, and real-corpus validation documents. It gives authors semantic blocks, controlled review answers, and a table DSL while keeping the source in ordinary Markdown. This docs-side guide is self-contained; the runtime Skill contract in `../skill/SKILL.md` is the companion instruction for AI agents.
+本文是 LaTeX 后端的详细参考，包含旧源文件兼容语法和专用布局扩展。新文档先用[共享写作指南](../../../Docs/authoring.md)与[公开模板](../src/hypolatex/resources/starters/)，不要把这里的所有属性当作跨预览端支持的语法。AI 入口见 [Skill](../../../Skills/LaTeX/SKILL.md)。
 
 ## Semantic Blocks
 
@@ -159,7 +159,7 @@ answer_mode: student
 Use the CLI when the build needs a different view:
 
 ```bash
-hypolatex build skill/templates/review.md --answer-mode review --output build/c3-skill-review.pdf
+uv run --project Renderers/LaTeX hypolatex build Renderers/LaTeX/src/hypolatex/resources/starters/review.md --answer-mode review --output build/review.pdf
 ```
 
 ## Controlled Tables
@@ -226,21 +226,9 @@ caption and label behavior. Current controlled tables do not support row spans
 or column spans, and `.table` content must be exactly one Markdown table after
 the optional YAML block.
 
-## Public And Private Validation
+## 验证
 
-C3 separates public validation from private corpus validation.
-
-Public validation is committed and reproducible. It covers docs contracts, public fixtures, and buildable templates:
-
-```bash
-PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_skill_docs.py -q
-uv run hypolatex build skill/templates/project.md --theme tech-minimal --output build/c3-skill-project.pdf
-uv run hypolatex build skill/templates/review.md --answer-mode review --output build/c3-skill-review.pdf
-```
-
-The private corpus workflow uses real local documents. Keep real samples under `tests/private/corpus` or set `HYPOLATEX_TEST_CORPUS` to another local corpus root. Use the committed manifest and `scripts/prepare_private_corpus.py` to list, check, and prepare smoke samples, then run private smoke pytest selections with outputs in pytest `tmp_path` or ignored `tests/private/results` paths.
-
-Real artifacts and results are local only. Do not commit real source files, private PDFs, generated private TeX, logs, JSON summaries, screenshots, or extracted text. Public reports may record that private corpus smoke validation passed or failed, but they must not include private corpus content.
+测试方法见根[测试说明](../../../Docs/testing.md)。用户素材及其 PDF、截图、提取文本留在用户工作目录，不提交到工具仓库。这里的命令从仓库根目录执行。
 
 ## Beamer Note
 

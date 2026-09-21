@@ -1,0 +1,33 @@
+% Prefer the user's familiar fonts; the portable preset uses TeX Live faces.
+\usefonttheme{serif}
+\ifdefstring{\HypoFontPreset}{portable}{%
+  \setmainfont{TeX Gyre Termes}\setsansfont{TeX Gyre Termes}%
+  \setmonofont{Latin Modern Mono}%
+  \typeout{HYPODOC-FONT: latin=TeX Gyre Termes; code=Latin Modern Mono (portable)}%
+}{%
+  \IfFontExistsTF{Times New Roman}{%
+    \setmainfont{Times New Roman}\setsansfont{Times New Roman}%
+    \typeout{HYPODOC-FONT: latin=Times New Roman}%
+  }{%
+    \setmainfont{TeX Gyre Termes}\setsansfont{TeX Gyre Termes}%
+    \typeout{HYPODOC-FONT-FALLBACK: Times New Roman -> TeX Gyre Termes}%
+  }%
+  \IfFontExistsTF{Consolas}{\setmonofont{Consolas}\typeout{HYPODOC-FONT: code=Consolas}}{%
+    \IfFontExistsTF{Cascadia Mono}{\setmonofont{Cascadia Mono}\typeout{HYPODOC-FONT: code=Cascadia Mono}}{%
+      \setmonofont{Latin Modern Mono}%
+      \typeout{HYPODOC-FONT-FALLBACK: code -> Latin Modern Mono}%
+    }%
+  }%
+}
+\IfFontExistsTF{Noto Serif CJK SC}{%
+  \setCJKmainfont{Noto Serif CJK SC}[BoldFont={Noto Serif CJK SC Bold}]%
+  \setCJKsansfont{Noto Serif CJK SC}[BoldFont={Noto Serif CJK SC Bold}]%
+  \typeout{HYPODOC-FONT: chinese=Noto Serif CJK SC}%
+}{%
+  \setCJKmainfont{FandolSong-Regular.otf}[BoldFont={FandolSong-Bold.otf},ItalicFont={FandolKai-Regular.otf}]%
+  \setCJKsansfont{FandolSong-Regular.otf}[BoldFont={FandolSong-Bold.otf}]%
+  \typeout{HYPODOC-FONT-FALLBACK: chinese -> FandolSong}%
+}
+\IfFontExistsTF{Noto Sans Mono CJK SC}{\setCJKmonofont{Noto Sans Mono CJK SC}}{\setCJKmonofont{FandolFang-Regular.otf}}
+\setmathfont{TeX Gyre Termes Math}
+\renewcommand{\familydefault}{\rmdefault}

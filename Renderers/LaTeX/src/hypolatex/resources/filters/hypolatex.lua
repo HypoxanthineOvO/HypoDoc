@@ -622,12 +622,12 @@ end
 
 local function table_config(div, yaml_config)
   local config = {
-    type = attr(div, "type"),
+    type = attr(div, "kind") ~= "" and attr(div, "kind") or attr(div, "type"),
     long = attr(div, "long"),
     density = attr(div, "density"),
     width = attr(div, "width"),
     caption = attr(div, "caption"),
-    label = attr(div, "label"),
+    label = div.identifier ~= "" and div.identifier or attr(div, "label"),
     header = attr(div, "header"),
     striped = attr(div, "striped"),
     columns = {},

@@ -209,4 +209,4 @@ columns:
 :::
 ````
 
-Slides 支持 semantic blocks：`objective`、`info`、`task`、`requirement`、`deliverable`、`checklist`、`rubric`、`question`、`hint`、`answer`、`solution`。density/overfull lint 是 heuristic/limited，不保证最终布局。Slide local asset 只能使用 relative/local 路径或 `resource-root`/`resource_root`；remote files do not fetch。完整示例见 `skill/templates/beamer.md`。
+Slides 支持 semantic blocks：`objective`、`info`、`task`、`requirement`、`deliverable`、`checklist`、`rubric`、`question`、`hint`、`answer`、`solution`。density/overfull lint 是 heuristic/limited，不保证最终布局。Slide local asset 只能使用 relative/local 路径或 `resource-root`/`resource_root`；remote files do not fetch。完整示例见根 `Renderers/LaTeX/src/hypolatex/resources/starters/beamer.md`。

@@ -1,6 +1,6 @@
 {
   "name": "@hypodoc/desktop",
-  "version": "0.2.0",
+  "version": "0.3.0-rc.1",
   "description": "Offline source-first HypoDoc Markdown editor and renderer.",
   "author": "HypoDoc contributors",
   "private": true,

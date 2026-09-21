@@ -14,6 +14,8 @@ from hypolatex import document_options
 from hypolatex import diagnostics
 from hypolatex import slides
 from hypolatex import themes as themes_module
+from hypolatex import slide_resources
+from hypolatex.configuration import ConfigurationError, load_frontmatter
 
 
 class ConversionError(RuntimeError):
@@ -33,11 +35,14 @@ def convert_markdown(
     output_path: Path | str,
     theme: str | None = None,
     answer_mode: str | None = None,
+    school_cover: str | None = None,
 ) -> ConversionResult:
     """Convert a HypoDoc Markdown document to LaTeX using Pandoc."""
 
     source = Path(input_path).expanduser().resolve()
     target = Path(output_path).expanduser().resolve()
+    if source == target:
+        raise ConversionError("Output must not replace the Markdown source.")
 
     if not source.is_file():
         raise ConversionError(f"Input Markdown file does not exist: {source}")
@@ -58,13 +63,21 @@ def convert_markdown(
     except themes_module.ThemeError as exc:
         raise ConversionError(str(exc)) from exc
 
+    packaged = options.document_type == "beamer" and effective_theme in themes_module.PACKAGED_SLIDE_THEMES
+    try:
+        settings = slide_resources.settings(source, school_cover) if packaged else None
+    except ConfigurationError as exc:
+        raise ConversionError(str(exc)) from exc
+    if school_cover is not None and effective_theme != "school":
+        raise ConversionError("--school-cover is only supported with theme school.")
+
     pandoc = shutil.which("pandoc")
     if pandoc is None:
         raise ConversionError(
             "Pandoc executable was not found on PATH. Install Pandoc and retry "
             "`hypolatex convert`."
         )
-    pandoc_check = diagnostics.check_pandoc_version(pandoc)
+    pandoc_check = diagnostics.check_pandoc(pandoc)
     if not pandoc_check.ok:
         raise ConversionError(pandoc_check.detail + "\n" + pandoc_check.remediation)
 
@@ -77,7 +90,7 @@ def convert_markdown(
         pandoc_source = source
         if options.document_type == "beamer":
             try:
-                normalized_markdown = slides.normalize_slides_markdown(source)
+                normalized_markdown = slides.normalize_slides_markdown(source, native=packaged)
             except slides.SlidesError as exc:
                 raise ConversionError(str(exc)) from exc
 
@@ -91,14 +104,14 @@ def convert_markdown(
         with (
             resources.as_file(
                 resources.files("hypolatex").joinpath(
-                    "resources", "filters", "hypolatex.lua"
+                    "resources", "filters", "slides.lua" if packaged else "hypolatex.lua"
                 )
             ) as lua_filter,
             resources.as_file(
                 resources.files("hypolatex").joinpath(
                     "resources",
                     "templates",
-                    _template_name(options.document_type),
+                    "hypolatex-slides.tex" if packaged else _template_name(options.document_type),
                 )
             ) as template,
         ):
@@ -127,6 +140,27 @@ def convert_markdown(
                 )
                 if options.logo is not None:
                     command.append(f"--metadata=logo:{options.logo}")
+                if packaged:
+                    try:
+                        asset_dir = slide_resources.export(target_parent, effective_theme)
+                    except (OSError, ValueError) as exc:
+                        raise ConversionError(str(exc)) from exc
+                    command.remove("--no-highlight")
+                    command.extend([
+                        "--listings", f"--metadata=theme:{effective_theme}",
+                        f"--metadata=resources_dir:{asset_dir.name}",
+                        f"--metadata=school_cover:{settings.school_cover}",
+                        f"--metadata=font_preset:{settings.font_preset}",
+                        f"--metadata=answer_mode:{options.answer_mode}",
+                    ])
+                    metadata = load_frontmatter(source)
+                    slide_options = slides.resolve_slide_options(source)
+                    # Navigation context is preserved; divider pages are opt-in.
+                    for key in ("section_dividers", "subsection_dividers"):
+                        value = getattr(slide_options, key) if key in metadata else False
+                        command.append(f"--metadata={key}:{str(value).lower()}")
+                    if effective_theme == "school":
+                        command.append("--metadata=school_name:上海科技大学")
             else:
                 command.append(
                     f"--top-level-division={_top_level_division(options.document_type)}"
@@ -143,14 +177,12 @@ def convert_markdown(
             detail = _pandoc_error_detail(result)
             raise ConversionError(f"HypoDoc Markdown conversion failed.\n{detail}")
 
-        preamble_commands = [f"\\HypoSetAnswerMode{{{options.answer_mode}}}"]
-        if _should_emit_theme_selection(effective_theme, theme):
-            preamble_commands.append(f"\\HypoUseTheme{{{effective_theme}}}")
-        _insert_preamble_commands(
-            temp_path,
-            preamble_commands,
-            package_name=_package_name(options.document_type),
-        )
+        if not packaged:
+            preamble_commands = [f"\\HypoSetAnswerMode{{{options.answer_mode}}}"]
+            if _should_emit_theme_selection(effective_theme, theme):
+                preamble_commands.append(f"\\HypoUseTheme{{{effective_theme}}}")
+            _insert_preamble_commands(temp_path, preamble_commands,
+                                      package_name=_package_name(options.document_type))
 
         os.replace(temp_path, target)
     except Exception:

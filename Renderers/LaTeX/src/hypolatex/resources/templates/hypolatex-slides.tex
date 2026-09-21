@@ -1,0 +1,59 @@
+\documentclass[aspectratio=$aspectratio$,11pt,fontset=none,t,xcolor=dvipsnames]{ctexbeamer}
+\usepackage{tikz,graphicx,tabularray,booktabs,longtable,array,calc,listings,amssymb,unicode-math,xparse}
+\UseTblrLibrary{booktabs}
+\newcommand{\SchoolCoverLayout}{$school_cover$}
+\newcommand{\HypoFontPreset}{$font_preset$}
+\newcommand{\HypoAnswerMode}{$answer_mode$}
+\newcommand{\HypoResourceDir}{$resources_dir$}
+\makeatletter\edef\input@path{{\HypoResourceDir/}}\makeatother
+\input{\HypoResourceDir/$theme$.tex}
+\usepackage{hypolatex-pandoc}
+\setkeys{Gin}{keepaspectratio}
+
+% All three themes share the same typefaces, sizes and body conversion.
+\input{\HypoResourceDir/fonts.tex}
+\setbeamerfont{title}{family=\rmfamily,series=\bfseries,size=\LARGE}
+\setbeamerfont{subtitle}{family=\rmfamily,size=\normalsize}
+\setbeamerfont{frametitle}{family=\rmfamily,series=\bfseries,size=\large}
+\setbeamerfont{framesubtitle}{family=\rmfamily,size=\small}
+\setbeamerfont{block title}{family=\rmfamily,series=\bfseries,size=\normalsize}
+\setbeamerfont{block body}{family=\rmfamily,size=\normalsize}
+\setbeamerfont{section in head/foot}{family=\rmfamily,size=\tiny}
+\setbeamerfont{title in head/foot}{family=\rmfamily,size=\scriptsize}
+\setbeamerfont{author in head/foot}{family=\rmfamily,size=\scriptsize}
+\setbeamerfont{date in head/foot}{family=\rmfamily,size=\scriptsize}
+\setbeamersize{text margin left=9mm,text margin right=9mm}
+\setbeamertemplate{caption}[numbered]
+\setbeamerfont{caption}{family=\rmfamily,size=\footnotesize}
+\setlength{\parskip}{0.3em}
+\providecommand{\tightlist}{\setlength{\itemsep}{3pt}\setlength{\parskip}{0pt}}
+
+\colorlet{HypoTableHead}{ThemeAccent!13!white}
+\colorlet{HypoTableHeadFg}{ThemeInk}
+\colorlet{HypoTableRowHead}{ThemeAccent!8!white}
+\colorlet{HypoTableStripe}{ThemeAccent!4!white}
+\input{\HypoResourceDir/semantics.tex}
+
+\lstset{
+  basicstyle=\ttfamily\small,keywordstyle=\color{ThemeAccent}\bfseries,
+  commentstyle=\color{ThemeInk!60},stringstyle=\color{ThemeAccent!75!black},
+  showstringspaces=false,columns=fullflexible,keepspaces=true,breaklines=true,
+  backgroundcolor=\color{ThemeAccent!4!white},frame=single,framerule=0pt,
+  xleftmargin=0.06\linewidth,xrightmargin=0.06\linewidth,
+  framexleftmargin=6pt,framexrightmargin=6pt,framextopmargin=5pt,framexbottommargin=5pt,
+  aboveskip=1em,belowskip=0.8em
+}
+\title[$if(short_title)$$short_title$$else$$title$$endif$]{$title$}
+\subtitle{$subtitle$}
+\author[$if(short_author)$$short_author$$else$$for(author)$$author$$sep$, $endfor$$endif$]{$for(author)$$author$$sep$\quad\allowbreak $endfor$}
+\institute[$if(school_name)$$school_name$$if(institute)$ · $institute$$endif$$else$$institute$$endif$]{$if(institute)$$institute$$else$$if(school_name)$$school_name$$endif$$endif$}
+\date{$date$}
+\hypersetup{pdftitle={$title$},pdfauthor={$for(author)$$author$$sep$, $endfor$},pdfsubject={HypoDoc Slides}}
+$if(section_dividers)$\AtBeginSection[]{\begin{frame}\sectionpage\end{frame}}$else$\AtBeginSection[]{}$endif$
+$if(subsection_dividers)$\AtBeginSubsection[]{\begin{frame}\subsectionpage\end{frame}}$else$\AtBeginSubsection[]{}$endif$
+\begin{document}
+\ExperimentTitle
+% BEGIN SHARED CONTENT — identical in all three .tex outputs.
+$body$
+% END SHARED CONTENT
+\end{document}

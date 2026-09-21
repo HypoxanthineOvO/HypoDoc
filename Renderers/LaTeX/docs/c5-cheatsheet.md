@@ -1,4 +1,6 @@
-# C5 Cheatsheet Layout
+# LaTeX 专用多栏速查表
+
+普通速查表先使用[共享模板](../src/hypolatex/resources/starters/cheatsheet.md)。下文的 grid/cell 是 PDF 后端专用扩展，不保证 Desktop/Web 预览兼容；仅在确实需要多栏时使用。
 
 C5 增加的是面向紧凑速查表的 layout API。作者在 Markdown frontmatter 中写
 `profile: article` 与 `layout: cheatsheet`，即可让同一篇 `article`
@@ -52,10 +54,7 @@ layout 时不会破坏原有 article 渲染。
 
 ## target pages
 
-`target pages` 是 hard constraint。AI 在执行 `hd:make-cheatsheet` Skill workflow
-时，应把目标页数视为不可静默突破的约束：如果公式、关键点和示例无法压缩到目标
-页数内，应返回 conflict report，而不是自动增加页数。压缩优先级为
-`formulas > keypoints > examples`，所以示例最先删减，公式最后删减。
+如果用户指定目标页数，应在构建后核对。内容无法在保持可读性的同时放入目标页数时，说明取舍并请用户决定，不静默增加页数或删掉重要内容。压缩顺序依据用户用途决定，不固定为某一种内容优先。
 
 ## compact table
 

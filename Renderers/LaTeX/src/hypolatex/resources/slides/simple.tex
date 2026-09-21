@@ -1,0 +1,44 @@
+% Keep the previous demo's quiet, unbranded content-first direction.
+\usetheme{default}
+\useinnertheme{circles}
+\definecolor{ThemeAccent}{HTML}{985368}
+\definecolor{ThemeInk}{HTML}{303C4C}
+\definecolor{SimplePaper}{HTML}{FCFCFD}
+\definecolor{SimpleBand}{HTML}{F1F3F6}
+\definecolor{SimpleRule}{HTML}{D7DDE5}
+\setbeamercolor{normal text}{fg=ThemeInk,bg=SimplePaper}
+\setbeamercolor{background canvas}{bg=SimplePaper}
+\setbeamercolor{structure}{fg=ThemeAccent}
+\setbeamercolor{title}{fg=ThemeAccent}
+\setbeamercolor{frametitle}{fg=ThemeInk,bg=SimpleBand}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[default]
+\setbeamercolor{block title}{fg=ThemeAccent,bg=ThemeAccent!7!white}
+\setbeamercolor{block body}{fg=ThemeInk,bg=ThemeAccent!3!white}
+\setbeamertemplate{background}{%
+  \includegraphics[width=\paperwidth,height=\paperheight]{\HypoResourceDir/assets/simple-background.pdf}}
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=9mm,rightskip=9mm,sep=0pt]{frametitle}
+    \vskip1.1ex\usebeamerfont{frametitle}\strut\insertframetitle\strut\par\vskip0.8ex
+  \end{beamercolorbox}}
+\setbeamertemplate{footline}{%
+  {\color{SimpleRule}\hrule height0.3pt}%
+  \hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=3.2ex,dp=1.6ex,leftskip=9mm,rightskip=9mm]{normal text}
+    {\scriptsize\color{ThemeInk!75}\insertshortauthor\enspace /\enspace\insertshorttitle}\hfill
+    {\scriptsize\color{ThemeAccent}\insertframenumber\,/\,\inserttotalframenumber}
+  \end{beamercolorbox}}}
+\NewDocumentEnvironment{ThemeBlock}{m m +b}{%
+  \begin{block}{#2}#3\end{block}}{}
+\newcommand{\ExperimentTitle}{%
+  \begin{frame}[plain]
+    \vspace{1.0cm}
+    {\Large\color{ThemeAccent}\bfseries HypoDoc\par}
+    \vspace{0.8cm}
+    {\usebeamerfont{title}\color{ThemeAccent}\inserttitle\par}
+    \vspace{0.3cm}
+    {\usebeamerfont{subtitle}\insertsubtitle\par}
+    \vspace{0.8cm}
+    \insertauthor\enspace /\enspace\insertinstitute\par
+    \vspace{0.3cm}\insertdate
+  \end{frame}}

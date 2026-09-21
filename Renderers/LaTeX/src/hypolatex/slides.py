@@ -111,6 +111,8 @@ def resolve_slide_options(input_path: Path | str | os.PathLike[str]) -> SlideOpt
 def normalize_slides_markdown(
     input_path_or_text: Path | str | os.PathLike[str],
     options: SlideOptions | Mapping[str, Any] | None = None,
+    *,
+    native: bool = False,
 ) -> NormalizedSlides:
     """Normalize slides Markdown and fail fast on unsafe slide structure."""
 
@@ -119,7 +121,7 @@ def normalize_slides_markdown(
     resolved_options = (
         _coerce_options(options) if options is not None else _options_from_mapping(frontmatter)
     )
-    events = _parse_body(body, resolved_options)
+    events = _parse_body(body, resolved_options, native=native)
     normalized = _render_events(events)
     return NormalizedSlides(normalized)
 
@@ -177,7 +179,7 @@ def _coerce_options(options: SlideOptions | Mapping[str, Any]) -> SlideOptions:
 
 
 def _parse_body(
-    body: str, options: SlideOptions
+    body: str, options: SlideOptions, *, native: bool = False
 ) -> list[_Frame | _Heading]:
     events: list[_Frame | _Heading] = []
     current_frame: _Frame | None = None
@@ -192,7 +194,7 @@ def _parse_body(
         nonlocal current_frame
         if current_frame is None:
             return
-        _validate_frame(current_frame)
+        _validate_frame(current_frame, check_density=not native)
         events.append(current_frame)
         current_frame = None
 
@@ -225,7 +227,7 @@ def _parse_body(
                     title_run_count = 0
                     context_changed = True
                     pending_new_frame = False
-                    if options.section_dividers:
+                    if options.section_dividers or native:
                         events.append(_Heading(level=1, title=title))
                     continue
                 if level == 2:
@@ -268,7 +270,7 @@ def _parse_body(
             title_run_count += 1
             pending_new_frame = False
 
-        current_frame.lines.append(line if in_fence else _rewrite_image_line(line))
+        current_frame.lines.append(line if in_fence or native else _rewrite_image_line(line))
 
     if pending_new_frame and current_frame is None:
         if last_title is None or context_changed:
@@ -304,14 +306,14 @@ def _continued_title(title: str, count: int, options: SlideOptions) -> str:
     return f"{title} (continued {count}/{options.frame_title_inheritance_limit})"
 
 
-def _validate_frame(frame: _Frame) -> None:
+def _validate_frame(frame: _Frame, *, check_density: bool = True) -> None:
     nonblank = [line for line in frame.lines if line.strip()]
     if not nonblank:
         raise SlidesError(f"Empty frame {frame.title!r} is not allowed.")
 
     bullet_count = sum(1 for line in nonblank if _BULLET_RE.match(line))
     char_count = sum(len(line) for line in nonblank)
-    if bullet_count > 60 or len(nonblank) > 180 or char_count > 12000:
+    if check_density and (bullet_count > 60 or len(nonblank) > 180 or char_count > 12000):
         raise SlidesError(f"Overfull frame {frame.title!r} is too large.")
 
 
@@ -355,8 +357,24 @@ def _rewrite_centered_image_line(line: str) -> str:
     if tokens is None:
         return line
     if len(tokens) == 1 and tokens[0].group("alt").strip():
-        # Captioned lone image: pandoc renders a centered figure with caption.
-        return line
+        # Keep Pandoc's native caption, but give old/new writers the same
+        # bounding box. Reserve space for the frame title, caption and footer.
+        token = tokens[0]
+        raw_attrs = token.group("attrs") or ""
+        attrs = _parse_image_attrs(raw_attrs)
+        defaults = []
+        if "width" not in attrs:
+            defaults.append("width=100%")
+        if "height" not in attrs:
+            defaults.append("height=65%")
+        if not defaults:
+            return line
+        merged = " ".join([raw_attrs.strip(), *defaults]).strip()
+        image_end = line.rfind("}") if token.group("attrs") is not None else -1
+        if image_end >= 0:
+            image_start = line.rfind("{", 0, image_end)
+            return line[:image_start] + "{" + merged + "}" + line[image_end + 1:]
+        return line.rstrip() + "{" + merged + "}"
     graphics = "\n".join(_fit_includegraphics(token) for token in tokens)
     return f"\\begin{{center}}\n{graphics}\n\\end{{center}}"
 
