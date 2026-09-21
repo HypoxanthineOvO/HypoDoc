@@ -8,9 +8,11 @@
 python3 scripts/setup.py
 ```
 
+重复运行会更新由 HypoDoc 自己创建的用户级 `hypolatex` 启动器，使它指向当前仓库；同名但由用户或其他工具创建的命令不会被覆盖。安装后可用 `hypolatex --version` 和 `hypolatex themes` 确认实际运行的版本与可用主题。
+
 Windows 将 `python3` 换成 `python` 或 `py -3`。脚本在仓库根 `.venv` 中隔离安装 CLI；已有 uv 时用它加速，否则使用该虚拟环境的 pip。不会修改系统 Python、下载 Spec、安装 Node.js 或更改 shell 配置。
 
-脚本默认创建用户级命令入口：Linux/macOS 为 `~/.local/bin/hypolatex`，Windows 为 `%LOCALAPPDATA%/HypoDoc/bin/hypolatex.cmd`。如果已有同名命令，脚本会保留它并打印本次 CLI 的完整路径，不强制覆盖。
+脚本默认创建用户级命令入口：Linux/macOS 为 `~/.local/bin/hypolatex`，Windows 为 `%LOCALAPPDATA%/HypoDoc/bin/hypolatex.cmd`。如果已有同名命令，脚本只更新带 HypoDoc 管理标记的旧入口；其他命令会被保留，并打印本次 CLI 的完整路径。
 
 常用选项：
 

@@ -45,6 +45,19 @@ def test_launcher_does_not_replace_other_installation(repo_root, tmp_path, monke
     assert target.read_text() == "another installation"
 
 
+def test_launcher_updates_previous_hypodoc_installation(repo_root, tmp_path, monkeypatch):
+    setup = module(repo_root, "scripts/setup.py")
+    monkeypatch.setattr(Path, "home", classmethod(lambda _: tmp_path))
+    target = tmp_path / ".local/bin/hypolatex"
+    target.parent.mkdir(parents=True)
+    target.write_text("#!/bin/sh\n# Managed by HypoDoc setup\nexec /old/repo/.venv/bin/hypolatex \"$@\"\n")
+    cli = tmp_path / "new/repo/.venv/bin/hypolatex"
+
+    assert setup.install_launcher(cli, True) == target
+    assert str(cli) in target.read_text()
+    assert "/old/repo" not in target.read_text()
+
+
 def test_rc_versions_are_mapped_and_checked(repo_root, tmp_path, monkeypatch):
     release = module(repo_root, "tools/release.py")
     root_package = tmp_path / "package.json"

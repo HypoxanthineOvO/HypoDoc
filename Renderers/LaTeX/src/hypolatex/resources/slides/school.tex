@@ -59,11 +59,12 @@
       \def\slideentry##1##2##3##4##5##6{%
         \ifnum##6=\c@part\ifnum##1=#1
           \beamer@link(##4){%
+            \def\SchoolDotFill{SchoolNav}%
             \ifnum\c@section=##1\ifnum\c@subsection=##2\ifnum\c@subsectionslide=##3
-              \color{ThemeAccent}\else\color{ThemeAccent!45!white}\fi
-            \else\color{ThemeAccent!45!white}\fi
-            \else\color{ThemeAccent!45!white}\fi
-            \ensuremath{\circ}}\kern1pt
+              \def\SchoolDotFill{ThemeAccent}%
+            \fi\fi\fi
+            \tikz[baseline=-0.4mm]\draw[draw=ThemeAccent!55!white,
+              fill=\SchoolDotFill,line width=0.3pt] (0,0) circle (0.45mm);}\kern1.2pt
         \fi\fi}%
       \dohead
     \fi
@@ -76,7 +77,7 @@
       \ifnum\c@section>0
         \truncate{0.72\paperwidth}{\textbf{\insertsectionhead}}%
       \else\textbf{报告概览}\fi
-      \hfill\the\c@section\,/\,\the\SchoolSections\ 章节}%
+      \hfill\ifnum\c@section>0\relax\the\c@section\,/\,\fi\the\SchoolSections\ 章节}%
   \else
     \ifnum\SchoolSections>0
       \SchoolCellWidth=\dimexpr\paperwidth-12mm\relax
@@ -94,7 +95,7 @@
         \hbox{\dohead}%
       \endgroup
     \else
-      \hbox to\dimexpr\paperwidth-12mm\relax{\truncate{0.8\paperwidth}{\insertshorttitle}\hfil}%
+      \hbox to\dimexpr\paperwidth-12mm\relax{\truncate{0.8\paperwidth}{\beamer@shorttitle}\hfil}%
     \fi
   \fi}
 \setbeamertemplate{headline}{%
@@ -120,18 +121,18 @@
 \setbeamertemplate{footline}{%
   \SchoolFooterRow{author in head/foot}{%
     \hbox to\dimexpr\paperwidth-12mm\relax{%
-      \truncate{0.34\paperwidth}{\insertshortauthor}\hfill
-      \truncate{0.54\paperwidth}{\insertshortinstitute}}}%
+      \truncate{0.34\paperwidth}{\beamer@shortauthor}\hfill
+      \truncate{0.54\paperwidth}{\beamer@shortinstitute}}}%
   \SchoolFooterRow{title in head/foot}{%
     \hbox to\dimexpr\paperwidth-12mm\relax{%
-      \truncate{0.53\paperwidth}{\insertshorttitle}\hfill
-      \truncate{0.23\paperwidth}{\insertshortdate}\hspace{4mm}%
+      \truncate{0.53\paperwidth}{\beamer@shorttitle}\hfill
+      \truncate{0.23\paperwidth}{\beamer@shortdate}\hspace{4mm}%
       \insertframenumber\,/\,\inserttotalframenumber}}}
 \makeatother
 % Official ShanghaiTech SVG artwork, converted to vector PDF without changes.
 \newcommand{\SchoolLogo}{\includegraphics[width=0.23\paperwidth,keepaspectratio]{\HypoResourceDir/assets/logo-red.pdf}}
 \NewDocumentEnvironment{ThemeBlock}{m m +b}{%
-  \begin{tcolorbox}[colback=SchoolPanel!23!white,colframe=SchoolPanel,
+  \begin{tcolorbox}[colback=SchoolPanel!23!white,colframe=SchoolPanel,coltext=ThemeInk,
     colbacktitle=SchoolPanel,coltitle=SchoolBlockInk,
     fonttitle=\usebeamerfont{block title},title={#2},
     boxrule=0pt,arc=1.5mm,left=2.5mm,right=2.5mm,top=1.2mm,bottom=1.2mm,
@@ -143,11 +144,14 @@
     \vspace{1mm}
     \hfill\SchoolLogo\par
     \vspace{3mm}
-    \begin{beamercolorbox}[wd=\linewidth,center,sep=4mm]{title}
+    \begin{tcolorbox}[width=\linewidth,colback=ThemeAccent,colframe=ThemeAccent,
+      coltext=white,boxrule=0pt,arc=2mm,boxsep=0pt,
+      left=5mm,right=5mm,top=5mm,bottom=5mm,
+      halign=flush center,before skip=0pt,after skip=0pt]
       {\usebeamerfont{title}\inserttitle\par}%
       \ifdefempty{\insertsubtitle}{}{\vspace{2mm}%
         {\usebeamerfont{subtitle}\insertsubtitle\par}}%
-    \end{beamercolorbox}
+    \end{tcolorbox}
     \vspace{4mm}
     \begin{minipage}{0.88\linewidth}
       \centering\setlength{\parskip}{0pt}
@@ -172,18 +176,20 @@
       \end{scope}
       \node[anchor=north west,inner sep=0pt]
         at ([xshift=9mm,yshift=-13mm]current page.north west)
-        {\includegraphics[width=0.26\paperwidth,keepaspectratio]{\HypoResourceDir/assets/logo-red.pdf}};
-      \node[anchor=north west,align=left,text width=0.45\paperwidth,
+        {\SchoolLogo};
+      % One flowing stack, rather than independently anchored title and author
+      % boxes: wrapped subtitles can no longer collide with multiple authors.
+      \node[anchor=north west,align=left,text width=0.43\paperwidth,
             inner sep=0pt,text=ThemeInk]
-        at ([xshift=9mm,yshift=-36mm]current page.north west)
-        {{\usebeamerfont{title}\fontsize{18}{24}\selectfont\color{ThemeAccent}\inserttitle\par}
-         \vspace{0.25em}{\usebeamerfont{subtitle}\insertsubtitle\par}};
-      \node[anchor=south west,align=left,text width=0.38\paperwidth,
-            inner sep=0pt,text=ThemeInk]
-        at ([xshift=9mm,yshift=16mm]current page.south west)
-        {{\small\insertauthor\par}\vspace{0.3em}
-         {\small\insertinstitute\par}\vspace{0.3em}
-         {\small\insertdate}};
+        at ([xshift=9mm,yshift=-29mm]current page.north west)
+        {\setlength{\parskip}{0pt}%
+         {\usebeamerfont{title}\fontsize{16}{21}\selectfont\color{ThemeAccent}\inserttitle\par}
+         \ifdefempty{\insertsubtitle}{}{\vspace{2mm}%
+           {\usebeamerfont{subtitle}\fontsize{10}{12}\selectfont\insertsubtitle\par}}%
+         \vspace{3mm}
+         {\fontsize{9}{12}\selectfont\insertauthor\par}\vspace{1.5mm}
+         {\fontsize{8}{11}\selectfont\insertinstitute\par}\vspace{1.5mm}
+         {\fontsize{9}{12}\selectfont\insertdate\par}};
       \node[anchor=south east,inner sep=0pt]
         at ([xshift=-8mm,yshift=14mm]current page.south east)
         {\includegraphics[width=0.32\paperwidth,keepaspectratio]{\HypoResourceDir/assets/logo-white.pdf}};

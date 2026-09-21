@@ -17,6 +17,7 @@ import venv
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = ["python3-venv", "pandoc", "texlive-xetex", "texlive-latex-extra", "texlive-lang-chinese",
             "latexmk", "fonts-noto-cjk", "poppler-utils"]
+LAUNCHER_MARKER = "Managed by HypoDoc setup"
 
 
 def system_plan(system=None):
@@ -38,14 +39,20 @@ def install_launcher(cli, enabled):
     if os.name == "nt":
         directory = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "HypoDoc/bin"
         target = directory / "hypolatex.cmd"
-        content = '@rem Managed by HypoDoc setup\n@"' + str(cli).replace("%", "%%") + '" %*\n'
+        content = f'@rem {LAUNCHER_MARKER}\n@"' + str(cli).replace("%", "%%") + '" %*\n'
     else:
         directory = Path.home() / ".local/bin"
         target = directory / "hypolatex"
-        content = "#!/bin/sh\n# Managed by HypoDoc setup\nexec " + shlex.quote(str(cli)) + ' "$@"\n'
+        content = f"#!/bin/sh\n# {LAUNCHER_MARKER}\nexec " + shlex.quote(str(cli)) + ' "$@"\n'
     directory.mkdir(parents=True, exist_ok=True)
     if target.exists() or target.is_symlink():
-        if not target.is_file() or target.is_symlink() or target.read_text(errors="replace") != content:
+        existing = target.read_text(errors="replace") if target.is_file() and not target.is_symlink() else ""
+        if existing == content:
+            pass
+        elif any(LAUNCHER_MARKER in line for line in existing.splitlines()[:2]):
+            target.write_text(content, encoding="utf-8")
+            print(f"已更新 HypoDoc 用户命令：{target}")
+        else:
             print(f"保留已有命令 {target}；本次 CLI 请使用完整路径 {cli}")
             return None
     else:
