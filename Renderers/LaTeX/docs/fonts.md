@@ -1,69 +1,39 @@
-# Hypo-LaTeX Chinese Font Roles
+# 文档字体
 
-Hypo-LaTeX uses theme-level font roles instead of asking ordinary Markdown files to set fonts directly. AI-authored drafts should usually select only `theme`.
+本文描述 book / article 的字体系统；Slides 保持独立字体配置。
 
-## Font Roles
+## 默认角色
 
-- Body: long paragraphs, tables, ordinary lists, and mixed Chinese/English text.
-- Title: cover titles, chapter titles, and large visual headings.
-- Mono: code, commands, paths, model IDs, and compact technical tokens.
-- Poster title: optional future role for strong cover-only titles such as Smiley Sans or DingTalk JinBuTi.
+| 角色 | 首选 | 后备 |
+| --- | --- | --- |
+| 拉丁正文 | TeX Gyre Pagella | Latin Modern Roman |
+| 中文正文 | Noto Serif CJK SC | FandolSong |
+| 标题、Box 标题 | 正文家族的粗体 | 随正文 |
+| 页眉页脚 | 正文家族的小字号 | 随正文 |
+| 数学 | TeX Gyre Pagella Math | Latin Modern Math |
+| 拉丁代码 | Cascadia Mono | Latin Modern Mono |
+| 中文代码 | Noto Sans Mono CJK SC | FandolFang |
+| 显式无衬线文字 | TeX Gyre Heros / Noto Sans CJK SC | Latin Modern Sans / FandolHei |
 
-## Theme Defaults
+默认保留真实的 Latin 斜体、粗体与数学字形，不再让中文字体同时承担全部英文字形。标题不自动切换黑体，中文正文和标题也不混用宋体／黑体。字体随本机与 TeX 发行版提供，构建不会自动下载安装。
 
-### `classic-readable`
+## 覆盖
 
-- Body: `Noto Serif CJK SC`
-- Title / cover / chapter: `Noto Serif CJK SC Black`
-- Module / Q-A title: `Noto Serif CJK SC Bold`
-- Mono: `LXGW WenKai Mono`
+```yaml
+mainfont: TeX Gyre Pagella
+cjkfont: Noto Serif CJK SC
+mathfont: TeX Gyre Pagella Math
+titlefont: TeX Gyre Pagella
+cjktitlefont: Noto Serif CJK SC
+monofont: Cascadia Mono
+```
 
-Use this for longform books, tutorials, and paper-like Chinese reading.
+标题默认继承正文，不需要重复填写。`sansfont` 可覆盖显式无衬线内容的拉丁字体。显式配置的字体找不到时构建失败，避免配置看似生效、实际却悄悄后备。
 
-### `tech-minimal`
+`mathfont` 需要 OpenType 数学字体；普通文字字体不能替代。字体名称不能包含原始 TeX 或文件路径。`font_preset` 仍是 Slides 字段，不控制文档字体。
 
-- Body: `Noto Serif CJK SC`
-- Sans fallback for explicit technical accents: `Sarasa Gothic SC`
-- Title / cover / chapter: `Noto Serif CJK SC Black`
-- Module / Q-A title: `Noto Serif CJK SC Bold`
-- Mono: `LXGW WenKai Mono`
+## 选型与验证
 
-Use this for model reviews, technical guides, rankings, tables, and mixed model-name text when a restrained paper-like look is preferred.
+默认使用用户确认的 Pagella 与 Pagella Math，配合 Noto Serif CJK SC。Termes 可通过显式字体字段继续选用。字体改变会影响换行与分页，应以同一份中英混排样张检查，不仅看字体名。
 
-### `warm-handbook`
-
-- Body: `Noto Serif CJK SC`
-- Title / cover / chapter: `Noto Serif CJK SC Black`
-- Module / Q-A title: `Noto Serif CJK SC Bold`
-- Mono: `LXGW WenKai Mono`
-
-Use this for explanation-heavy or more conversational tutorials. Its warmer tone
-comes from spacing and color choices; ordinary body text still uses the stable
-Noto Serif role, and LXGW is kept for mono/code only.
-
-### `academic-clean`
-
-- Body: `Noto Serif CJK SC`
-- Sans / mixed fallback: `Sarasa Gothic SC`
-- Title / cover / chapter: `Noto Serif CJK SC Black`
-- Module / Q-A title: `Noto Serif CJK SC Bold`
-- Mono: `LXGW WenKai Mono`
-
-Use this for formal notes, study material, and academic-style documents.
-
-## Fallback Policy
-
-The package checks each preferred font with `\IfFontExistsTF` before using it. Missing preferred fonts fall back to the stable Noto CJK/default LaTeX stack rather than breaking the build.
-
-`hypolatex doctor` treats Noto CJK fonts as required fallback fonts and reports MiSans, Sarasa Gothic SC, LXGW WenKai, Smiley Sans, Alibaba PuHuiTi 3.0, and DingTalk JinBuTi as recommended Chinese fonts. Missing recommended fonts should be fixed for final visual quality, but they do not block the MVP build loop.
-
-The current package defaults deliberately do not use MiSans, Smiley Sans, Alibaba PuHuiTi, or DingTalk JinBuTi for ordinary document boxes. MiSans looked too product-like inside cards, while the installed Alibaba/Smiley/DingTalk files are woff2 or segmented woff2 and are not stable XeLaTeX core defaults in this environment.
-
-## AI Authoring Rules
-
-1. For ordinary drafts, use only `theme`.
-2. Use `tech-minimal` for model evaluation, technical ranking, and table-heavy content.
-3. Use `classic-readable` for longform book-like tutorials.
-4. Use `warm-handbook` for conversational explanations or solution walkthroughs.
-5. Use `academic-clean` for formal study material.
-6. Do not add `mainfont`, `sansfont`, `monofont`, or `cjkfont` unless the user explicitly requests a document-specific override.
+样张源文件：`examples/document-design/font-sample.md`。检查 PDF 的嵌入字体、标题字重、斜体、公式、代码以及打印尺寸下的长段落。[完整配置](document-design.md)

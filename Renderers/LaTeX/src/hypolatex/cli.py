@@ -33,7 +33,7 @@ def main(version: Annotated[bool, typer.Option("--version", is_eager=True)] = Fa
 @app.command("init")
 def init_document(
     output: Annotated[Path, typer.Argument(help="New Markdown file; existing files are never overwritten.")],
-    template: Annotated[str, typer.Option(help="document, article, slides, review, cheatsheet")] = "document",
+    template: Annotated[str, typer.Option(help="document, article, project, notes, report, slides, review, cheatsheet")] = "document",
     theme: Annotated[str | None, typer.Option(help="Optional compatible theme.")] = None,
     school_cover: Annotated[str | None, typer.Option(help="standard or diagonal (theme school)")] = None,
 ) -> None:
@@ -142,12 +142,12 @@ def build(
         ),
     ] = None,
     paper: Annotated[
-        str,
+        str | None,
         typer.Option(
             "--paper",
             help="Paper size for the generated PDF: a4paper or letterpaper.",
         ),
-    ] = build_module.DEFAULT_PAPER,
+    ] = None,
     theme: Annotated[
         str | None,
         typer.Option(

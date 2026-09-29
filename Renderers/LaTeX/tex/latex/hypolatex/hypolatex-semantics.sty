@@ -66,6 +66,7 @@
 }
 
 \tcbset{
+  hypobox/spacing/.style={},
   hypobox/base/.style={
     breakable,
     enhanced,
@@ -137,18 +138,19 @@
     coltitle=#1TitleText,
     fonttitle=\HypoSemanticTitleFont,
     title={\HypoBoxTitle{#2}{#3}},
-    #4
+    #4,
+    hypobox/spacing
   ]
   #5%
   \end{tcolorbox}%
 }
 
 \NewDocumentCommand{\HypoQASection}{m m m +m}{%
-  \par\medskip
+  \par\addvspace{10pt}
   \noindent{\HypoSemanticTitleFont\color{#1Frame}\HypoBoxTitle{#2}{#3}\par}
   \vspace{2pt}%
   {\color{#1Frame}\hrule height 0.35pt}%
-  \vspace{5pt}%
+  \vspace{8pt}%
   {\leftskip=\HypoIconTitleIndent\relax #4\par}%
 }
 

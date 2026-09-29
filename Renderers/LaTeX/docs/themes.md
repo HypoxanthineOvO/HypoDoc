@@ -22,6 +22,12 @@ theme: classic-readable
 
 另外提供 `simple`、`nature` 两个正式 Slides 主题，使用相同的正文转换与字体后备。用 `hypolatex themes` 查看安装版本实际支持的主题。下述 `shanghaitech` 为旧兼容主题，封面参数不与 `school` 混用。
 
+### 场景主题：`course-notes` / `professional-doc`
+
+`course-notes` 面向课程笔记，以统一的中英文衬线字体、舒展的推导行距、浅色 Box 和网格曲线封面支持长期阅读。`professional-doc` 面向正式技术文档，使用蓝灰配色、较克制的行距和几何封面。两者均支持 book / article；用 `init --template notes` 或 `init --template report` 开始。
+
+两者的布局、字体覆盖和边界见 [文档排版](document-design.md)。旧主题继续保留，字体角色统一见 [字体](fonts.md)。
+
 ### `plain`
 
 基础兼容主题，适合调试、最小文档和渲染器测试。需要尽量排除视觉样式干扰时使用它。

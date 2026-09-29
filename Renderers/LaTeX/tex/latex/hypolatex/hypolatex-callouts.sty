@@ -5,66 +5,70 @@
 \tcbuselibrary{breakable}
 \providecommand{\HypoSemanticTitleFont}{\bfseries}
 
-\newtcolorbox{HypoNote}{
+\newtcolorbox{HypoNote}[1][]{
   breakable,
   colback=HypoNoteBack,
   colframe=HypoNoteFrame,
   colbacktitle=HypoNoteTitleBack,
   coltitle=HypoNoteTitleText,
   fonttitle=\HypoSemanticTitleFont,
-  title={\HypoIconTitle{note}{Note}},
+  title={\HypoIconTitle{note}{\ifstrempty{#1}{Note}{#1}}},
   arc=2mm,
   boxrule=0.6pt,
   left=8pt,
   right=8pt,
   top=7pt,
-  bottom=7pt
+  bottom=7pt,
+  hypobox/spacing
 }
 
-\newtcolorbox{HypoTip}{
+\newtcolorbox{HypoTip}[1][]{
   breakable,
   colback=HypoTipBack,
   colframe=HypoTipFrame,
   colbacktitle=HypoTipTitleBack,
   coltitle=HypoTipTitleText,
   fonttitle=\HypoSemanticTitleFont,
-  title={\HypoIconTitle{tip}{Tip}},
+  title={\HypoIconTitle{tip}{\ifstrempty{#1}{Tip}{#1}}},
   arc=2mm,
   boxrule=0.6pt,
   left=8pt,
   right=8pt,
   top=7pt,
-  bottom=7pt
+  bottom=7pt,
+  hypobox/spacing
 }
 
-\newtcolorbox{HypoWarning}{
+\newtcolorbox{HypoWarning}[1][]{
   breakable,
   colback=HypoWarningBack,
   colframe=HypoWarningFrame,
   colbacktitle=HypoWarningTitleBack,
   coltitle=HypoWarningTitleText,
   fonttitle=\HypoSemanticTitleFont,
-  title={\HypoIconTitle{warning}{Warning}},
+  title={\HypoIconTitle{warning}{\ifstrempty{#1}{Warning}{#1}}},
   arc=2mm,
   boxrule=0.6pt,
   left=8pt,
   right=8pt,
   top=7pt,
-  bottom=7pt
+  bottom=7pt,
+  hypobox/spacing
 }
 
-\newtcolorbox{HypoSummary}{
+\newtcolorbox{HypoSummary}[1][]{
   breakable,
   colback=HypoSummaryBack,
   colframe=HypoSummaryFrame,
   colbacktitle=HypoSummaryTitleBack,
   coltitle=HypoSummaryTitleText,
   fonttitle=\HypoSemanticTitleFont,
-  title={\HypoIconTitle{summary}{Summary}},
+  title={\HypoIconTitle{summary}{\ifstrempty{#1}{Summary}{#1}}},
   arc=2mm,
   boxrule=0.6pt,
   left=8pt,
   right=8pt,
   top=7pt,
-  bottom=7pt
+  bottom=7pt,
+  hypobox/spacing
 }

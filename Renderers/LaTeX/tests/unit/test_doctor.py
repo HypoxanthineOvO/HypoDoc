@@ -82,6 +82,12 @@ def test_missing_slides_dependency_is_not_reported_as_ready(monkeypatch, package
     assert any(r.name == package and not r.ok for r in report.required)
 
 
+@pytest.mark.parametrize("package", ["unicode-math", "tikz"])
+def test_document_design_packages_are_checked(monkeypatch, package):
+    fake_checks(monkeypatch, {package})
+    assert not diagnostics.collect_doctor_report("build").ok
+
+
 def test_evidence_only_needs_poppler(monkeypatch):
     fake_checks(monkeypatch, {"pandoc", "latexmk", "xelatex"})
     assert diagnostics.collect_doctor_report("evidence").ok

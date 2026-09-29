@@ -11,6 +11,8 @@ uv run --project Renderers/LaTeX hypolatex build Renderers/LaTeX/src/hypolatex/r
 
 ## 需要时再查的高级功能
 
+- [课程笔记与正式文档排版](document-design.md)：场景主题、字体、封面、Box、选择题和高级配置
+
 - [主题与覆盖项](themes.md)、[字体](fonts.md)、[封面](cover-layouts.md)
 - [Slides](beamer.md)、[图片](figures.md)
 - [表格和语义模块](c3-authoring.md)、[多栏速查表](c5-cheatsheet.md)

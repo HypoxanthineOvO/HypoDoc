@@ -1,0 +1,48 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hypolatex-fonts}[2026/09/27 Coherent bilingual document fonts]
+\RequirePackage{unicode-math}
+
+% Keep Latin, CJK and mathematics separate; a CJK font's Latin glyphs are not
+% a substitute for a complete text family with real italics.
+\newcommand{\HypoUseStableFonts}{%
+  \IfFontExistsTF{TeX Gyre Pagella}{\setmainfont{TeX Gyre Pagella}}{\setmainfont{Latin Modern Roman}}%
+  \IfFontExistsTF{TeX Gyre Heros}{\setsansfont{TeX Gyre Heros}}{\setsansfont{Latin Modern Sans}}%
+  \IfFontExistsTF{Cascadia Mono}{\setmonofont{Cascadia Mono}[Scale=MatchLowercase]}{\setmonofont{Latin Modern Mono}[Scale=MatchLowercase]}%
+  \IfFontExistsTF{Noto Serif CJK SC}{%
+    \setCJKmainfont{Noto Serif CJK SC}[BoldFont={Noto Serif CJK SC Bold}]%
+  }{\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]}%
+  \IfFontExistsTF{Noto Sans CJK SC}{\setCJKsansfont{Noto Sans CJK SC}[BoldFont={Noto Sans CJK SC Bold}]}{\setCJKsansfont{FandolHei-Regular.otf}}%
+  \IfFontExistsTF{Noto Sans Mono CJK SC}{\setCJKmonofont{Noto Sans Mono CJK SC}}{\setCJKmonofont{FandolFang-Regular.otf}}%
+  \IfFontExistsTF{TeX Gyre Pagella Math}{\setmathfont{TeX Gyre Pagella Math}}{\setmathfont{Latin Modern Math}}%
+}
+\newcommand{\HypoLatinTitleFont}{}
+\newcommand{\HypoCJKTitleFont}{}
+\newcommand{\HypoTitleFont}{\rmfamily\HypoLatinTitleFont\HypoCJKTitleFont}
+\newcommand{\HypoChapterTitleFont}{\HypoTitleFont}
+\newcommand{\HypoCoverTitleFont}{\HypoTitleFont}
+\newcommand{\HypoSerifTitleFont}{\HypoTitleFont}
+\newcommand{\HypoSerifModuleFont}{\HypoTitleFont}
+\newcommand{\HypoSemanticTitleFont}{\HypoTitleFont\bfseries}
+\newcommand{\HypoQuestionTitleFont}{\HypoTitleFont\bfseries}
+\newcommand{\HypoAnswerTitleFont}{\HypoTitleFont\bfseries}
+\newcommand{\HypoRubricTitleFont}{\HypoTitleFont\bfseries}
+% Theme selection changes the palette, not the user's font role choices.
+\newcommand{\HypoUseReadableFonts}{}
+\newcommand{\HypoUseTechFonts}{}
+\newcommand{\HypoUseWarmFonts}{}
+\newcommand{\HypoUseAcademicFonts}{}
+\HypoUseStableFonts
+
+\newcommand{\HypoSetFont}[2]{%
+  \IfFontExistsTF{#2}{%
+    \ifstrequal{#1}{main}{\setmainfont{#2}}{}%
+    \ifstrequal{#1}{sans}{\setsansfont{#2}}{}%
+    \ifstrequal{#1}{mono}{\setmonofont{#2}[Scale=MatchLowercase]}{}%
+    \ifstrequal{#1}{cjk}{%
+      \ifstrequal{#2}{FandolSong-Regular.otf}{\setCJKmainfont{#2}[BoldFont=FandolSong-Bold.otf]}{\setCJKmainfont{#2}}%
+    }{}%
+    \ifstrequal{#1}{title}{\newfontfamily\HypoCustomLatinTitle{#2}\renewcommand{\HypoLatinTitleFont}{\HypoCustomLatinTitle}}{}%
+    \ifstrequal{#1}{cjktitle}{\newCJKfontfamily\HypoCustomCJKTitle{#2}\renewcommand{\HypoCJKTitleFont}{\HypoCustomCJKTitle}}{}%
+    \ifstrequal{#1}{math}{\setmathfont{#2}}{}%
+  }{\PackageError{hypolatex-fonts}{Requested #1 font not found: #2}{Install the requested font or remove the explicit override.}}%
+}

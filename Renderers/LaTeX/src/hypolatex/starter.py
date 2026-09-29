@@ -8,8 +8,9 @@ from hypolatex.configuration import split_frontmatter
 from hypolatex.themes import validate_theme_id
 
 TEMPLATES = {
-    "document": "longform.md", "article": "project.md", "slides": "beamer.md",
+    "document": "longform.md", "article": "article.md", "project": "project.md", "slides": "beamer.md",
     "review": "review.md", "cheatsheet": "cheatsheet.md",
+    "notes": "notes.md", "report": "report.md",
 }
 
 

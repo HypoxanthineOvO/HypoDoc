@@ -37,7 +37,7 @@ class BuildResult:
 def build_pdf(
     input_path: Path | str,
     output_path: Path | str,
-    paper: str = DEFAULT_PAPER,
+    paper: str | None = None,
     theme: str | None = None,
     answer_mode: str | None = None,
     allow_placeholders: bool = False,
@@ -50,7 +50,8 @@ def build_pdf(
     target = Path(output_path).expanduser().resolve()
     if source == target:
         raise BuildError("Output must not replace the Markdown source.")
-    paper = _normalize_paper(paper)
+    if paper is not None:
+        paper = _normalize_paper(paper)
 
     if not source.is_file():
         raise BuildError(f"Input Markdown file does not exist: {source}")
@@ -96,8 +97,10 @@ def build_pdf(
         convert_module.convert_markdown(
             source, tex_path, theme=theme, answer_mode=options.answer_mode,
             school_cover=school_cover,
+            paper=paper,
         )
-        _apply_paper_override(tex_path, paper)
+        if options.document_type == "beamer" and paper is not None:
+            _apply_paper_override(tex_path, paper)
         try:
             resource_files.prepare_markdown_resources(
                 source, work_dir, allow_missing=allow_placeholders

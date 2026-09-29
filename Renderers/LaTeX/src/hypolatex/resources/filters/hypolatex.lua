@@ -115,7 +115,9 @@ local function raw_code_block_environment(block)
   text = text:gsub("\r\n", "\n"):gsub("\r", "\n")
 
   local nonempty_lines = 0
+  local line_count = 0
   for line in (text .. "\n"):gmatch("([^\n]*)\n") do
+    line_count = line_count + 1
     if line:match("%S") then
       nonempty_lines = nonempty_lines + 1
     end
@@ -127,7 +129,8 @@ local function raw_code_block_environment(block)
   end
 
   return raw_block(
-    "\\begin{" .. environment .. "}\n" .. text .. "\n\\end{" .. environment .. "}"
+    "\\ifdefined\\HypoCodeNeedspace\\HypoCodeNeedspace{" .. tostring(line_count <= 8 and line_count + 3 or 5) .. "}\\fi\n"
+      .. "\\begin{" .. environment .. "}\n" .. text .. "\n\\end{" .. environment .. "}"
   )
 end
 
@@ -152,6 +155,14 @@ local function normalize_figure_width(value)
 
   if value:match("^%d*%.?%d+$") then
     return value .. "\\linewidth"
+  end
+  local percent = value:match("^(%d*%.?%d+)%%$")
+  if percent and tonumber(percent) > 0 and tonumber(percent) <= 100 then
+    return tostring(tonumber(percent) / 100) .. "\\linewidth"
+  end
+  local pixels = value:match("^(%d*%.?%d+)px$")
+  if pixels and tonumber(pixels) > 0 then
+    return tostring(tonumber(pixels) * 0.75) .. "bp"
   end
 
   local command_suffixes = {
@@ -444,6 +455,10 @@ local function normalize_table_width(value)
 
   if value:match("^%d*%.?%d+$") then
     return value .. "\\linewidth"
+  end
+  local percent = value:match("^(%d*%.?%d+)%%$")
+  if percent and tonumber(percent) > 0 and tonumber(percent) <= 100 then
+    return tostring(tonumber(percent) / 100) .. "\\linewidth"
   end
 
   local command_suffixes = {
@@ -1413,7 +1428,7 @@ function Div(div)
   local environment = environments[directive]
   if environment ~= nil then
     if directive == "question" then
-      local label = latex_escape(attr(div, "label"))
+      local label = normalize_label(attr(div, "label"))
       local title = latex_escape(attr(div, "title"))
       local numbered = lower_trim(attr(div, "numbered"))
       local style = normalize_question_style(attr(div, "style"))
@@ -1450,11 +1465,19 @@ function Div(div)
   end
 
   if directive == "figure" then
+    local source = attr(div, "src")
+    if source == "" or source:find("[\\{}%%#%c]") or source:match("^/")
+      or source:match("^[%a][%w+.-]*:") then
+      error("figure src must be a plain relative resource path")
+    end
+    for segment in source:gmatch("[^/]+") do
+      if segment == "." or segment == ".." then error("figure src must stay inside resource roots") end
+    end
     return raw_block(
       "\\HypoFigureEx{"
-        .. latex_escape(attr(div, "label"))
+        .. normalize_label(div.identifier ~= "" and div.identifier or attr(div, "label"))
         .. "}{"
-        .. latex_escape(attr(div, "src"))
+        .. "\\detokenize{" .. source .. "}"
         .. "}{"
         .. latex_escape(attr(div, "caption"))
         .. "}{"

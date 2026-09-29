@@ -74,6 +74,9 @@
   tabsize=2
 }
 
+% Document layout supplies the page-builder reservation; Slides keep a no-op.
+\providecommand{\HypoCodeNeedspace}[1]{}
+
 \newtcblisting{HypoCodeBlock}[1][]{
   listing only,
   breakable,
@@ -143,7 +146,7 @@
       \ifdim\wd\z@>0.6\linewidth
         \Hypo@BreakableInlineCode{#1}%
       \else
-        \HypoInlineCode{\Hypo@OriginalTexttt{#1}}%
+        \HypoInlineCode{\ttfamily #1}%
       \fi
     \endgroup
   }%
@@ -152,6 +155,8 @@
 
 \makeatletter
 \newcommand{\Hypo@metadata@title}{}
+\csdef{Hypo@metadata@short_title}{}
+\csdef{Hypo@metadata@article_label}{}
 \newcommand{\Hypo@metadata@subtitle}{}
 \newcommand{\Hypo@metadata@author}{}
 \newcommand{\Hypo@metadata@organization}{}
@@ -184,6 +189,7 @@
 }
 
 \newcommand{\HypoRef}[1]{Figure~\ref{#1}}
+\newcommand{\HypoTypedRef}[2]{#1~\ref{#2}}
 
 \newcommand{\HypoSetAnswerMode}[1]{%
   \renewcommand{\Hypo@answer@mode}{#1}%

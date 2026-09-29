@@ -19,6 +19,29 @@ cover_image: assets/cover.png
 
 ## Layout Set
 
+### `artwork`
+
+Use this with a generated, text-free cover background and an explicit
+`cover_image`. Title, subtitle and the author/date byline form one connected
+group in the upper light area; the lower illustration stays free of text.
+Text remains selectable LaTeX typography. The background
+must reserve those areas: this is not automatic saliency-aware placement.
+The cover hierarchy uses 44pt title, 24pt subtitle, 22pt author, 20pt date
+and 14pt course information; these sizes do not affect Article title blocks.
+See the [ImageGen candidates](../examples/document-design/cover-candidates/README.md).
+
+For `profile: article`, the default is now an inline first-page title block,
+not any full-page cover. Set `title_layout: cover` explicitly to use a cover.
+
+### `notebook` / `editorial`
+
+New vector covers for `course-notes` and `professional-doc`, respectively.
+Both preserve selectable text, generous title space, and metadata at the bottom.
+`notebook` uses a quiet grid and curve; `editorial` uses blue-gray geometry.
+These are decorative graphics, not data charts. They require no external image.
+For a photographic or illustrated cover, select an image-based layout below
+and provide `cover_image`. See [document design](document-design.md).
+
 ### `plain`
 
 Baseline text cover. Use this for debug builds, minimal drafts, or documents where a visual cover would distract from the content.

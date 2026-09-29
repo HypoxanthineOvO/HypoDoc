@@ -18,7 +18,18 @@ theme: tech-minimal
 | 报告、题目、速查表 | `article` | 同上 |
 | Slides | `beamer` | 推荐 `school`、`simple`、`nature`；旧 plain / minimal / shanghaitech / glass 继续兼容 |
 
+PDF 文档另提供两个场景主题：`course-notes`（课程笔记）和 `professional-doc`（正式文档），均支持 `book` / `article`。它们统一中英文衬线字体、数学字体与页眉页脚，默认使用更宽松的 Box 和矢量封面；不要求 Web 预览呈现相同版式。
+
+```sh
+hypolatex init notes.md --template notes
+hypolatex init report.md --template report
+```
+
+详细配置和设计边界见 [文档排版](../Renderers/LaTeX/docs/document-design.md)。
+
 普通文档只需选类型和主题，不必设置字体、封面、色值。旧 `document_type` / `documentclass` 仅用于兼容已有文件，新文档用 `profile`，不要混写。
+
+**短文直接用 `profile: article`**：默认首页标题／摘要与正文连续排版，不插入独立封面或目录。`init --template article` 创建短文，旧项目任务模板改用 `--template project`。`title_layout: cover` 可显式恢复整页封面，`toc: true` 可开启目录。Book 仍默认保留封面和目录。文档字体默认采用 Pagella＋Pagella Math＋Noto Serif CJK。
 
 ## 正文与提示块
 
@@ -67,6 +78,8 @@ uv run --project Renderers/LaTeX hypolatex build Renderers/LaTeX/src/hypolatex/r
 ```
 
 `teacher` 也显示答案。CLI 参数优先于 frontmatter。
+
+PDF 后端也支持 `kind="single-choice"` / `kind="multiple-choice"`：在 `.qa` 内使用 `.choices` 包住带 `#标识` 的 `.choice`，在 `.answer choices="选项ID"` 中指定答案（多选用逗号分隔）。输出按 A、B、C 排列；答案引用不存在的选项或单选题选中多项会报错，不静默忽略。完整例子见[文档排版](../Renderers/LaTeX/docs/document-design.md)。
 
 ## 图片
 

@@ -17,6 +17,8 @@ def build(runner, cli_app, source, output, *options):
 @pytest.mark.parametrize("name,marker", [
     ("longform", "我的技术文档"), ("project", "项目说明"),
     ("review", "求函数"), ("cheatsheet", "技术速查表"), ("beamer", "核心观点"),
+    ("notes", "应用数值计算"), ("report", "技术方案说明"),
+    ("article", "一份清晰的技术短文"),
 ])
 def test_every_public_template_builds_after_copying_outside_repo(runner, cli_app, templates, tmp_path, name, marker):
     source = tmp_path / f"{name}.md"
@@ -47,6 +49,7 @@ def test_review_answer_visibility(runner, cli_app, templates, tmp_path):
 @pytest.mark.parametrize("profile,theme", [
     ("article", "plain"), ("article", "classic-readable"), ("article", "tech-minimal"),
     ("article", "warm-handbook"), ("article", "academic-clean"),
+    ("article", "course-notes"), ("article", "professional-doc"),
     ("beamer", "plain"), ("beamer", "minimal"), ("beamer", "shanghaitech"), ("beamer", "glass"),
     ("beamer", "school"), ("beamer", "simple"), ("beamer", "nature"),
 ])

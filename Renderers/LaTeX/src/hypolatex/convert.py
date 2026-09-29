@@ -15,6 +15,7 @@ from hypolatex import diagnostics
 from hypolatex import slides
 from hypolatex import themes as themes_module
 from hypolatex import slide_resources
+from hypolatex import typography
 from hypolatex.configuration import ConfigurationError, load_frontmatter
 
 
@@ -36,6 +37,7 @@ def convert_markdown(
     theme: str | None = None,
     answer_mode: str | None = None,
     school_cover: str | None = None,
+    paper: str | None = None,
 ) -> ConversionResult:
     """Convert a HypoDoc Markdown document to LaTeX using Pandoc."""
 
@@ -65,6 +67,7 @@ def convert_markdown(
 
     packaged = options.document_type == "beamer" and effective_theme in themes_module.PACKAGED_SLIDE_THEMES
     try:
+        document_style = typography.resolve(source, paper, options.document_type) if options.document_type != "beamer" else None
         settings = slide_resources.settings(source, school_cover) if packaged else None
     except ConfigurationError as exc:
         raise ConversionError(str(exc)) from exc
@@ -162,6 +165,15 @@ def convert_markdown(
                     if effective_theme == "school":
                         command.append("--metadata=school_name:上海科技大学")
             else:
+                document_filter = resources.files("hypolatex").joinpath("resources", "filters", "document.lua")
+                # Installed wheels are unpacked; keep both filters in package resources.
+                command.insert(command.index(f"--lua-filter={lua_filter}"), f"--lua-filter={document_filter}")
+                command.extend([
+                    f"--metadata=fontsize:{document_style.fontsize}",
+                    f"--metadata=answer_mode:{options.answer_mode}",
+                ])
+                if options.document_type == "book":
+                    command.append("--metadata=document_book:true")
                 command.append(
                     f"--top-level-division={_top_level_division(options.document_type)}"
                 )
@@ -181,8 +193,13 @@ def convert_markdown(
             preamble_commands = [f"\\HypoSetAnswerMode{{{options.answer_mode}}}"]
             if _should_emit_theme_selection(effective_theme, theme):
                 preamble_commands.append(f"\\HypoUseTheme{{{effective_theme}}}")
+            if document_style is not None:
+                preamble_commands.extend(document_style.commands)
             _insert_preamble_commands(temp_path, preamble_commands,
                                       package_name=_package_name(options.document_type))
+            if document_style is not None:
+                text = temp_path.read_text(encoding="utf-8")
+                temp_path.write_text(f"\\providecommand{{\\HypoPaperSize}}{{{document_style.paper}}}\n" + text, encoding="utf-8")
 
         os.replace(temp_path, target)
     except Exception:

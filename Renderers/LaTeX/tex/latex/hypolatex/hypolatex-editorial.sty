@@ -1,0 +1,225 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hypolatex-editorial}[2026/09/27 Reading-oriented document design]
+\RequirePackage{tikz}
+\newcommand{\HypoShowCover}{true}
+\newcommand{\HypoShowTOC}{true}
+\newcommand{\HypoTitleLayout}{cover}
+\newcommand{\HypoRunningFont}{\rmfamily\small\color{HypoMuted}}
+\renewcommand{\HypoCodeNeedspace}[1]{\Needspace{#1\baselineskip}}
+\newcommand{\HypoSetBoxDensity}[1]{%
+  \ifstrequal{#1}{comfortable}{%
+    \tcbset{hypobox/spacing/.style={left=12pt,right=12pt,top=10pt,bottom=10pt,toptitle=6pt,bottomtitle=6pt,before skip=12pt,after skip=12pt,before upper={\setlength{\parskip}{5pt}}}}%
+  }{\ifstrequal{#1}{compact}{%
+    \tcbset{hypobox/spacing/.style={left=7pt,right=7pt,top=5pt,bottom=5pt,toptitle=3pt,bottomtitle=3pt,before skip=6pt,after skip=6pt}}%
+  }{\tcbset{hypobox/spacing/.style={left=10pt,right=10pt,top=8pt,bottom=8pt,toptitle=4pt,bottomtitle=4pt,before skip=9pt,after skip=9pt,before upper={\setlength{\parskip}{3pt}}}}}}%
+}
+\HypoSetBoxDensity{normal}
+\makeatletter
+\@ifundefined{chapter}{%
+  \renewcommand{\HypoTitleLayout}{inline}%
+  \renewcommand{\HypoShowTOC}{false}%
+}{}%
+% Cover and TOC are independent; use real front/main matter numbering for books.
+\renewcommand{\Hypo@StandardDocumentStart}{%
+  \ifdefstring{\HypoTitleLayout}{cover}{%
+    \ifdefstring{\HypoShowCover}{true}{\HypoMakeCover}{}%
+  }{}%
+  \@ifundefined{frontmatter}{}{\frontmatter}%
+  \ifdefstring{\HypoTitleLayout}{inline}{\HypoMakeArticleTitle}{}%
+  \ifdefstring{\HypoShowTOC}{true}{%
+    \tableofcontents
+    \@ifundefined{chapter}{\par\bigskip}{\clearpage}%
+  }{}%
+  \@ifundefined{mainmatter}{}{\mainmatter}%
+}
+% A title block in the ordinary text flow, not a titlepage/minipage that
+% ejects the body or overflows when an abstract is longer than expected.
+\newcommand{\HypoMakeArticleTitle}{%
+  \thispagestyle{plain}%
+  \begingroup
+    \raggedright\setlength{\parindent}{0pt}\setlength{\parskip}{0pt}%
+    \HypoIfMetadataTF{article_label}{%
+      {\small\bfseries\color{HypoAccent}\HypoMetadata{article_label}\par}\vspace{7pt}%
+    }{}%
+    \HypoIfMetadataTF{title}{%
+      {\HypoTitleFont\bfseries\fontsize{24}{31}\selectfont\color{HypoInk}\HypoMetadata{title}\par}%
+      \vspace{6pt}%
+    }{}%
+    \HypoIfMetadataTF{subtitle}{%
+      {\large\color{HypoMuted}\HypoMetadata{subtitle}\par}\vspace{7pt}%
+    }{}%
+    {\small\color{HypoMuted}%
+      \HypoIfMetadataTF{author}{\HypoMetadata{author}\par\vspace{3pt}}{}%
+      \HypoIfMetadataTF{organization}{\HypoMetadata{organization}\par\vspace{3pt}}{}%
+      \HypoIfMetadataTF{course}{\HypoMetadata{course}\par\vspace{3pt}}{}%
+      \HypoIfMetadataTF{date}{\HypoMetadata{date}\par\vspace{3pt}}{}%
+      \HypoIfMetadataTF{version}{Version\ \HypoMetadata{version}\par\vspace{3pt}}{}%
+    }%
+    \HypoIfMetadataTF{title}{%
+      \vspace{6pt}{\color{HypoAccent!45!white}\hrule height 0.5pt}\vspace{10pt}%
+    }{}%
+    \HypoIfMetadataTF{abstract}{%
+      {\small\setlength{\parskip}{4pt}\color{HypoInk}%
+        {\bfseries 摘要}\quad\HypoMetadata{abstract}\par}%
+      \vspace{9pt}%
+    }{}%
+  \endgroup
+}
+\newcommand{\HypoEditorialSetup}[1]{%
+  \ifstrequal{#1}{notes}{%
+    \definecolor{HypoAccent}{HTML}{286759}%
+    \definecolor{HypoInk}{HTML}{253B35}%
+    \definecolor{HypoMuted}{HTML}{64766E}%
+  }{%
+    \definecolor{HypoAccent}{HTML}{285879}%
+    \definecolor{HypoInk}{HTML}{243745}%
+    \definecolor{HypoMuted}{HTML}{627581}%
+  }%
+  \HypoSetBoxDensity{comfortable}%
+  \AtBeginDocument{%
+  % Related blocks share a quiet palette; warning/answer distinctions remain.
+  \colorlet{HypoNoteBack}{HypoAccent!4!white}%
+  \colorlet{HypoNoteFrame}{HypoAccent!35!white}%
+  \colorlet{HypoNoteTitleBack}{HypoAccent!8!white}%
+  \colorlet{HypoNoteTitleText}{HypoAccent}%
+  \colorlet{HypoSemanticBack}{HypoAccent!3!white}%
+  \colorlet{HypoSemanticFrame}{HypoAccent!30!white}%
+  \colorlet{HypoSemanticTitleBack}{HypoAccent!7!white}%
+  \colorlet{HypoSemanticTitleText}{HypoInk}%
+  \colorlet{HypoQuestionBack}{HypoAccent!3!white}%
+  \colorlet{HypoQuestionFrame}{HypoAccent}%
+  \colorlet{HypoQuestionTitleBack}{HypoAccent!9!white}%
+  \colorlet{HypoQuestionTitleText}{HypoInk}%
+  \colorlet{HypoHintFrame}{HypoHintFrame!80!black}%
+  }%
+  \AtBeginDocument{%
+    \ifstrequal{#1}{notes}{\linespread{1.12}}{\linespread{1.06}}\selectfont
+    \setlength{\parskip}{0.45em plus 0.1em minus 0.1em}%
+    \setlength{\parindent}{0pt}%
+    \setlength{\abovedisplayskip}{11pt plus 3pt minus 2pt}%
+    \setlength{\belowdisplayskip}{11pt plus 3pt minus 2pt}%
+    \setlist{itemsep=4pt,topsep=6pt,parsep=2pt}%
+    \@ifundefined{chapter}{}{%
+      \titleformat{\chapter}[display]{\HypoTitleFont\bfseries\color{HypoInk}}%
+        {\large\color{HypoAccent}第\ \thechapter\ 章}{0.65em}{\fontsize{24}{32}\selectfont}%
+      \titlespacing*{\chapter}{0pt}{0pt}{1.8em}%
+    }%
+    \raggedbottom
+  }%
+}
+
+% Every heading level uses the same bilingual family, not only the chapter.
+\AtBeginDocument{%
+  \titleformat{\section}{\HypoTitleFont\Large\bfseries\color{HypoInk}}{\color{HypoAccent}\thesection}{0.7em}{}%
+  \titleformat{\subsection}{\HypoTitleFont\large\bfseries\color{HypoInk}}{\color{HypoAccent}\thesubsection}{0.7em}{}%
+  \titleformat{\subsubsection}{\HypoTitleFont\normalsize\bfseries\color{HypoInk}}{\thesubsubsection}{0.7em}{}%
+  \titlespacing*{\section}{0pt}{1.5em}{0.65em}%
+  \titlespacing*{\subsection}{0pt}{1.15em}{0.45em}%
+  \fancyhf{}%
+  \fancyhead[L]{\HypoRunningFont\HypoMetadata{title}}%
+  \fancyhead[R]{\HypoRunningFont\nouppercase{\leftmark}}%
+  \fancyfoot[C]{\HypoRunningFont\thepage}%
+  \fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\HypoRunningFont\thepage}\renewcommand{\headrulewidth}{0pt}}%
+  \@ifundefined{chapter}{\renewcommand{\sectionmark}[1]{\markboth{#1}{}}}{\renewcommand{\chaptermark}[1]{\markboth{#1}{}}}%
+}
+
+% Article is a first-class continuous layout, independent of the palette.
+% Keep cheatsheets on their existing specialised compact path.
+\AtBeginDocument{%
+  \@ifundefined{chapter}{%
+    \ifdefstring{\Hypo@metadata@layout}{cheatsheet}{}{%
+      \newgeometry{left=26mm,right=26mm,top=24mm,bottom=25mm,headheight=28pt,headsep=6mm}%
+      \setlength{\parindent}{0pt}%
+      \setlength{\parskip}{0.4em plus 0.1em minus 0.1em}%
+      \setlength{\emergencystretch}{1em}%
+      \raggedbottom
+      \titleformat{\section}{\HypoTitleFont\large\bfseries\color{HypoInk}}{\color{HypoAccent}\thesection}{0.65em}{}%
+      \titleformat{\subsection}{\HypoTitleFont\normalsize\bfseries\color{HypoInk}}{\thesubsection}{0.65em}{}%
+      \titlespacing*{\section}{0pt}{1.2em}{0.4em}%
+      \titlespacing*{\subsection}{0pt}{0.9em}{0.3em}%
+      \fancyhead[R]{}%
+      \fancyhead[L]{\parbox[b]{\textwidth}{\HypoRunningFont\raggedright%
+        \HypoIfMetadataTF{short_title}{\HypoMetadata{short_title}}{\HypoMetadata{title}}}}%
+    }%
+  }{}%
+}
+
+% Vector artwork scales without fonts/images downloaded at build time.
+\newcommand{\Hypo@MakeEditorialCover}[1]{%
+  \begin{titlepage}
+    \thispagestyle{empty}\raggedright
+    \begin{tikzpicture}[remember picture,overlay]
+      \fill[HypoAccent!4!white] (current page.south west) rectangle (current page.north east);
+      \fill[HypoAccent] (current page.north west) rectangle ([xshift=7mm]current page.south west);
+      \draw[HypoAccent!12!white,line width=0.5pt,step=12mm]
+        ([xshift=-100mm,yshift=23mm]current page.south east) grid ([xshift=-18mm,yshift=105mm]current page.south east);
+      \ifstrequal{#1}{notes}{%
+        \draw[HypoAccent!50!white,line width=1.1pt]
+          ([xshift=-100mm,yshift=35mm]current page.south east) .. controls
+          ([xshift=-74mm,yshift=110mm]current page.south east) and
+          ([xshift=-45mm,yshift=20mm]current page.south east) ..
+          ([xshift=-18mm,yshift=82mm]current page.south east);
+      }{%
+        \fill[HypoAccent!12!white] ([xshift=-90mm,yshift=32mm]current page.south east) rectangle ([xshift=-73mm,yshift=62mm]current page.south east);
+        \fill[HypoAccent!22!white] ([xshift=-66mm,yshift=32mm]current page.south east) rectangle ([xshift=-49mm,yshift=81mm]current page.south east);
+        \fill[HypoAccent!38!white] ([xshift=-42mm,yshift=32mm]current page.south east) rectangle ([xshift=-25mm,yshift=98mm]current page.south east);
+      }%
+    \end{tikzpicture}%
+    {\HypoTitleFont\small\color{HypoAccent}\ifstrequal{#1}{notes}{COURSE NOTES\quad /\quad 课程笔记}{DOCUMENT\quad /\quad 技术文档}\par}
+    \vspace*{24mm}
+    {\HypoCoverTitleFont\bfseries\fontsize{30}{41}\selectfont\color{HypoInk}\HypoMetadata{title}\par}
+    \HypoIfMetadataTF{subtitle}{\vspace{7mm}{\large\color{HypoMuted}\HypoMetadata{subtitle}\par}}{}%
+    \vspace{11mm}{\color{HypoAccent}\rule{30mm}{1pt}\par}
+    \HypoIfMetadataTF{abstract}{\vspace{8mm}\begin{minipage}{0.88\linewidth}\color{HypoMuted}\HypoMetadata{abstract}\end{minipage}\par}{}%
+    \vfill
+    \begin{minipage}{0.46\linewidth}
+      \Hypo@CoverAuthorBlock
+    \end{minipage}
+    \vspace*{10mm}
+  \end{titlepage}
+}
+\let\HypoLegacyMakeCover\HypoMakeCover
+\newcommand{\Hypo@MakeArtworkCover}{%
+  \begin{titlepage}
+    \thispagestyle{empty}\Hypo@CoverBackground\raggedright
+    \vspace*{10mm}
+    \HypoIfMetadataTF{course}{%
+      {\HypoTitleFont\fontsize{14}{20}\selectfont\color{HypoAccent}\HypoMetadata{course}\par}%
+      \vspace{9mm}%
+    }{}%
+    \begin{minipage}{0.90\textwidth}
+      {\HypoCoverTitleFont\bfseries\fontsize{44}{56}\selectfont\color{HypoInk}\HypoMetadata{title}\par}
+      \HypoIfMetadataTF{subtitle}{%
+        \vspace{6mm}\noindent\begin{minipage}{0.84\linewidth}
+          \raggedright\fontsize{24}{32}\selectfont\color{HypoInk}\HypoMetadata{subtitle}\par
+        \end{minipage}\par
+      }{}%
+      % Treat the metadata as a byline belonging to the title, rather than
+      % placing a detached label over the lower illustration.
+      \HypoIfMetadataTF{author}{%
+        \vspace{12mm}%
+        {\HypoTitleFont\fontsize{22}{30}\selectfont\color{HypoInk}\HypoMetadata{author}%
+          \HypoIfMetadataTF{date}{%
+            \hspace{0.8em}{\fontsize{20}{27}\selectfont\color{HypoAccent}\textperiodcentered\hspace{0.8em}\HypoMetadata{date}}%
+          }{}\par}%
+      }{%
+        \HypoIfMetadataTF{date}{\vspace{12mm}{\fontsize{20}{27}\selectfont\color{HypoAccent}\HypoMetadata{date}\par}}{}%
+      }%
+      \HypoIfMetadataTF{organization}{\vspace{4mm}{\fontsize{15}{22}\selectfont\color{HypoMuted}\HypoMetadata{organization}\par}}{}%
+      \HypoIfMetadataTF{abstract}{\vspace{7mm}{\fontsize{14}{21}\selectfont\color{HypoInk}\HypoMetadata{abstract}\par}}{}%
+    \end{minipage}
+    \vfill
+  \end{titlepage}
+}
+\renewcommand{\HypoMakeCover}{%
+  \Hypo@ResolveCoverLayout
+  \HypoIfMetadataTF{cover_layout}{}{%
+    \ifdefstring{\HypoThemeName}{course-notes}{\def\Hypo@ResolvedCoverLayout{notebook}}{}%
+    \ifdefstring{\HypoThemeName}{professional-doc}{\def\Hypo@ResolvedCoverLayout{editorial}}{}%
+  }%
+  \ifdefstring{\Hypo@ResolvedCoverLayout}{artwork}{\Hypo@MakeArtworkCover}{%
+  \ifdefstring{\Hypo@ResolvedCoverLayout}{notebook}{\Hypo@MakeEditorialCover{notes}}{%
+    \ifdefstring{\Hypo@ResolvedCoverLayout}{editorial}{\Hypo@MakeEditorialCover{report}}{\HypoLegacyMakeCover}%
+  }}%
+}
+\makeatother

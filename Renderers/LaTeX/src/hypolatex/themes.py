@@ -13,6 +13,8 @@ class ThemeError(ValueError):
 
 DEFAULT_THEME = "plain"
 THEME_REGISTRY = {
+    "course-notes": {"latex_theme": "course-notes", "profiles": ("book", "article")},
+    "professional-doc": {"latex_theme": "professional-doc", "profiles": ("book", "article")},
     "plain": {
         "latex_theme": "plain",
         "profiles": ("book", "article", "beamer"),

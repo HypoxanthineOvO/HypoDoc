@@ -10,6 +10,8 @@ import subprocess
 from typing import Iterable
 import zlib
 
+from hypolatex.configuration import ConfigurationError, load_frontmatter, optional_scalar
+
 
 class ResourceError(RuntimeError):
     """Raised when Markdown resources cannot be discovered or copied."""
@@ -216,7 +218,25 @@ def _resource_roots(
     source: Path, resource_roots: Iterable[Path | str]
 ) -> tuple[Path, ...]:
     roots: list[Path] = []
-    for root in [*resource_roots, source.parent, source.parent.parent]:
+    try:
+        metadata = load_frontmatter(source)
+        configured = optional_scalar(metadata, "resource-root")
+        alias = optional_scalar(metadata, "resource_root")
+        if configured and alias and configured != alias:
+            raise ResourceError("Conflicting resource-root and resource_root.")
+        configured = configured or alias
+    except ConfigurationError as exc:
+        raise ResourceError(str(exc)) from exc
+    configured_roots: list[Path] = []
+    if configured:
+        relative = Path(configured)
+        if relative.is_absolute() or ".." in relative.parts or _is_external_reference(configured) or "\\" in configured:
+            raise ResourceError("resource-root must be a local directory inside the document directory.")
+        root = (source.parent / relative).resolve()
+        if not root.is_relative_to(source.parent.resolve()) or not root.is_dir():
+            raise ResourceError("resource-root is missing or outside the document directory: " + configured)
+        configured_roots.append(root)
+    for root in [*resource_roots, *configured_roots, source.parent, source.parent.parent]:
         path = Path(root).expanduser()
         if not path.is_absolute():
             path = (Path.cwd() / path).resolve()
