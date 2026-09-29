@@ -49,5 +49,5 @@ jobs:
           flags=(--draft)
           if [[ "$VERSION" == *-rc.* ]]; then flags+=(--prerelease); fi
           gh release create "$TAG" release/latex/* --target "$GITHUB_SHA" \
-            --title "HypoDoc $TAG · LaTeX & ShanghaiTech themes" \
+            --title "HypoDoc $TAG · Book & Article" \
             --notes-file release/latex/RELEASE_NOTES.md "${flags[@]}"

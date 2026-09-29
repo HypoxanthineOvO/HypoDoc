@@ -1,5 +1,9 @@
 # Changelog
 
+## HypoDoc 0.3.1
+
+Book / Article 场景排版、Pagella 字体、连贯的图像封面、可配置排版、规范选择题与图片引用修复。完整发布说明和升级注意事项见仓库根 CHANGELOG.md。以下 v0.x 记录保留独立 Hypo-LaTeX 历史，不代表当前产品版本。
+
 ## HypoDoc 0.3.0（2026-09-22，统一产品版本）
 
 正式发布 school / simple / nature 主题、源码 ZIP 安装、School 圆角封面与多作者排版、完整主题宏包诊断及实际构建自检。更新启动器避免误用旧主题版本。发布附件与验证范围见 [统一更新记录](../../CHANGELOG.md)。

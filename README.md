@@ -4,9 +4,9 @@
 
 适合中文技术文档、项目说明、复习资料、速查表和学术演示。源文件始终可编辑；不需要手工维护生成的 LaTeX。
 
-**v0.3.0 已整理为 LaTeX 专项版本**：发布 CLI、文档/Slides 主题和安装指南；HTML、Desktop、VS Code 的后续功能不包含在本次发布中。
+**v0.3.1：Book / Article 文档排版更新**。短文不再默认插入整页封面和目录；新增课程笔记／正式文档主题，默认使用 Pagella 与配套数学字体。继续作为 LaTeX 专项版本发布，不包含新的 HTML、Desktop 或 VS Code 构建。
 
-**[下载 v0.3.0](https://github.com/HypoxanthineOvO/HypoDoc/releases/tag/v0.3.0)** · [直接下载源码 ZIP](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.0/hypodoc-source-0.3.0.zip) · [查看上科大 PDF 示例](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.0/School-standard.pdf)
+**[下载 v0.3.1](https://github.com/HypoxanthineOvO/HypoDoc/releases/tag/v0.3.1)** · [直接下载源码 ZIP](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.1/hypodoc-source-0.3.1.zip) · [查看短文 PDF](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.1/Article-brief.pdf) · [上科大 Slides 示例](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.1/School-standard.pdf)
 
 新上科大主题的 ID 是 `school`，需要 **0.3.0 或更新版本**；不要拿 v0.2.0 的安装包配合新版文档。用 `hypolatex --version`、`hypolatex themes` 检查实际运行的安装。
 
@@ -55,6 +55,15 @@ hypolatex build document.md
 
 需要指定位置时加 `--output build/result.pdf`；需要 TeX 时用 `hypolatex convert slides.md`。
 
+创建简洁短文（标题、摘要与正文从第一页开始）：
+
+```sh
+hypolatex init brief.md --template article
+hypolatex build brief.md --strict
+```
+
+课程笔记用 `--template notes`，技术说明用 `--template report`。Book / Article 的字体、封面和迁移说明见 [文档排版指南](Renderers/LaTeX/docs/document-design.md)。
+
 ## 选择样式与模板
 
 | Slides 主题 | 特点 |
@@ -78,13 +87,13 @@ school_cover: diagonal
 
 圆角内容块、居中的章节导航、带日期的双行页脚；多章节自动改用章节进度，长元数据不会挤占相邻栏。参见 [主题排版说明](Examples/ThemeComparison/README.md)。
 
-`init --template` 可选 `document`（长文）、`article`（项目／报告）、`slides`、`review`（复习题）、`cheatsheet`（速查表）。用 `hypolatex themes` 查看全部主题；常用写法见 [写作指南](Docs/authoring.md)。
+`init --template` 可选 `document`（长文）、`article`（短文）、`project`（项目任务）、`notes`（课程笔记）、`report`（技术说明）、`slides`、`review`（复习题）、`cheatsheet`（速查表）。用 `hypolatex themes` 查看全部主题；常用写法见 [写作指南](Docs/authoring.md)。
 
 ## 不止是“编译成功”
 
 - `hypolatex build slides.md --json`：机器可读的输出路径、溢出与字体提示。
 - `hypolatex build slides.md --strict`：遇到溢出或缺字则失败，不替换已有 PDF。
-- 字体优先使用熟悉的 Times / Consolas / Cascadia；缺少时使用 TeX 发行版的后备字体并明确提示。无需为构建安装商业字体。
+- 文档默认使用 Pagella / Pagella Math / Noto Serif CJK；Slides 保留自己的字体策略。无需安装商业字体。显式指定的文档字体不存在时会报错，不静默替换。
 - PDF 仍需检查内容和排版；日志不能覆盖所有绝对定位或图片中的问题。
 
 ## 查看与交付

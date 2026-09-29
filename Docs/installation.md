@@ -2,7 +2,7 @@
 
 ## 推荐：源码准备脚本
 
-安装 Python 3.11+，克隆仓库或下载 [v0.3.0 源码 ZIP](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.0/hypodoc-source-0.3.0.zip) 并解压，在含 `scripts/` 的目录运行（ZIP 方式不需要 Git）：
+安装 Python 3.11+，克隆仓库或下载 [v0.3.1 源码 ZIP](https://github.com/HypoxanthineOvO/HypoDoc/releases/download/v0.3.1/hypodoc-source-0.3.1.zip) 并解压，在含 `scripts/` 的目录运行（ZIP 方式不需要 Git）：
 
 ```sh
 python3 scripts/setup.py --smoke-test
@@ -75,6 +75,8 @@ uv tool install /path/to/hypolatex-VERSION-py3-none-any.whl
 将路径和版本替换成实际下载文件。也可在自行创建的 Python 虚拟环境中通过 pip 安装 wheel。不要默认从 PyPI 安装同名包。主题、模板、图片和必要说明随 wheel 提供，不要求工作目录内存在 HypoDoc 仓库。
 
 ## 字体不再成为隐含前提
+
+Book / Article 默认使用 TeX Gyre Pagella、Pagella Math 和 Noto Serif CJK SC，标题与页眉页脚沿用衬线体系；可在 YAML 中覆盖。显式指定的字体缺失时会报错；省略字段时才使用后备。详见[字体说明](../Renderers/LaTeX/docs/fonts.md)。
 
 新 Slides 主题默认 `font_preset: preferred`：英文优先 Times New Roman，代码优先 Consolas / Cascadia Mono；缺少时使用 TeX Gyre Termes / Latin Modern Mono。中文优先 Noto Serif CJK SC，缺少时使用 TeX 发行版的 Fandol 字体。数学使用 TeX Gyre Termes Math。
 

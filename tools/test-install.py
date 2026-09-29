@@ -97,6 +97,8 @@ def main():
             names = archive.namelist()
             assert any(n.endswith("hypolatex.lua") for n in names)
             assert any(n.endswith("hypolatex.sty") for n in names)
+            for resource in ("document.lua", "hypolatex-fonts.sty", "hypolatex-editorial.sty", "article.md", "notes.md", "report.md"):
+                assert any(n.endswith("/" + resource) for n in names), resource
             for resource in ("school.tex", "simple.tex", "nature.tex", "FZU_Beamer.sty",
                              "assets/logo-red.pdf", "assets/logo-white.pdf"):
                 assert "hypolatex/resources/slides/" + resource in names
@@ -114,6 +116,15 @@ def main():
         run([cli, "convert", document, "--output", base / "document.tex"], base)
         run([cli, "build", document, "--output", base / "installed.pdf"], base)
         assert (base / "installed.pdf").read_bytes().startswith(b"%PDF-")
+        info = subprocess.check_output(["pdfinfo", str(base / "installed.pdf")], text=True)
+        assert re.search(r"Pages:\s+1\b", info), info
+        fonts = subprocess.check_output(["pdffonts", str(base / "installed.pdf")], text=True)
+        assert "Pagella" in fonts, fonts
+        for template in ("notes", "report"):
+            source = base / f"installed-{template}.md"
+            run([cli, "init", source, "--template", template], base)
+            run([cli, "build", source, "--strict", "--json"], base)
+            assert source.with_suffix(".pdf").read_bytes().startswith(b"%PDF-")
         # The installed wheel must not reach back into the source tree.
         checkout.rename(base / "source-not-in-working-directory")
         for theme, cover in [("school", "standard"), ("school", "diagonal"), ("simple", None), ("nature", None)]:

@@ -21,11 +21,13 @@ setup 自动准备本地 Python 环境；系统安装必须先说明并确认，
 hypolatex init slides.md --template slides --theme school
 ```
 
-`--template` 可选 document、article、slides、review、cheatsheet。初始化不会覆盖现有文件。用 `hypolatex themes` 查看完整主题表。
+`--template` 可选 document、article、project、notes、report、slides、review、cheatsheet。初始化不会覆盖现有文件。用 `hypolatex themes` 查看完整主题表。
+
+短文使用 article，默认标题／摘要与正文同页、不单独生成封面或目录；Book 保留章节与目录结构。文档默认 Pagella / Pagella Math / Noto Serif CJK。课程笔记选 course-notes，技术文档选 professional-doc；字体覆盖、封面和图表／题目语法见 `Renderers/LaTeX/docs/document-design.md`。
 
 Slides 新主题：school（完整高校样式）、simple（简约细线）、nature（摄影封面／淡几何正文）。School 可在 frontmatter 中指定 `school_cover: standard` 或 `diagonal`。新源文件用 `profile`，不混入旧 document_type/documentclass。
 
-字体默认优先使用本机首选字体并明确后备；需要开放字体环境时设 `font_preset: portable`。不要要求安装商业字体才能完成任务。
+Slides 字体默认优先使用本机首选字体并明确后备；需要开放字体环境时设 `font_preset: portable`。该字段不控制 Book / Article 字体。不要要求安装商业字体才能完成任务。
 
 ## 构建与检查
 

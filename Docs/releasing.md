@@ -4,10 +4,12 @@
 
 仅发布 PDF 后端和主题、不等待 HTML/宿主应用时，用 **Release LaTeX** workflow。它不安装 Node.js、不构建 Desktop/VSIX、不拉取 Spec；在干净提交上运行 Python/真实 PDF 回归，构建 wheel、sdist、源码 ZIP、指南/Skill ZIP 和 School PDF/Markdown，再对这些实际附件执行解压安装测试，最后创建草稿。
 
+0.3.1 同时附带单页／多页 Article 的 Markdown 与 PDF，以及三份封面 PDF 和可选背景素材 ZIP。候选背景不作为默认主题、不要求用户联网生成；指南包包含详细文档与可复现样例。
+
 ```sh
 python3 tools/release.py check
 python3 tools/release.py build --latex-only --output release/latex
-python3 tools/test-install.py --source-zip release/latex/hypodoc-source-0.3.0.zip --wheel release/latex/hypolatex-0.3.0-py3-none-any.whl
+python3 tools/test-install.py --source-zip release/latex/hypodoc-source-0.3.1.zip --wheel release/latex/hypolatex-0.3.1-py3-none-any.whl
 ```
 
 构建要求干净提交；源码 ZIP 取自同一 HEAD，不接受 dirty 预览混入正式附件。版本需替换为实际目标版本。确认 Actions 成功、manifest 提交和哈希正确后，经用户授权公开草稿并标为 latest。**草稿不是用户可见的交付**：发布后用 GitHub Release API 和匿名下载核实附件可见、可下载且哈希一致。

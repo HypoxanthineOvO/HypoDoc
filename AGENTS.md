@@ -1,7 +1,8 @@
 # 使用 HypoDoc
 
 - 普通任务先读 README、Docs/installation.md、Docs/ai-guide.md 和 Skills/LaTeX/SKILL.md。
-- v0.3.0 本次发布范围为 LaTeX CLI、文档与 Slides 主题；HTML/Marp 后续工作不属于该版本。
+- v0.3.1 发布范围为 LaTeX CLI、Book/Article 文档与既有 Slides 主题；不包含未发布的 HTML/Marp、Desktop 或 VS Code 新功能。
+- 短文使用 `profile: article`，默认首页标题与正文连续排版；长文用 `profile: book`。默认文档字体为 Pagella / Pagella Math / Noto Serif CJK。
 - 用户只想生成 PDF 时，不要先安装 Node.js、拉取 Spec 子模块或启动 Desktop。
 - 源码 ZIP 也能安装：运行 `python3 scripts/setup.py --smoke-test`（Windows 用 `python`）。系统安装、大体积下载先说明并征得同意。
 - 使用 setup 打印的本次 CLI 完整路径检查版本与主题，避免 PATH 中的旧安装。新上科大主题为 `profile: beamer` + `theme: school`，需要 0.3.0+。

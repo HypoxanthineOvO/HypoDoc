@@ -1,5 +1,24 @@
 # 更新记录
 
+## 0.3.1
+
+**文档排版补丁版本：让 Book 与 Article 各有合适的阅读体验。** 延续 v0.3.0 的 LaTeX 专项发布范围，不发布新的 Desktop、VS Code 或 Marp 功能。
+
+- Article 默认标题、副标题、作者与摘要从正文第一页开始，不强制生成独立封面或目录；新增短文模板、短页眉及自然续排，短代码块预留页内空间。
+- 新增 course-notes / professional-doc 主题，以及 notes / report 模板。文档默认采用 Pagella、Pagella Math 与 Noto Serif CJK，统一标题、正文、页眉页脚；增大 Box 留白并修复提示框自定义标题。
+- 新增 artwork 封面布局：大标题、副标题、署名与年份组成上方文字组。提供三张 ImageGen 背景作为可选示例，不替换默认主题背景；原图约 128 dpi（A4），不是印刷母版。
+- 接通文档字体、数学／标题字体、强调色、纸张、字号、行距、Box 密度、标题区和目录配置；显式无效设置会报错。
+- 修复图片标识与下划线路径、资源根查找、图表／题目引用；支持规范的单选／多选题与答案校验，学生版在生成 TeX 前移除答案和解析。
+- 保留 v0.3.0 的 Slides 主题、安装器修复及打包边界；源码 ZIP、wheel、sdist、指南、可编辑样例及 PDF 均由同一干净提交构建，并提供 SHA-256。
+
+### 升级须知
+
+- Article 的新默认行为会改变旧稿分页。要保留整页封面与目录，显式设置 `title_layout: cover` 与 `toc: true`。
+- `init --template article` 现在创建简洁短文；旧项目任务模板使用 `--template project`。
+- 文档默认字体与间距已更新；原稿中手写的 LaTeX 样式仍可能覆盖主题。独立且未加载 HypoDoc 的 .tex 不会自动迁移。
+- 下载 `Article-note.pdf`、`Article-brief.pdf`、`Article-review.pdf` 查看单页／多页示例；`Cover-A/B/C.pdf` 展示候选封面，背景、Markdown 与提示词在 `hypodoc-cover-candidates-0.3.1.zip`。
+- PDF 仍需本机 Pandoc、XeLaTeX、latexmk；不包含商业字体，不发布 PyPI/CTAN。Linux 为实际验收平台，原生 Windows/macOS 的完整 PDF 工具链仍需目标机验证。
+
 ## 0.3.0
 
 本次公开发布专注 **LaTeX CLI、文档与 Slides 主题**。不包含新的 HTML/Marp、Desktop 或 VS Code 构建，也不要求用户安装 Node.js 或 Spec 子模块。

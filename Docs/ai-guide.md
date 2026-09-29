@@ -12,7 +12,8 @@
 ## 从材料到成品
 
 - 根据用户材料组织标题、大纲和内容。长文先给结构，Slides 每页聚焦一个观点；不要把长段落机械地塞到幻灯片中。
-- 用 `hypolatex init` 从五个内置模板中创建源文件。图片保存在源文件旁的 `assets/`，用户文档不要混进工具源码目录。
+- 用 `hypolatex init` 从内置模板中创建源文件：短文用 article、课程笔记用 notes、技术说明用 report、项目任务用 project。图片保存在源文件旁的 `assets/`，用户文档不要混进工具源码目录。
+- `profile: article` 默认首页标题区、不插入独立封面或目录；Book 保留长文结构。旧 Article 要保留封面与目录需显式设置 `title_layout: cover`、`toc: true`。不要把原始 LaTeX 的字体设置复制进新稿覆盖主题。
 - 使用 canonical `profile: book`、`article` 或 `beamer`，选择匹配主题。普通任务无需设置大量字体、纸张和封面参数。
 - 新上科大 Slides 使用 `profile: beamer` + `theme: school`，不是旧 `shanghaitech`。安装后用 setup 打印的完整 CLI 路径确认版本为 0.3.0+、主题表包含 school；不直接信任 PATH 里的同名旧命令。
 - 使用 [写作指南](authoring.md) 的共享语法；专用排版需求再查 LaTeX 详细指南。

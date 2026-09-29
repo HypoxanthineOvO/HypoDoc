@@ -110,6 +110,9 @@ def build(output=None, allow_dirty=False, latex_only=False):
         paths += [p for p in (ROOT / "Docs").glob("*.md") if p.name not in {"architecture.md", "security.md"}]
         paths += [p for p in (ROOT / "Docs/assets").rglob("*") if p.is_file()]
         paths += [p for folder in ("Skills/Authoring", "Skills/LaTeX") for p in (ROOT / folder).rglob("*") if p.is_file()]
+        paths += [p for folder in ("Renderers/LaTeX/docs", "Renderers/LaTeX/src/hypolatex/resources/starters",
+                                   "Renderers/LaTeX/examples/document-design", "Examples/ThemeComparison")
+                  for p in (ROOT / folder).rglob("*") if p.is_file() and not any(part.startswith(".") for part in p.relative_to(ROOT).parts)]
         for path in sorted(paths):
             archive.write(path, path.relative_to(ROOT))
     (output / "RELEASE_NOTES.md").write_text(notes(version))
@@ -124,6 +127,7 @@ def build(output=None, allow_dirty=False, latex_only=False):
                  "--school-cover", cover])
             run(["uv", "run", "--project", "Renderers/LaTeX", "hypolatex",
                  "build", source, "--strict", "--json"])
+        build_document_examples(output, version)
     manifest = finalize(output, allow_dirty)
     if latex_only:
         manifest["scope"] = "latex-only"
@@ -131,6 +135,24 @@ def build(output=None, allow_dirty=False, latex_only=False):
         paths = [output / f["name"] for f in manifest["files"]] + [output / "manifest.json"]
         (output / "CHECKSUMS.txt").write_text("".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n" for p in paths))
     print(json.dumps({"output": str(output), "version": version, "dirty": manifest["dirty"]}))
+
+
+def build_document_examples(output, version):
+    """Attach document demos and optional generated artwork, never user notes."""
+    examples = ROOT / "Renderers/LaTeX/examples/document-design"
+    for name in ("note", "brief", "review"):
+        source = output / f"Article-{name}.md"
+        shutil.copyfile(examples / f"article-{name}.md", source)
+        run(["uv", "run", "--project", "Renderers/LaTeX", "hypolatex",
+             "build", source, "--strict", "--json"])
+    covers = examples / "cover-candidates"
+    with zipfile.ZipFile(output / f"hypodoc-cover-candidates-{version}.zip", "w", zipfile.ZIP_DEFLATED) as archive:
+        for path in sorted(covers.rglob("*")):
+            if path.is_file() and path.suffix in {".md", ".png"}:
+                archive.write(path, path.relative_to(covers))
+    for label, name in (("A", "contour-atlas"), ("B", "wave-field"), ("C", "material-structure")):
+        run(["uv", "run", "--project", "Renderers/LaTeX", "hypolatex", "build",
+             covers / f"{name}.md", "--output", output / f"Cover-{label}.pdf", "--strict", "--json"])
 
 
 def assemble(input_dir, output):
